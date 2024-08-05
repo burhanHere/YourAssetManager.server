@@ -109,6 +109,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowSepcificOrigin");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
