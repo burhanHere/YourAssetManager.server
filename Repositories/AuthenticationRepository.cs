@@ -234,7 +234,7 @@ namespace YourAssetManager.Server.Repositories
                 // Generating confirmation token
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 // Creating link of the confirmation token
-                var confirmationLink = $"http://localhost:4200/EmailConfirmation?token={token}&email={newUser.Email!}";
+                var confirmationLink = $"http://localhost:4200/EmailConfirmation?token={token}&email={user.Email!}";
                 // Sending confirmation link for email confirmation
                 string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
                 string subject = "Confirmation E-Mail (No Reply)";
