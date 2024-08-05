@@ -234,9 +234,9 @@ namespace YourAssetManager.Server.Repositories
                 // Generating confirmation token
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 // Creating link of the confirmation token
-                var confirmationLink = urlHelper.Action(nameof(ConfirmEmail), "Authentication", new { token, email = user.Email }, protocol: "http", host: httpContext.Request.Host.ToString());
-                // Send confirmation email
-                string message = $"Please click the link below to confirm your email address.\nConfirmation Link: {confirmationLink}";
+                var confirmationLink = $"http://localhost:4200/EmailConfirmation?token={token}&email={newUser.Email!}";
+                // Sending confirmation link for email confirmation
+                string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
                 string subject = "Confirmation E-Mail (No Reply)";
                 bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
                 if (!emailStatus)
@@ -331,8 +331,10 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
             var forgetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var forgetPasswordLink = urlHelper.Action(nameof(AuthenticationController.ResetPassword), "Authentication", new { token = forgetPasswordToken, email = user.Email }, httpContext.Request.Scheme);
-            string message = $"Please click the link below to Reset your password.\nReset password Link: {forgetPasswordLink}";
+            // Creating link of the forgot Password token
+            var resetPasswordLink = $"http://localhost:4200/PasswordReset?token={forgetPasswordToken}&email={user.Email!}";
+            // Sending confirmation link for email confirmation
+            string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={resetPasswordLink}>Click</a>";
             string subject = "Reset password E-Mail (No Reply)";
             bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
             if (!emailStatus)
