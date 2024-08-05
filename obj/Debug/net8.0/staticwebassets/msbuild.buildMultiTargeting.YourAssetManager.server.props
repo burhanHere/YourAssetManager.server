@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/YourAssetManager.server.props" />
+</Project>
