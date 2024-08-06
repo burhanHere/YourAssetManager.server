@@ -156,9 +156,3 @@ namespace YourAssetManager.Server
 //   "password": "Burhan123@"
 // }
 
-// {
-//   "newPassword": "Burewala123@",
-//   "confirmedNewPassword": "Burewala123@",
-//   "email": "burhanburewala@gmail.com",
-//   "token": "CfDJ8CZUNWhaE/BDlDSBRIF6gsfgqNVsKMzTBr0e5fu9Bh5y89bNphYXbrLmVKEAJQ1zZVx/bB9zxeZZGVR1HR6jqBFeg3jVsnGOPjJasxak2TaYh0vYAwRfJEwMFnuY8cf9FHOVm3dFXj5+s2I2lVZJDAZLaL1A2sWZk/zL6ZflHlngrdlRG7dC+57fFEBR7oe1SmrZT2834YwHxaQJ7aDvWq/GaWNo5rsk4WLKbHSFM0Ck"
-// }
