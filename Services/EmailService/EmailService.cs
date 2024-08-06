@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Options;
 using YourAssetManager.server.Services.EmailService;
-using YourAssetManager.Server.Models;
+using YourAssetManager.Server.DTOs;
 
 namespace YourAssetManager.Server.Services
 {
