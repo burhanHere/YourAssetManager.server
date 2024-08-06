@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using YourAssetManager.Server.Models;
+using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Services;
 
 namespace YourAssetManager.Server.Repositories
@@ -75,7 +75,7 @@ namespace YourAssetManager.Server.Repositories
             // Generating confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             // Creating link of the confirmation token
-            var confirmationLink = $"http://localhost:4200/EmailConfirmation?token={token}&email={newUser.Email!}";
+            var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={token}&email={newUser.Email!}";
             // Sending confirmation link for email confirmation
             string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
             string subject = "Confirmation E-Mail (No Reply)";
@@ -234,7 +234,7 @@ namespace YourAssetManager.Server.Repositories
                 // Generating confirmation token
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 // Creating link of the confirmation token
-                var confirmationLink = $"http://localhost:4200/EmailConfirmation?token={token}&email={user.Email!}";
+                var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={token}&email={user.Email!}";
                 // Sending confirmation link for email confirmation
                 string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
                 string subject = "Confirmation E-Mail (No Reply)";
@@ -332,7 +332,7 @@ namespace YourAssetManager.Server.Repositories
             }
             var forgetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             // Creating link of the forgot Password token
-            var resetPasswordLink = $"http://localhost:4200/PasswordReset?token={forgetPasswordToken}&email={user.Email!}";
+            var resetPasswordLink = $"http://localhost:4200/auth/PasswordReset?token={forgetPasswordToken}&email={user.Email!}";
             // Sending confirmation link for email confirmation
             string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={resetPasswordLink}>Click</a>";
             string subject = "Reset password E-Mail (No Reply)";

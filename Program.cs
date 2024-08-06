@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using YourAssetManager.server.Services.EmailService;
 using YourAssetManager.Server.Data;
-using YourAssetManager.Server.Models;
+using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
