@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace YourAssetManager.Server.Models
+namespace YourAssetManager.Server.DTOs
 {
     public class ResetPassowrdModel
     {

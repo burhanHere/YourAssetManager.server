@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
-using YourAssetManager.Server.Models;
+using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server

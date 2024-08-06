@@ -1,4 +1,4 @@
-namespace YourAssetManager.Server.Models
+namespace YourAssetManager.Server.DTOs
 {
     public class MailSettings
     {
