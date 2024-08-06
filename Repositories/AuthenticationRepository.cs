@@ -1,13 +1,12 @@
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Services;
 
 namespace YourAssetManager.Server.Repositories
@@ -15,7 +14,7 @@ namespace YourAssetManager.Server.Repositories
     /// <summary>
     /// Repository for handling authentication-related tasks.
     /// </summary>
-    public class AuthenticationRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IConfiguration configuration)
+    public class AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IConfiguration configuration)
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationRepository"/> class.
@@ -23,7 +22,7 @@ namespace YourAssetManager.Server.Repositories
         /// <param name="userManager">The user manager for handling user-related tasks.</param>
         /// <param name="roleManager">The role manager for handling role-related tasks.</param>
         /// <param name="appSettings">Application settings for configuring services.</param>
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly EmailService _emailService = new(mailSettings);
         private readonly IConfiguration _configuration = configuration;
@@ -51,7 +50,7 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Create a new user
-            IdentityUser newUser = new()
+            ApplicationUser newUser = new()
             {
                 Email = signUpModel.Email,
                 UserName = signUpModel.UserName,
@@ -185,8 +184,8 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Confirm email with the token
-            var uriDcodedToken = WebUtility.UrlDecode(token);
-            var result = await _userManager.ConfirmEmailAsync(user, uriDcodedToken);
+            var uriDecodedToken = WebUtility.UrlDecode(token);
+            var result = await _userManager.ConfirmEmailAsync(user, uriDecodedToken);
             if (result.Succeeded)
             {
                 // Email confirmation succeeded
@@ -254,6 +253,7 @@ namespace YourAssetManager.Server.Repositories
                 string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
                 string subject = "Confirmation E-Mail (No Reply)";
                 bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
+
                 if (!emailStatus)
                 {
                     // Failed to send confirmation email
@@ -305,6 +305,7 @@ namespace YourAssetManager.Server.Repositories
             {
                 authClaim.Add(new(ClaimTypes.Role, userRole));
             }
+
             var secret = _configuration.GetValue<string>("JWT:Secret");
             var issuer = _configuration.GetValue<string>("JWT:ValidIssuer");
             var audience = _configuration.GetValue<string>("JWT:ValidAudience");
@@ -352,6 +353,7 @@ namespace YourAssetManager.Server.Repositories
             string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={resetPasswordLink}>Click</a>";
             string subject = "Reset password E-Mail (No Reply)";
             bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
+
             if (!emailStatus)
             {
                 // Failed to send confirmation email

@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using YourAssetManager.server.Services.EmailService;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultDbConne
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 2))));
 // adding idnetity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     // Password settings
     options.Password.RequireNonAlphanumeric = true;

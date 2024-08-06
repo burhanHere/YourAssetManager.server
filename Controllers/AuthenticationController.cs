@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server
@@ -10,7 +11,7 @@ namespace YourAssetManager.Server
     [AllowAnonymous]
     [ApiController]
     [Route("YourAssetManager.Server/{controller}")]
-    public class AuthenticationController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IUrlHelperFactory urlHelperFactory, IConfiguration configuration) : ControllerBase
+    public class AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IUrlHelperFactory urlHelperFactory, IConfiguration configuration) : ControllerBase
     {
         // Initialize the authentication repository using the provided services
         private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration);
