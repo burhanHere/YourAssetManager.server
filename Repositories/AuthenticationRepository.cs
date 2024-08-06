@@ -272,7 +272,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status400BadRequest,
                     ResponceData = new List<string>
                     {
-                        $"Reset password link has been sent to your email: {user.Email[..3]}...{user.Email[user.Email.IndexOf("@")..]}",
+                        $"Email Confirmation link has been sent to your email: {user.Email[..3]}...{user.Email[user.Email.IndexOf("@")..]}",
                         "A confirmation email has been sent. Please check your inbox."
                     }
                 };
