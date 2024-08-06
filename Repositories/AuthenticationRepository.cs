@@ -1,5 +1,6 @@
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
@@ -74,8 +75,14 @@ namespace YourAssetManager.Server.Repositories
 
             // Generating confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+
+            // URL encode the token and email address
+            var encodedToken = WebUtility.UrlEncode(token);
+            var encodedEmail = WebUtility.UrlEncode(newUser.Email);
+
             // Creating link of the confirmation token
-            var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={token}&email={newUser.Email!}";
+            var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={encodedToken}&email={encodedEmail}";
+
             // Sending confirmation link for email confirmation
             string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
             string subject = "Confirmation E-Mail (No Reply)";
@@ -231,10 +238,17 @@ namespace YourAssetManager.Server.Repositories
             // Check if the user's email is confirmed
             if (!user.EmailConfirmed)
             {
+
                 // Generating confirmation token
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                // URL encode the token and email address
+                var encodedToken = WebUtility.UrlEncode(token);
+                var encodedEmail = WebUtility.UrlEncode(user.Email);
+
                 // Creating link of the confirmation token
-                var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={token}&email={user.Email!}";
+                var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={encodedToken}&email={encodedEmail}";
+
                 // Sending confirmation link for email confirmation
                 string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
                 string subject = "Confirmation E-Mail (No Reply)";
