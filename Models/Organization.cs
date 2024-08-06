@@ -7,17 +7,21 @@ namespace YourAssetManager.Server.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Please add Organization Name.")]
         public string OrganizationName { get; set; }
-        public string Descriiption { get; set; }
+
+        public string Description { get; set; }
+
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; }
-        [Required(ErrorMessage = "Please enter organization Domain")]
+
+        [Required(ErrorMessage = "Please enter Organization Domain.")]
         public string OrganizationDomain { get; set; }
 
-        [ForeignKey("OrganizationOwner")]
-        public string OrganizationOwnerId { get; set; } // Fixed foreign key property name
+        [ForeignKey("ApplicationUser")]
+        public string ApplicationUserId { get; set; }
 
-        public OrganizationOwner OrganizationOwner { get; set; } // Changed to OrganizationOwner
+        public ApplicationUser ApplicationUser { get; set; }
     }
 }

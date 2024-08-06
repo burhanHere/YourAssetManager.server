@@ -185,7 +185,8 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Confirm email with the token
-            var result = await _userManager.ConfirmEmailAsync(user, token);
+            var uriDcodedToken = WebUtility.UrlDecode(token);
+            var result = await _userManager.ConfirmEmailAsync(user, uriDcodedToken);
             if (result.Succeeded)
             {
                 // Email confirmation succeeded

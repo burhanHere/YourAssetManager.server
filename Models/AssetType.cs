@@ -6,8 +6,10 @@ namespace YourAssetManager.Server.Models
     {
         [Key]
         public int Id { get; set; }
+
         [Required(ErrorMessage = "Please add Asset Type Name.")]
         public string AssetTypeName { get; set; }
+
         public string Description { get; set; }
     }
 }

@@ -5,28 +5,33 @@ using YourAssetManager.Server.Models;
 
 namespace YourAssetManager.Server.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<IdentityUser>(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<Asset> Assets { get; set; }
+        public DbSet<AssetAssignment> AssetAssignments { get; set; }
+        public DbSet<AssetCategories> AssetCategories { get; set; }
+        public DbSet<AssetMaintenance> AssetMaintenances { get; set; }
+        public DbSet<AssetType> AssetTypes { get; set; }
+        public DbSet<LogAction> LogActions { get; set; }
+        public DbSet<Vender> Venders { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Organization>()
-             .HasOne(o => o.OrganizationOwner)
-             .WithMany(u => u.Organizations)
-             .HasForeignKey(o => o.OrganizationOwnerId) // Corrected property name
-             .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(o => o.ApplicationUser)
+                .WithMany(u => u.Organizations)
+                .HasForeignKey(o => o.ApplicationUserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            SeedRoles(modelBuilder);
-        }
-        private static void SeedRoles(ModelBuilder modelBuilder)
-        {
+            // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
-                    new() { Name = "OrganizationOwner", ConcurrencyStamp = "1", NormalizedName = "ORGANIZATIONOWNER" },
-                    new() { Name = "AssetManager", ConcurrencyStamp = "2", NormalizedName = "ASSETMANAGER" },
-                    new() { Name = "Employee", ConcurrencyStamp = "3", NormalizedName = "EMPLOYEE" }
-                    );
+                new IdentityRole { Id = "1", Name = "OrganizationOwner", ConcurrencyStamp = "1", NormalizedName = "ORGANIZATIONOWNER" },
+                new IdentityRole { Id = "2", Name = "AssetManager", ConcurrencyStamp = "2", NormalizedName = "ASSETMANAGER" },
+                new IdentityRole { Id = "3", Name = "Employee", ConcurrencyStamp = "3", NormalizedName = "EMPLOYEE" }
+            );
         }
     }
 }

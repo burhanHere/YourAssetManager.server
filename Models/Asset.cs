@@ -8,30 +8,53 @@ namespace YourAssetManager.Server.Models
     {
         [Key]
         public int AssetId { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Name.")]
+
+        [Required(ErrorMessage = "Please add Asset Name.")]
         public string AssetName { get; set; }
+
         public string Description { get; set; }
-        [Required(ErrorMessage = "Plase add Asset status.")]
-        public string status { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Purchase Date.")]
+
+        [Required(ErrorMessage = "Please add Asset status.")]
+        public string Status { get; set; }
+
+        [Required(ErrorMessage = "Please add Asset Purchase Date.")]
         public DateTime PurchaseDate { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Purchase Price.")]
+
+        [Required(ErrorMessage = "Please add Asset Purchase Price.")]
         public double PurchasePrice { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Serial Number.")]
-        public string SerialNumber { get; }
+
+        [Required(ErrorMessage = "Please add Asset Serial Number.")]
+        public string SerialNumber { get; set; }
+
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; }
         public DateTime LastServiced { get; set; }
         public string Problems { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Asset Identification Number.")]
+
+        [Required(ErrorMessage = "Please add Asset Identification Number.")]
         public string AssetIdentificationNumber { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Manufacturer.")]
+
+        [Required(ErrorMessage = "Please add Asset Manufacturer.")]
         public string Manufacturer { get; set; }
-        [Required(ErrorMessage = "Plase add Asset Model.")]
+
+        [Required(ErrorMessage = "Please add Asset Model.")]
         public string Model { get; set; }
-        public virtual Organization Organization { get; set; }
-        // [ForeignKey("Organization")]
+
+        [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
 
+        [ForeignKey("AssetCategory")]
+        public int AssetCategoryId { get; set; }
+
+        [ForeignKey("AssetType")]
+        public int AssetTypeId { get; set; }
+
+        [ForeignKey("Vender")]
+        public int VenderId { get; set; }
+
+        public Organization Organization { get; set; }
+        public AssetCategories AssetCategory { get; set; }
+        public AssetType AssetType { get; set; }
+        public Vender Vender { get; set; }
     }
 }

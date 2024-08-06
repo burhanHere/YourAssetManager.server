@@ -9,7 +9,7 @@ namespace YourAssetManager.Server.Models
         public int Id { get; set; }
 
         [Required]
-        public DateTime AssignedData { get; set; } = DateTime.Now;
+        public DateTime AssignedDate { get; set; } = DateTime.Now;
 
         [ForeignKey("Assignee")]
         public string AssigneeId { get; set; }
@@ -23,6 +23,10 @@ namespace YourAssetManager.Server.Models
         [ForeignKey("LogAction")]
         public int LogActionId { get; set; }
 
-
+        public ApplicationUser Assignee { get; set; }
+        public ApplicationUser Assigner { get; set; }
+        public Asset Asset { get; set; }
+        public LogAction LogAction { get; set; }
     }
+
 }
