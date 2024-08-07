@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Helpers;
 using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Services;
 
@@ -32,7 +33,7 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="signUpModel">The signup model containing user information.</param>
         /// <returns>An <see cref="ApiResponce"/> indicating the status of the signup operation.</returns>
-        public async Task<ApiResponce> SignUp(SignUpModel signUpModel, IUrlHelper urlHelper, HttpContext httpContext)
+        public async Task<ApiResponce> SignUp(SignUpModel signUpModel)
         {
             // Check if a user already exists with this email
             var checkUser = await _userManager.FindByEmailAsync(signUpModel.Email!);
@@ -75,15 +76,9 @@ namespace YourAssetManager.Server.Repositories
             // Generating confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
-            // URL encode the token and email address
-            var encodedToken = WebUtility.UrlEncode(token);
-            var encodedEmail = WebUtility.UrlEncode(newUser.Email);
-
-            // Creating link of the confirmation token
-            var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={encodedToken}&email={encodedEmail}";
-
             // Sending confirmation link for email confirmation
-            string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
+            // string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ConfirmEmail", token, user.Email!)}>Click</a>";
+            string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:4200/auth", "EmailConfirmation", token, newUser.Email!)}>Click</a>";
             string subject = "Confirmation E-Mail (No Reply)";
             bool emailStatus = await _emailService.SendEmailAsync(newUser.Email!, subject, message);
 
@@ -156,6 +151,8 @@ namespace YourAssetManager.Server.Repositories
         public async Task<ApiResponce> ConfirmEmail(string token, string email)
         {
             // Find the user by email
+            // var uriDecodedEmail = WebUtility.UrlDecode(email);
+            // var user = await _userManager.FindByEmailAsync(uriDecodedEmail);
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -184,8 +181,9 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Confirm email with the token
-            var uriDecodedToken = WebUtility.UrlDecode(token);
-            var result = await _userManager.ConfirmEmailAsync(user, uriDecodedToken);
+            // var uriDecodedToken = WebUtility.UrlDecode(token);
+            // var result = await _userManager.ConfirmEmailAsync(user, uriDecodedToken);
+            var result = await _userManager.ConfirmEmailAsync(user, token);
             if (result.Succeeded)
             {
                 // Email confirmation succeeded
@@ -218,7 +216,7 @@ namespace YourAssetManager.Server.Repositories
         /// <param name="urlHelper">The URL helper for generating confirmation links.</param>
         /// <param name="httpContext">The HTTP context for accessing request-related information.</param>
         /// <returns>An <see cref="ApiResponce"/> indicating the status of the sign-in operation.</returns>
-        public async Task<ApiResponce> SignIn(SignInModel signInModel, IUrlHelper urlHelper, HttpContext httpContext)
+        public async Task<ApiResponce> SignIn(SignInModel signInModel)
         {
             var user = await _userManager.FindByEmailAsync(signInModel.Email!);
             if (user == null)
@@ -242,15 +240,9 @@ namespace YourAssetManager.Server.Repositories
                 // Generating confirmation token
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
 
-                // URL encode the token and email address
-                var encodedToken = WebUtility.UrlEncode(token);
-                var encodedEmail = WebUtility.UrlEncode(user.Email);
-
-                // Creating link of the confirmation token
-                var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={encodedToken}&email={encodedEmail}";
-
                 // Sending confirmation link for email confirmation
-                string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={confirmationLink}>Click</a>";
+                // string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ConfirmEmail", token, user.Email!)}>Click</a>";
+                string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:4200/auth", "EmailConfirmation", token, user.Email!)}>Click</a>";
                 string subject = "Confirmation E-Mail (No Reply)";
                 bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
 
@@ -331,7 +323,7 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
-        public async Task<ApiResponce> ForgetPassword(string email, IUrlHelper urlHelper, HttpContext httpContext)
+        public async Task<ApiResponce> ForgetPassword(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -346,11 +338,11 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+            // creating forget password token
             var forgetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            // Creating link of the forgot Password token
-            var resetPasswordLink = $"http://localhost:4200/auth/PasswordReset?token={forgetPasswordToken}&email={user.Email!}";
+
             // Sending confirmation link for email confirmation
-            string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={resetPasswordLink}>Click</a>";
+            string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ResetPassword", forgetPasswordToken, user.Email!)}>Click</a>";
             string subject = "Reset password E-Mail (No Reply)";
             bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
 

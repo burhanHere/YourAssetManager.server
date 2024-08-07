@@ -11,7 +11,7 @@ namespace YourAssetManager.Server
     [AllowAnonymous]
     [ApiController]
     [Route("YourAssetManager.Server/{controller}")]
-    public class AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IUrlHelperFactory urlHelperFactory, IConfiguration configuration) : ControllerBase
+    public class AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IConfiguration configuration) : ControllerBase
     {
         // Initialize the authentication repository using the provided services
         private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration);
@@ -28,9 +28,8 @@ namespace YourAssetManager.Server
         [HttpPost("/SignUp")]
         public async Task<IActionResult> SignUp([FromBody] SignUpModel signUpModel)
         {
-            var _urlHelper = urlHelperFactory.GetUrlHelper(ControllerContext);
             // Call the SignUp method from the authentication repository
-            ApiResponce result = await _authenticationRepository.SignUp(signUpModel, _urlHelper, HttpContext);
+            ApiResponce result = await _authenticationRepository.SignUp(signUpModel);
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
             {
@@ -79,9 +78,8 @@ namespace YourAssetManager.Server
         [HttpPost("/SignIn")]
         public async Task<IActionResult> SignIn(SignInModel signInModel)
         {
-            var _urlHelper = urlHelperFactory.GetUrlHelper(ControllerContext);
             // Call the SignIn method from the authentication repository
-            ApiResponce result = await _authenticationRepository.SignIn(signInModel, _urlHelper, HttpContext);
+            ApiResponce result = await _authenticationRepository.SignIn(signInModel);
 
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
@@ -103,8 +101,7 @@ namespace YourAssetManager.Server
         [HttpPost("/ForgetPassword")]
         public async Task<IActionResult> ForgetPassword(string email)
         {
-            var _urlHelper = urlHelperFactory.GetUrlHelper(ControllerContext);
-            ApiResponce result = await _authenticationRepository.ForgetPassword(email, _urlHelper, HttpContext);
+            ApiResponce result = await _authenticationRepository.ForgetPassword(email);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
