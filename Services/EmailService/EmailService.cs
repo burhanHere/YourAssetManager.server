@@ -7,13 +7,13 @@ using YourAssetManager.Server.DTOs;
 
 namespace YourAssetManager.Server.Services
 {
-    public class EmailService(MailSettings mailSettings) : IEmailService
+    public class EmailService(MailSettingsDTO mailSettings) : IEmailService
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="EmailService"/> class.
         /// </summary>
         /// <param name="appSettingJson">Configuration options for the application settings.</param>
-        private readonly MailSettings _mailSettings = mailSettings;
+        private readonly MailSettingsDTO _mailSettings = mailSettings;
 
         /// <summary>
         /// Sends an email asynchronously to the specified recipient.

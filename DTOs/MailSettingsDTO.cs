@@ -1,6 +1,6 @@
 namespace YourAssetManager.Server.DTOs
 {
-    public class MailSettings
+    public class MailSettingsDTO
     {
         public string? SmtpServer { get; set; }
         public string? From { get; set; }

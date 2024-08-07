@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 //registering email service
 builder.Services.AddTransient<IEmailService, EmailService>();
 //making SmtpSetting accessable to all the class in this porject
-var smtpSetting = builder.Configuration.GetSection("SmtpSettings:gmail").Get<MailSettings>();
+var smtpSetting = builder.Configuration.GetSection("SmtpSettings:gmail").Get<MailSettingsDTO>();
 builder.Services.AddSingleton(smtpSetting!);
 builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 //adding entity db context

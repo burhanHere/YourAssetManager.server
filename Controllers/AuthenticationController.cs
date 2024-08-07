@@ -1,17 +1,16 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
-namespace YourAssetManager.Server
+namespace YourAssetManager.Server.Controllers
 {
     [AllowAnonymous]
     [ApiController]
     [Route("YourAssetManager.Server/{controller}")]
-    public class AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IConfiguration configuration) : ControllerBase
+    public class AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration) : ControllerBase
     {
         // Initialize the authentication repository using the provided services
         private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration);
@@ -26,10 +25,10 @@ namespace YourAssetManager.Server
 
         // Define the SignUp endpoint to handle user registration
         [HttpPost("/SignUp")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpModel signUpModel)
+        public async Task<IActionResult> SignUp([FromBody] SignUpDTO signUpModel)
         {
             // Call the SignUp method from the authentication repository
-            ApiResponce result = await _authenticationRepository.SignUp(signUpModel);
+            ApiResponceDTO result = await _authenticationRepository.SignUp(signUpModel);
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
             {
@@ -51,7 +50,7 @@ namespace YourAssetManager.Server
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             // Call the ConfirmEmail method from the authentication repository
-            ApiResponce result = await _authenticationRepository.ConfirmEmail(token, email);
+            ApiResponceDTO result = await _authenticationRepository.ConfirmEmail(token, email);
 
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
@@ -76,10 +75,10 @@ namespace YourAssetManager.Server
 
         // Define the SignIn endpoint to handle user SignIn
         [HttpPost("/SignIn")]
-        public async Task<IActionResult> SignIn(SignInModel signInModel)
+        public async Task<IActionResult> SignIn(SignInDTO signInModel)
         {
             // Call the SignIn method from the authentication repository
-            ApiResponce result = await _authenticationRepository.SignIn(signInModel);
+            ApiResponceDTO result = await _authenticationRepository.SignIn(signInModel);
 
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
@@ -99,9 +98,9 @@ namespace YourAssetManager.Server
 
         // Define the ForgetPassword endpoint to handle passwords reset after forgetting
         [HttpPost("/ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword(string email)
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequestDTO forgetPasswordRequest)
         {
-            ApiResponce result = await _authenticationRepository.ForgetPassword(email);
+            ApiResponceDTO result = await _authenticationRepository.ForgetPassword(forgetPasswordRequest);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -114,19 +113,19 @@ namespace YourAssetManager.Server
         }
 
         // Define the ResetPassword Get endpoint to handle passwords reset
-        [HttpGet("/ResetPassword")]
-        public IActionResult ResetPassword(string token, string email)
-        {
-            ResetPassowrdModel resetPassowrdModel = new()
-            {
-                Token = token,
-                Email = email
-            };
-            return Ok(resetPassowrdModel);
-        }
+        // [HttpGet("/ResetPassword")]
+        // public IActionResult ResetPassword(string token, string email)
+        // {
+        //     ResetPassowrdModel resetPassowrdModel = new()
+        //     {
+        //         Token = token,
+        //         Email = email
+        //     };
+        //     return Ok(resetPassowrdModel);
+        // }
         // Define the ResetPassword Post endpoint to handle passwords reset
         [HttpPost("/ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPassowrdModel resetPassowrdModel)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPassowrdModel)
         {
             var result = await _authenticationRepository.ResetPassword(resetPassowrdModel);
             if (result.Status == StatusCodes.Status200OK)

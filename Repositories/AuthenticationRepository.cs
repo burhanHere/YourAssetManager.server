@@ -15,7 +15,7 @@ namespace YourAssetManager.Server.Repositories
     /// <summary>
     /// Repository for handling authentication-related tasks.
     /// </summary>
-    public class AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettings mailSettings, IConfiguration configuration)
+    public class AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration)
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationRepository"/> class.
@@ -32,14 +32,14 @@ namespace YourAssetManager.Server.Repositories
         /// Signs up a new user with the specified signup model.
         /// </summary>
         /// <param name="signUpModel">The signup model containing user information.</param>
-        /// <returns>An <see cref="ApiResponce"/> indicating the status of the signup operation.</returns>
-        public async Task<ApiResponce> SignUp(SignUpModel signUpModel)
+        /// <returns>An <see cref="ApiResponceDTO"/> indicating the status of the signup operation.</returns>
+        public async Task<ApiResponceDTO> SignUp(SignUpDTO signUpModel)
         {
             // Check if a user already exists with this email
             var checkUser = await _userManager.FindByEmailAsync(signUpModel.Email!);
             if (checkUser != null)
             {
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status403Forbidden,
                     ResponceData = new List<string>
@@ -62,7 +62,7 @@ namespace YourAssetManager.Server.Repositories
             if (!createUser.Succeeded)
             {
                 // User creation failed
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
                     ResponceData = new List<string>
@@ -89,7 +89,7 @@ namespace YourAssetManager.Server.Repositories
                 var organizationOwnerRole = await _roleManager.FindByNameAsync(roleName);
                 if (organizationOwnerRole == null)
                 {
-                    return new ApiResponce
+                    return new ApiResponceDTO
                     {
                         Status = StatusCodes.Status500InternalServerError,
                         ResponceData = new List<string>
@@ -101,7 +101,7 @@ namespace YourAssetManager.Server.Repositories
                 var addToRoleResult = await _userManager.AddToRoleAsync(newUser, organizationOwnerRole.Name!);
                 if (!addToRoleResult.Succeeded)
                 {
-                    return new ApiResponce
+                    return new ApiResponceDTO
                     {
                         Status = StatusCodes.Status500InternalServerError,
                         ResponceData = new List<string>
@@ -116,7 +116,7 @@ namespace YourAssetManager.Server.Repositories
                 }
 
                 // Account created, Email sent and role assigned successfully 
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status200OK,
                     ResponceData = new List<string>
@@ -129,7 +129,7 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Account created, but email sending failed
-            return new ApiResponce
+            return new ApiResponceDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponceData = new List<string>
@@ -147,8 +147,8 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="token">The confirmation token generated during user registration.</param>
         /// <param name="email">The email address of the user whose email is being confirmed.</param>
-        /// <returns>An <see cref="ApiResponce"/> indicating the status of the email confirmation operation.</returns>
-        public async Task<ApiResponce> ConfirmEmail(string token, string email)
+        /// <returns>An <see cref="ApiResponceDTO"/> indicating the status of the email confirmation operation.</returns>
+        public async Task<ApiResponceDTO> ConfirmEmail(string token, string email)
         {
             // Find the user by email
             // var uriDecodedEmail = WebUtility.UrlDecode(email);
@@ -157,7 +157,7 @@ namespace YourAssetManager.Server.Repositories
             if (user == null)
             {
                 // User not found
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status404NotFound,
                     ResponceData = new List<string>
@@ -170,7 +170,7 @@ namespace YourAssetManager.Server.Repositories
             if (user.EmailConfirmed)
             {
                 // Email already confirmed
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status208AlreadyReported,
                     ResponceData = new List<string>
@@ -187,7 +187,7 @@ namespace YourAssetManager.Server.Repositories
             if (result.Succeeded)
             {
                 // Email confirmation succeeded
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status200OK,
                     ResponceData = new List<string>
@@ -197,7 +197,7 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            return new ApiResponce
+            return new ApiResponceDTO
             {
                 Status = StatusCodes.Status400BadRequest,
                 ResponceData = new List<string>
@@ -215,14 +215,14 @@ namespace YourAssetManager.Server.Repositories
         /// <param name="signInModel">The sign-in model containing user credentials.</param>
         /// <param name="urlHelper">The URL helper for generating confirmation links.</param>
         /// <param name="httpContext">The HTTP context for accessing request-related information.</param>
-        /// <returns>An <see cref="ApiResponce"/> indicating the status of the sign-in operation.</returns>
-        public async Task<ApiResponce> SignIn(SignInModel signInModel)
+        /// <returns>An <see cref="ApiResponceDTO"/> indicating the status of the sign-in operation.</returns>
+        public async Task<ApiResponceDTO> SignIn(SignInDTO signInModel)
         {
             var user = await _userManager.FindByEmailAsync(signInModel.Email!);
             if (user == null)
             {
                 // User not found
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status404NotFound,
                     ResponceData = new List<string>
@@ -249,7 +249,7 @@ namespace YourAssetManager.Server.Repositories
                 if (!emailStatus)
                 {
                     // Failed to send confirmation email
-                    return new ApiResponce
+                    return new ApiResponceDTO
                     {
                         Status = StatusCodes.Status400BadRequest,
                         ResponceData = new List<string>
@@ -259,7 +259,7 @@ namespace YourAssetManager.Server.Repositories
                     };
                 }
                 // Email not confirmed, confirmation email sent
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
                     ResponceData = new List<string>
@@ -275,7 +275,7 @@ namespace YourAssetManager.Server.Repositories
             if (!passwordCheck)
             {
                 // Incorrect password
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
                     ResponceData = new List<string>
@@ -312,7 +312,7 @@ namespace YourAssetManager.Server.Repositories
             var finalJwtToken = new JwtSecurityTokenHandler().WriteToken(newJwtToken);
 
             // Successful sign-in, return JWT token
-            return new ApiResponce
+            return new ApiResponceDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponceData = new
@@ -323,12 +323,12 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
-        public async Task<ApiResponce> ForgetPassword(string email)
+        public async Task<ApiResponceDTO> ForgetPassword(ForgetPasswordRequestDTO forgetPasswordRequest)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(forgetPasswordRequest.Email);
             if (user == null)
             {
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status404NotFound,
                     ResponceData = new List<string>
@@ -342,14 +342,15 @@ namespace YourAssetManager.Server.Repositories
             var forgetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
             // Sending confirmation link for email confirmation
-            string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ResetPassword", forgetPasswordToken, user.Email!)}>Click</a>";
+            // string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ResetPassword", forgetPasswordToken, user.Email!)}>Click</a>";
+            string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:4200/auth", "resetpassword", forgetPasswordToken, user.Email!)}>Click</a>";
             string subject = "Reset password E-Mail (No Reply)";
             bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
 
             if (!emailStatus)
             {
                 // Failed to send confirmation email
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
                     ResponceData = new List<string>
@@ -358,7 +359,7 @@ namespace YourAssetManager.Server.Repositories
                         }
                 };
             }
-            return new ApiResponce
+            return new ApiResponceDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponceData = new List<string>
@@ -369,12 +370,12 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
-        public async Task<ApiResponce> ResetPassword(ResetPassowrdModel resetPassowrdModel)
+        public async Task<ApiResponceDTO> ResetPassword(ResetPasswordDTO resetPassowrdModel)
         {
             var user = await _userManager.FindByEmailAsync(resetPassowrdModel.Email!);
             if (user == null)
             {
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status404NotFound,
                     ResponceData = new List<string>
@@ -387,7 +388,7 @@ namespace YourAssetManager.Server.Repositories
             var passwordResetResult = await _userManager.ResetPasswordAsync(user, resetPassowrdModel.Token!, resetPassowrdModel.NewPassword!);
             if (!passwordResetResult.Succeeded)
             {
-                return new ApiResponce
+                return new ApiResponceDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
                     ResponceData = new List<string>
@@ -398,7 +399,7 @@ namespace YourAssetManager.Server.Repositories
                     Errors = passwordResetResult.Errors
                 };
             }
-            return new ApiResponce
+            return new ApiResponceDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponceData = new List<string>

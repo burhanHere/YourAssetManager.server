@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YourAssetManager.Server.DTOs
 {
-    public class ResetPassowrdModel
+    public class ResetPasswordDTO
     {
         [Required]
         public string? NewPassword { get; set; }

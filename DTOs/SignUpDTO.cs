@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YourAssetManager.Server.DTOs
 {
-    public class SignUpModel
+    public class SignUpDTO
     {
         [Required, EmailAddress]
         public string? Email { get; set; }
