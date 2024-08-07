@@ -9,8 +9,7 @@ namespace YourAssetManager.Server.Helpers
             var encodedToken = WebUtility.UrlEncode(token);
             var encodedEmail = WebUtility.UrlEncode(email);
 
-            // Creating link of the confirmation token
-            // var confirmationLink = $"http://localhost:4200/auth/EmailConfirmation?token={encodedToken}&email={encodedEmail}";
+            //$"http://localhost:4200/auth/EmailConfirmation?token={encodedToken}&email={encodedEmail}";
             var confirmationLink = $"{baseUrl}/{endpoint}?token={encodedToken}&email={encodedEmail}";
             return confirmationLink;
         }

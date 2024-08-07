@@ -25,7 +25,7 @@ builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 var connectionString = builder.Configuration.GetConnectionString("DefaultDbConnectionString")
     ?? throw new Exception("Connection string 'DefaultDbConnectionString' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 2))));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 2))));
 // adding idnetity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
