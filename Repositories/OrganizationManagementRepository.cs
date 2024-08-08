@@ -7,12 +7,12 @@ using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
 
-namespace YourAssetManager.Server.Controllers
+namespace YourAssetManager.Server.Repositories
 {
     /// <summary>
     /// Repository for handling organization-related tasks.
     /// </summary>
-    public class OrganizationRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
+    public class OrganizationManagementRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
     {
         // Fields for database context and user manager
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
@@ -23,7 +23,7 @@ namespace YourAssetManager.Server.Controllers
         /// </summary>
         /// <param name="SignedInUserName">The username of the signed-in user.</param>
         /// <returns>An <see cref="ApiResponceDTO"/> indicating the status of the operation.</returns>
-        public async Task<ApiResponceDTO> GetMyOrganizations(string SignedInUserName)
+        public async Task<ApiResponceDTO> GetOrganizationsInfo(string SignedInUserName)
         {
             // Find the user by username
             var user = await _userManager.FindByNameAsync(SignedInUserName);
@@ -42,12 +42,12 @@ namespace YourAssetManager.Server.Controllers
             }
 
             // Query the organizations related to the user
-            var resultontOrganizations = await _applicationDbContext.Organizations
+            var resultontOrganization = await _applicationDbContext.Organizations
                                 .Select(x => x)
-                                .Where(x => x.ApplicationUserId == user.Id)
+                                .Where(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true)
                                 .ToListAsync();
 
-            if (resultontOrganizations == null)
+            if (resultontOrganization == null)
             {
                 // Return success but indicate no organizations found
                 return new ApiResponceDTO
@@ -55,7 +55,8 @@ namespace YourAssetManager.Server.Controllers
                     Status = StatusCodes.Status200OK,
                     ResponceData = new List<string>
                     {
-                        "No Organization associated to this user."
+                        "No Organization associated to this user.",
+                        "Please create an organization first."
                     }
                 };
             }
@@ -66,8 +67,7 @@ namespace YourAssetManager.Server.Controllers
                 Status = StatusCodes.Status200OK,
                 ResponceData = new
                 {
-                    count = resultontOrganizations.Count,
-                    organizationList = resultontOrganizations
+                    organization = resultontOrganization
                 }
             };
         }
@@ -93,6 +93,20 @@ namespace YourAssetManager.Server.Controllers
                     {
                         "Invalid user request.",
                         "User not found."
+                    }
+                };
+            }
+
+            // Check if any organization is already registerd to this user and is active or not
+            var organizations = await _applicationDbContext.Organizations.Select(x => x).Where(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true).ToListAsync();
+            if (organizations.Count > 0)
+            {
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status409Conflict,
+                    ResponceData = new List<string>
+                    {
+                       "An account with this email address already exists."
                     }
                 };
             }
@@ -139,6 +153,7 @@ namespace YourAssetManager.Server.Controllers
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
                 OrganizationDomain = newOrganization.OrganizationDomain,
+                ActiveOrganization = true,
                 ApplicationUserId = user.Id,
             };
 
@@ -197,7 +212,7 @@ namespace YourAssetManager.Server.Controllers
 
             // Find the organization by name
             var organization = await _applicationDbContext.Organizations
-                                            .FirstOrDefaultAsync(x => x.OrganizationName == newOrganization.OrganizationName);
+                                            .FirstOrDefaultAsync(x => x.OrganizationName == newOrganization.OrganizationName && x.ActiveOrganization == true);
             if (organization == null)
             {
                 // Return error if organization not found
@@ -276,6 +291,62 @@ namespace YourAssetManager.Server.Controllers
                 {
                     OrganizationOwnerData = user
                 }
+            };
+        }
+
+        public async Task<ApiResponceDTO> DeactivateOrganization(string OrganizationName, string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+
+                // Return error if user not found
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponceData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+
+            }
+            var organization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.ApplicationUserId == user.Id && x.OrganizationName == OrganizationName && x.ActiveOrganization);
+            if (organization == null)
+            {
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponceData = new List<string>
+                    {
+                        "Organization not found."
+                    }
+                };
+            }
+            organization.ActiveOrganization = false;
+            var saveDbChanges = await _applicationDbContext.SaveChangesAsync();
+            if (saveDbChanges == 0)
+            {
+                // Return error if saving changes failed
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponceData = new List<string>
+                    {
+                        "Unable to deactivate organizatino."
+                    }
+                };
+            }
+
+            // Return success if the organization was updated successfully
+            return new ApiResponceDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponceData = new List<string>
+                    {
+                        "Organization Deactivated Successfully."
+                    }
             };
         }
     }

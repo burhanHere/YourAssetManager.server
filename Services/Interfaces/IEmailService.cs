@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using YourAssetManager.Server.Models;
 
-namespace YourAssetManager.server.Services.EmailService
+namespace YourAssetManager.Server.Services.Interfaces
 {
     /// <summary>or the Email Service responsible for sending emails.
     ///

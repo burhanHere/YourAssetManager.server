@@ -210,6 +210,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
 
@@ -237,6 +240,8 @@ namespace YourAssetManager.server.Data.Migrations
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -460,6 +465,9 @@ namespace YourAssetManager.server.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("ActiveOrganization")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -569,6 +577,16 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("YourAssetManager.Server.Models.ApplicationUser", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
+                        .WithMany("AssetManagers")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Organization");
+                });
+
             modelBuilder.Entity("YourAssetManager.Server.Models.Asset", b =>
                 {
                     b.HasOne("YourAssetManager.Server.Models.AssetCategories", "AssetCategory")
@@ -672,6 +690,11 @@ namespace YourAssetManager.server.Data.Migrations
             modelBuilder.Entity("YourAssetManager.Server.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Organizations");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.Organization", b =>
+                {
+                    b.Navigation("AssetManagers");
                 });
 #pragma warning restore 612, 618
         }

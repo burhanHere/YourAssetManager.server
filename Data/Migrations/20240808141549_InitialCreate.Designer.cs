@@ -12,8 +12,8 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240807104654_AddOrganizationToApplicationUser")]
-    partial class AddOrganizationToApplicationUser
+    [Migration("20240808141549_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -462,6 +462,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("ActiveOrganization")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ApplicationUserId")
                         .IsRequired()

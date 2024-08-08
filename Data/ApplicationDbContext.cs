@@ -25,6 +25,12 @@ namespace YourAssetManager.Server.Data
                 .WithMany(u => u.Organizations)
                 .HasForeignKey(o => o.ApplicationUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasOne(a => a.Organization)
+                .WithMany(o => o.AssetManagers)
+                .HasForeignKey(a => a.OrganizationId)
+                .OnDelete(DeleteBehavior.Restrict);
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "OrganizationOwner", ConcurrencyStamp = "1", NormalizedName = "ORGANIZATIONOWNER" },

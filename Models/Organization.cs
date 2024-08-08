@@ -12,7 +12,7 @@ namespace YourAssetManager.Server.Models
         public string OrganizationName { get; set; }
 
         public string Description { get; set; }
-
+        public bool ActiveOrganization { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime UpdatedDate { get; set; }
 
@@ -23,5 +23,7 @@ namespace YourAssetManager.Server.Models
         public string ApplicationUserId { get; set; }
 
         public ApplicationUser ApplicationUser { get; set; }
+        public ICollection<ApplicationUser> AssetManagers { get; set; } = new List<ApplicationUser>();  // Asset Managers in this organization
+
     }
 }

@@ -1,11 +1,10 @@
 
 using System.Net;
 using System.Net.Mail;
-using Microsoft.Extensions.Options;
-using YourAssetManager.server.Services.EmailService;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Services.Interfaces;
 
-namespace YourAssetManager.Server.Services
+namespace YourAssetManager.server.Services
 {
     public class EmailService(MailSettingsDTO mailSettings) : IEmailService
     {
