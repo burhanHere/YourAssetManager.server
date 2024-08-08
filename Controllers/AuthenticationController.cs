@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using YourAssetManager.Server.DTOs;
@@ -91,7 +92,16 @@ namespace YourAssetManager.Server.Controllers
                 // Return a NotFound response with the result
                 return NotFound(result);
             }
-
+            else if (result.Status == StatusCodes.Status403Forbidden)
+            {
+                // Return a ForbidResult response with the result
+                return StatusCode(StatusCodes.Status403Forbidden, result);
+            }
+            else if (result.Status == StatusCodes.Status401Unauthorized)
+            {
+                // Return a Unauthorized response with the result
+                return Unauthorized(result);
+            }
             // Return a BadRequest response with the result for any other status
             return BadRequest(result);
         }

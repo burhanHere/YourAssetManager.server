@@ -254,6 +254,7 @@ namespace YourAssetManager.Server.Repositories
                         Status = StatusCodes.Status400BadRequest,
                         ResponceData = new List<string>
                         {
+                            "Email not confirmed.",
                             "Unable to send confirmation email. Please try again later."
                         }
                     };
@@ -261,7 +262,7 @@ namespace YourAssetManager.Server.Repositories
                 // Email not confirmed, confirmation email sent
                 return new ApiResponceDTO
                 {
-                    Status = StatusCodes.Status400BadRequest,
+                    Status = StatusCodes.Status401Unauthorized,
                     ResponceData = new List<string>
                     {
                         $"Email Confirmation link has been sent to your email: {user.Email[..3]}...{user.Email[user.Email.IndexOf("@")..]}",
@@ -277,7 +278,7 @@ namespace YourAssetManager.Server.Repositories
                 // Incorrect password
                 return new ApiResponceDTO
                 {
-                    Status = StatusCodes.Status400BadRequest,
+                    Status = StatusCodes.Status403Forbidden,
                     ResponceData = new List<string>
                     {
                         "Incorrect password.",
