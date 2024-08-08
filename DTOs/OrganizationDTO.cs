@@ -9,8 +9,6 @@ namespace YourAssetManager.Server.DTOs
 
         public string Description { get; set; }
 
-        public DateTime UpdatedDate { get; set; }
-
         public string OrganizationDomain { get; set; }
     }
 }
