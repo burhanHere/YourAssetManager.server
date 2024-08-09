@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
@@ -9,16 +10,16 @@ namespace YourAssetManager.Server.Repositories
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
-        public async Task<ApiResponceDTO> GetAssetManagers(string OrganizationOwnerUserName)
+        public async Task<ApiResponseDTO> GetAssetManagers(string OrganizationOwnerUserName)
         {
             var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
             if (organizationOwner == null)
             {
                 // Return error if user not found
-                return new ApiResponceDTO
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
-                    ResponceData = new List<string>
+                    ResponseData = new List<string>
                     {
                         "Invalid user request.",
                         "User not found."
@@ -29,25 +30,25 @@ namespace YourAssetManager.Server.Repositories
             var assetManagers = await _userManager.GetUsersInRoleAsync("AssetManager");
             if (assetManagers == null)
             {
-                return new ApiResponceDTO
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
-                    ResponceData = new List<string> { "No asset managers found." }
+                    ResponseData = new List<string> { "No asset managers found." }
                 };
             }
             var requiredAssetManager = assetManagers.Where(a => a.OrganizationId == organizationOwner.OrganizationId).Select(a => a);
             if (requiredAssetManager == null)
             {
-                return new ApiResponceDTO
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
-                    ResponceData = new List<string> { "No asset managers found related to this organizations.", }
+                    ResponseData = new List<string> { "No asset managers found related to this organizations.", }
                 };
             }
-            return new ApiResponceDTO
+            return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponceData = new
+                ResponseData = new
                 {
                     count = requiredAssetManager.Count(),
                     assetManagers = requiredAssetManager
@@ -55,42 +56,74 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
-        public async Task<ApiResponceDTO> CreateNewUser(string OrganizationOwnerUserName, NewUserDTO employeeDTO)
+        public async Task<ApiResponseDTO> CreateNewUser(string OrganizationOwnerUserName, NewUserDTO employeeDTO)
         {
             var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
             if (organizationOwner == null)
             {
                 // Return error if user not found
-                return new ApiResponceDTO
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
-                    ResponceData = new List<string>
+                    ResponseData = new List<string>
                     {
                         "Invalid user request.",
                         "User not found."
                     }
                 };
             }
-            return new ApiResponceDTO();
+            return new ApiResponseDTO();
         }
 
-        public async Task<ApiResponceDTO> GetAssetCategories(string OrganizationOwnerUserName)
+        public async Task<ApiResponseDTO> GetAssetCategories(string OrganizationOwnerUserName)
         {
             var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
             if (organizationOwner == null)
             {
                 // Return error if user not found
-                return new ApiResponceDTO
+                return new ApiResponseDTO
                 {
-                    Status = StatusCodes.Status404NotFound,
-                    ResponceData = new List<string>
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
                     {
                         "Invalid user request.",
                         "User not found."
                     }
                 };
             }
-            return new ApiResponceDTO();
+            var organization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.ActiveOrganization == true && x.ApplicationUserId == organizationOwner.Id);
+            if (organization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No catagories found as noorganization is associated to this user."
+                    }
+                };
+            }
+            var organizationAssetCategoryIds = await _applicationDbContext.Assets.Where(x => x.OrganizationId == organization.Id).Select(x => x.AssetCategoryId).ToListAsync();
+            if (organizationAssetCategoryIds.Count == 0)
+            {
+                // Return a response indicating no categories were found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No asset categories found for the organization."
+                    }
+                };
+            }
+
+            var requiredCategories = await _applicationDbContext.AssetCategories.Where(x => organizationAssetCategoryIds.Contains(x.Id)).ToListAsync();
+
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = requiredCategories
+            };
         }
     }
 }

@@ -25,14 +25,14 @@ namespace YourAssetManager.Server.Controllers
             if (string.IsNullOrEmpty(userName))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponceDTO
+                return Unauthorized(new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
-                    ResponceData = new List<string> { "User not found in token." }
+                    ResponseData = new List<string> { "User not found in token." }
                 });
             }
             // Call the repository method to get organizations related to the current user
-            ApiResponceDTO result = await _organizationManagementRepository.GetOrganizationsInfo(userName);
+            ApiResponseDTO result = await _organizationManagementRepository.GetOrganizationsInfo(userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if organizations were found
@@ -56,13 +56,13 @@ namespace YourAssetManager.Server.Controllers
             if (string.IsNullOrEmpty(userName))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponceDTO
+                return Unauthorized(new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
-                    ResponceData = new List<string> { "User not found in token." }
+                    ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponceDTO result = await _organizationManagementRepository.CreateOrganization(newOrganization, userName);
+            ApiResponseDTO result = await _organizationManagementRepository.CreateOrganization(newOrganization, userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if the organization was successfully created
@@ -86,13 +86,13 @@ namespace YourAssetManager.Server.Controllers
             if (string.IsNullOrEmpty(userName))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponceDTO
+                return Unauthorized(new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
-                    ResponceData = new List<string> { "User not found in token." }
+                    ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponceDTO result = await _organizationManagementRepository.UpdateOrganization(newOrganization, userName);
+            ApiResponseDTO result = await _organizationManagementRepository.UpdateOrganization(newOrganization, userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if the organization was successfully updated
@@ -115,13 +115,13 @@ namespace YourAssetManager.Server.Controllers
             if (string.IsNullOrEmpty(userName))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponceDTO
+                return Unauthorized(new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
-                    ResponceData = new List<string> { "User not found in token." }
+                    ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponceDTO result = await _organizationManagementRepository.DeactivateOrganization(userName);
+            ApiResponseDTO result = await _organizationManagementRepository.DeactivateOrganization(userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if organization is deactivated

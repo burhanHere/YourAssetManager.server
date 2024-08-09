@@ -19,7 +19,7 @@ namespace YourAssetManager.Server.Controllers
         [HttpGet("/GetAssetManagers")]
         public async Task<IActionResult> GetAssetManagers()
         {
-            ApiResponceDTO result = await _assetManagementRepository.GetAssetManagers(ClaimTypes.Name);
+            ApiResponseDTO result = await _assetManagementRepository.GetAssetManagers(ClaimTypes.Name);
             if (result.Status == StatusCodes.Status404NotFound)
             {
                 return NotFound(result);
@@ -30,7 +30,7 @@ namespace YourAssetManager.Server.Controllers
         [HttpPost("/CreateNewUser")]
         public async Task<IActionResult> CreateNewUser(NewUserDTO employeeDTO)//panding
         {
-            ApiResponceDTO result = await _assetManagementRepository.CreateNewUser(ClaimTypes.Name, employeeDTO);
+            ApiResponseDTO result = await _assetManagementRepository.CreateNewUser(ClaimTypes.Name, employeeDTO);
             if (result.Status == StatusCodes.Status404NotFound)
             {
                 return NotFound(result);
@@ -51,17 +51,25 @@ namespace YourAssetManager.Server.Controllers
             if (string.IsNullOrEmpty(userName))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponceDTO
+                return Unauthorized(new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
-                    ResponceData = new List<string> { "User not found in token." }
+                    ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponceDTO result = await _assetManagementRepository.GetAssetCategories(userName);
-            return Ok(result);
+            ApiResponseDTO result = await _assetManagementRepository.GetAssetCategories(userName);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
         }
 
-        // [HttpPost("/api/asset-categories")]
+        // [HttpPost("CreateAssetCategory")]
         // public async Task<IActionResult> CreateAssetCategory() { return Ok(); }
 
         // [HttpPut("/api/asset-categories/{id}")]

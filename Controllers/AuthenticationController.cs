@@ -29,7 +29,7 @@ namespace YourAssetManager.Server.Controllers
         public async Task<IActionResult> SignUp([FromBody] SignUpDTO signUpModel)
         {
             // Call the SignUp method from the authentication repository
-            ApiResponceDTO result = await _authenticationRepository.SignUp(signUpModel);
+            ApiResponseDTO result = await _authenticationRepository.SignUp(signUpModel);
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
             {
@@ -51,7 +51,7 @@ namespace YourAssetManager.Server.Controllers
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             // Call the ConfirmEmail method from the authentication repository
-            ApiResponceDTO result = await _authenticationRepository.ConfirmEmail(token, email);
+            ApiResponseDTO result = await _authenticationRepository.ConfirmEmail(token, email);
 
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
@@ -79,7 +79,7 @@ namespace YourAssetManager.Server.Controllers
         public async Task<IActionResult> SignIn(SignInDTO signInModel)
         {
             // Call the SignIn method from the authentication repository
-            ApiResponceDTO result = await _authenticationRepository.SignIn(signInModel);
+            ApiResponseDTO result = await _authenticationRepository.SignIn(signInModel);
 
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
@@ -110,7 +110,7 @@ namespace YourAssetManager.Server.Controllers
         [HttpPost("/ForgetPassword")]
         public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequestDTO forgetPasswordRequest)
         {
-            ApiResponceDTO result = await _authenticationRepository.ForgetPassword(forgetPasswordRequest);
+            ApiResponseDTO result = await _authenticationRepository.ForgetPassword(forgetPasswordRequest);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
