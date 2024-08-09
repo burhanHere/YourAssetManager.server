@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourAssetManager.Server.Models
 {
-    public class AssetCategories
+    public class AssetCategory
     {
         [Key]
         public int Id { get; set; }
@@ -12,7 +12,6 @@ namespace YourAssetManager.Server.Models
         public string CategoryName { get; set; }
 
         public string Description { get; set; }
-        public string Features { get; set; }
 
         [ForeignKey("Organization")]
         public int CatagoryOrganizationId { get; set; }

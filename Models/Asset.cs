@@ -53,7 +53,7 @@ namespace YourAssetManager.Server.Models
         public int VenderId { get; set; }
 
         public Organization Organization { get; set; }
-        public AssetCategories AssetCategory { get; set; }
+        public AssetCategory AssetCategory { get; set; }
         public AssetType AssetType { get; set; }
         public Vender Vender { get; set; }
     }

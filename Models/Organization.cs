@@ -28,6 +28,6 @@ namespace YourAssetManager.Server.Models
 
         [JsonIgnore]
         public ICollection<ApplicationUser> AssetManagers { get; set; } = new List<ApplicationUser>();  // Asset Managers in this organization
-        public ICollection<AssetCategories> AssetCategories { get; set; } = new List<AssetCategories>();  // Asset Managers in this organization
+        public ICollection<AssetCategory> AssetCategories { get; set; } = new List<AssetCategory>();  // Asset Managers in this organization
     }
 }

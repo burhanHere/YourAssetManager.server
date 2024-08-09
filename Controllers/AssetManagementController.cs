@@ -16,39 +16,11 @@ namespace YourAssetManager.Server.Controllers
     {
         private readonly AssetManagementRepository _assetManagementRepository = new(userManager, applicationDbContext);
 
-        [HttpGet("/GetAssetManagers")]
-        public async Task<IActionResult> GetAssetManagers()
-        {
-            ApiResponseDTO result = await _assetManagementRepository.GetAssetManagers(ClaimTypes.Name);
-            if (result.Status == StatusCodes.Status404NotFound)
-            {
-                return NotFound(result);
-            }
-            return Ok(result);
-        }
-
-        [HttpPost("/CreateNewUser")]
-        public async Task<IActionResult> CreateNewUser(NewUserDTO employeeDTO)//panding
-        {
-            ApiResponseDTO result = await _assetManagementRepository.CreateNewUser(ClaimTypes.Name, employeeDTO);
-            if (result.Status == StatusCodes.Status404NotFound)
-            {
-                return NotFound(result);
-            }
-            return Ok(result);
-        }
-
-        // [HttpPut("/api/asset-managers/{id}")]
-        // public async Task<IActionResult> UpdateAssetManager(int id) { return Ok(); }
-
-        // [HttpDelete("/api/asset-managers/{id}")]
-        // public async Task<IActionResult> DeleteAssetManager(int id) { return Ok(); }
-
         [HttpGet("/GetAssetCategories")]
         public async Task<IActionResult> GetAssetCategories()
         {
-            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
-            if (string.IsNullOrEmpty(userName))
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
             {
                 // If the username is not found, return an unauthorized response
                 return Unauthorized(new ApiResponseDTO
@@ -57,7 +29,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _assetManagementRepository.GetAssetCategories(userName);
+            ApiResponseDTO result = await _assetManagementRepository.GetAssetCategories(userId);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -69,8 +41,29 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // [HttpPost("CreateAssetCategory")]
-        // public async Task<IActionResult> CreateAssetCategory() { return Ok(); }
+        [HttpPost("CreateAssetCategory")]
+        public async Task<IActionResult> CreateAssetCategory(AssetCatagoryDTO assetCatagoryDTO)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // If the username is not found, return an unauthorized response
+                    return Unauthorized(new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status401Unauthorized,
+                        ResponseData = new List<string> { "User not found in token." }
+                    });
+                }
+            }
+            var result = await _assetManagementRepository.CreateAssetCategory(userId, assetCatagoryDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
 
         // [HttpPut("/api/asset-categories/{id}")]
         // public async Task<IActionResult> UpdateAssetCategory(int id) { return Ok(); }

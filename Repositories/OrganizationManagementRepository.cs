@@ -23,10 +23,10 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="SignedInUserName">The username of the signed-in user.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
-        public async Task<ApiResponseDTO> GetOrganizationsInfo(string SignedInUserName)
+        public async Task<ApiResponseDTO> GetOrganizationsInfo(string SignedInUserId)
         {
             // Find the user by username
-            var user = await _userManager.FindByNameAsync(SignedInUserName);
+            var user = await _userManager.FindByIdAsync(SignedInUserId);
             if (user == null)
             {
                 // Return error if user not found
@@ -77,11 +77,10 @@ namespace YourAssetManager.Server.Repositories
         /// <param name="newOrganization">The new organization's data.</param>
         /// <param name="SignedInUserName">The username of the signed-in user.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
-
-        public async Task<ApiResponseDTO> CreateOrganization(OrganizationDTO newOrganization, string SignedInUserName)
+        public async Task<ApiResponseDTO> CreateOrganization(OrganizationDTO newOrganization, string SignedInUserId)
         {
             // Find the user by username
-            var user = await _userManager.FindByNameAsync(SignedInUserName);
+            var user = await _userManager.FindByIdAsync(SignedInUserId);
             if (user == null)
             {
                 // Return error if user not found
@@ -190,11 +189,10 @@ namespace YourAssetManager.Server.Repositories
         /// <param name="newOrganization">The organization's updated data.</param>
         /// <param name="SignedInUserName">The username of the signed-in user.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
-
-        public async Task<ApiResponseDTO> UpdateOrganization(OrganizationDTO newOrganization, string SignedInUserName)
+        public async Task<ApiResponseDTO> UpdateOrganization(OrganizationDTO newOrganization, string SignedInUserId)
         {
             // Find the user by username
-            var user = await _userManager.FindByNameAsync(SignedInUserName);
+            var user = await _userManager.FindByIdAsync(SignedInUserId);
             if (user == null)
             {
                 // Return error if user not found
@@ -260,9 +258,9 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
-        public async Task<ApiResponseDTO> DeactivateOrganization(string userName)
+        public async Task<ApiResponseDTO> DeactivateOrganization(string SignedInUserId)
         {
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByIdAsync(SignedInUserId);
             if (user == null)
             {
 

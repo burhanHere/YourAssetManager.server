@@ -290,6 +290,7 @@ namespace YourAssetManager.Server.Repositories
             // Create JWT token
             var authClaim = new List<Claim>
             {
+                new(ClaimTypes.NameIdentifier, user.Id),
                 new(ClaimTypes.Name, user.UserName!),
                 new(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
             };

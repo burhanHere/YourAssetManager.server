@@ -76,7 +76,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the SignIn endpoint to handle user SignIn
         [HttpPost("/SignIn")]
-        public async Task<IActionResult> SignIn(SignInDTO signInModel)
+        public async Task<IActionResult> SignIn([FromBody] SignInDTO signInModel)
         {
             // Call the SignIn method from the authentication repository
             ApiResponseDTO result = await _authenticationRepository.SignIn(signInModel);

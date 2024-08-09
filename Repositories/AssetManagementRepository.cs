@@ -56,9 +56,9 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
-        public async Task<ApiResponseDTO> CreateNewUser(string OrganizationOwnerUserName, NewUserDTO employeeDTO)
+        public async Task<ApiResponseDTO> CreateNewUser(string SignedInUserId, NewUserDTO employeeDTO)
         {
-            var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
+            var organizationOwner = await _userManager.FindByIdAsync(SignedInUserId);
             if (organizationOwner == null)
             {
                 // Return error if user not found
@@ -75,9 +75,9 @@ namespace YourAssetManager.Server.Repositories
             return new ApiResponseDTO();
         }
 
-        public async Task<ApiResponseDTO> GetAssetCategories(string OrganizationOwnerUserName)
+        public async Task<ApiResponseDTO> GetAssetCategories(string signedInUserId)
         {
-            var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
+            var organizationOwner = await _userManager.FindByIdAsync(signedInUserId);
             if (organizationOwner == null)
             {
                 // Return error if user not found
@@ -103,7 +103,7 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            var requiredCategories = await _applicationDbContext.AssetCategories.Where(x => x.CatagoryOrganizationId == organization.Id).ToListAsync();
+            List<AssetCategory> requiredCategories = await _applicationDbContext.AssetCategories.Where(x => x.CatagoryOrganizationId == organization.Id).ToListAsync();
             if (requiredCategories.Count == 0)
             {
                 return new ApiResponseDTO
@@ -111,7 +111,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No catagories found as noorganization is associated to this user."
+                        "No catagories found as no organization is associated to this user."
                     }
                 };
             }
@@ -120,6 +120,40 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponseData = requiredCategories
             };
+        }
+
+        public async Task<ApiResponseDTO> CreateAssetCategory(string signedInUserId, AssetCatagoryDTO assetCatagoryDTO)
+        {
+            var organizationOwner = await _userManager.FindByIdAsync(signedInUserId);
+            if (organizationOwner == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+
+            var organization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.ApplicationUserId == organizationOwner.Id);
+            if (organization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "As no organization is allowed to this user so can create catagory"
+                    }
+                };
+            }
+
+
+            return new ApiResponseDTO();
         }
     }
 }
