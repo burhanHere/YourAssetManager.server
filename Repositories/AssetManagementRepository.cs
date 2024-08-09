@@ -103,22 +103,18 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            var organizationAssetCategoryIds = await _applicationDbContext.Assets.Where(x => x.OrganizationId == organization.Id).Select(x => x.AssetCategoryId).ToListAsync();
-            if (organizationAssetCategoryIds.Count == 0)
+            var requiredCategories = await _applicationDbContext.AssetCategories.Where(x => x.CatagoryOrganizationId == organization.Id).ToListAsync();
+            if (requiredCategories.Count == 0)
             {
-                // Return a response indicating no categories were found
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No asset categories found for the organization."
+                        "No catagories found as noorganization is associated to this user."
                     }
                 };
             }
-
-            var requiredCategories = await _applicationDbContext.AssetCategories.Where(x => organizationAssetCategoryIds.Contains(x.Id)).ToListAsync();
-
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
