@@ -383,6 +383,10 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("SpecialFeatures")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CatagoryOrganizationId");
