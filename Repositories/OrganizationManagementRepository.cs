@@ -261,7 +261,7 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
-        public async Task<ApiResponceDTO> DeactivateOrganization(string OrganizationName, string userName)
+        public async Task<ApiResponceDTO> DeactivateOrganization(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
@@ -279,7 +279,7 @@ namespace YourAssetManager.Server.Repositories
                 };
 
             }
-            var organization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.ApplicationUserId == user.Id && x.OrganizationName == OrganizationName && x.ActiveOrganization);
+            var organization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true);
             if (organization == null)
             {
                 return new ApiResponceDTO

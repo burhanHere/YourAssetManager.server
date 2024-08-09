@@ -109,7 +109,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the DeleteOrganization endpoint to delete and organization
         [HttpPost("/DeleteOrganization")]
-        public async Task<IActionResult> DeleteOrganization(string organizationName)
+        public async Task<IActionResult> DeleteOrganization()
         {
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
             if (string.IsNullOrEmpty(userName))
@@ -121,11 +121,11 @@ namespace YourAssetManager.Server.Controllers
                     ResponceData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponceDTO result = await _organizationManagementRepository.DeactivateOrganization(organizationName, userName);
+            ApiResponceDTO result = await _organizationManagementRepository.DeactivateOrganization(userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if organization is deactivated
-                return Ok();
+                return Ok(result);
             }
             else if (result.Status == StatusCodes.Status404NotFound)
             {
