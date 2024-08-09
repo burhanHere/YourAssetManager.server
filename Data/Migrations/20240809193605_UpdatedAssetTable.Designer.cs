@@ -12,8 +12,8 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240809192500_UpdatedAssettable")]
-    partial class UpdatedAssettable
+    [Migration("20240809193605_UpdatedAssetTable")]
+    partial class UpdatedAssetTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

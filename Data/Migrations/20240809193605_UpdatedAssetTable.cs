@@ -5,7 +5,7 @@
 namespace YourAssetManager.server.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedAssetTable2 : Migration
+    public partial class UpdatedAssetTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
