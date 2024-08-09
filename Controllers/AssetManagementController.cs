@@ -44,8 +44,22 @@ namespace YourAssetManager.Server.Controllers
         // [HttpDelete("/api/asset-managers/{id}")]
         // public async Task<IActionResult> DeleteAssetManager(int id) { return Ok(); }
 
-        // [HttpGet("/GetAssetCategories")]
-        // public async Task<IActionResult> GetAssetCategories() { return Ok(); }
+        [HttpGet("/GetAssetCategories")]
+        public async Task<IActionResult> GetAssetCategories()
+        {
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userName))
+            {
+                // If the username is not found, return an unauthorized response
+                return Unauthorized(new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponceData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponceDTO result = await _assetManagementRepository.GetAssetCategories(userName);
+            return Ok(result);
+        }
 
         // [HttpPost("/api/asset-categories")]
         // public async Task<IActionResult> CreateAssetCategory() { return Ok(); }

@@ -24,6 +24,10 @@ internal class Program
         var smtpSetting = builder.Configuration.GetSection("SmtpSettings:gmail").Get<MailSettingsDTO>();
         builder.Services.AddSingleton(smtpSetting!);
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        });
         //adding entity db context
         var connectionString = builder.Configuration.GetConnectionString("DefaultDbConnectionString")
             ?? throw new Exception("Connection string 'DefaultDbConnectionString' not found.");

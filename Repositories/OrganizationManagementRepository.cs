@@ -43,7 +43,6 @@ namespace YourAssetManager.Server.Repositories
 
             // Query the organizations related to the user
             var resultontOrganization = await _applicationDbContext.Organizations
-                                .Select(x => x)
                                 .Where(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true)
                                 .ToListAsync();
 
@@ -67,7 +66,7 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponceData = new
                 {
-                    organization = resultontOrganization
+                    resultontOrganization
                 }
             };
         }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace YourAssetManager.Server.Models
 {
@@ -22,8 +23,10 @@ namespace YourAssetManager.Server.Models
         [ForeignKey("ApplicationUser")]
         public string ApplicationUserId { get; set; }
 
+        [JsonIgnore]
         public ApplicationUser ApplicationUser { get; set; }
-        public ICollection<ApplicationUser> AssetManagers { get; set; } = new List<ApplicationUser>();  // Asset Managers in this organization
 
+        [JsonIgnore]
+        public ICollection<ApplicationUser> AssetManagers { get; set; } = new List<ApplicationUser>();  // Asset Managers in this organization
     }
 }

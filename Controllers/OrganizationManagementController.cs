@@ -21,7 +21,6 @@ namespace YourAssetManager.Server.Controllers
         [HttpGet("/GetOrganizationsInfo")]
         public async Task<IActionResult> GetOrganizationsInfo()
         {
-            // Call the repository method to get organizations related to the current user
             var userName = User.FindFirst(ClaimTypes.Name)?.Value;
             if (string.IsNullOrEmpty(userName))
             {
@@ -32,6 +31,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponceData = new List<string> { "User not found in token." }
                 });
             }
+            // Call the repository method to get organizations related to the current user
             ApiResponceDTO result = await _organizationManagementRepository.GetOrganizationsInfo(userName);
             if (result.Status == StatusCodes.Status200OK)
             {
