@@ -16,15 +16,27 @@ namespace YourAssetManager.Server.Controllers
     {
         private readonly AssetManagementRepository _assetManagementRepository = new(userManager, applicationDbContext);
 
-        [HttpGet("/api/asset-managers")]
+        [HttpGet("/GetAssetManagers")]
         public async Task<IActionResult> GetAssetManagers()
         {
             ApiResponceDTO result = await _assetManagementRepository.GetAssetManagers(ClaimTypes.Name);
-            return Ok();
+            if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
         }
 
-        // [HttpPost("/api/asset-managers")]
-        // public async Task<IActionResult> CreateAssetManager() { return Ok(); }
+        [HttpPost("/CreateNewUser")]
+        public async Task<IActionResult> CreateNewUser(NewUserDTO employeeDTO)//panding
+        {
+            ApiResponceDTO result = await _assetManagementRepository.CreateNewUser(ClaimTypes.Name, employeeDTO);
+            if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return Ok(result);
+        }
 
         // [HttpPut("/api/asset-managers/{id}")]
         // public async Task<IActionResult> UpdateAssetManager(int id) { return Ok(); }
@@ -32,7 +44,7 @@ namespace YourAssetManager.Server.Controllers
         // [HttpDelete("/api/asset-managers/{id}")]
         // public async Task<IActionResult> DeleteAssetManager(int id) { return Ok(); }
 
-        // [HttpGet("/api/asset-categories")]
+        // [HttpGet("/GetAssetCategories")]
         // public async Task<IActionResult> GetAssetCategories() { return Ok(); }
 
         // [HttpPost("/api/asset-categories")]

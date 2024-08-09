@@ -35,7 +35,61 @@ namespace YourAssetManager.Server.Repositories
                     ResponceData = new List<string> { "No asset managers found." }
                 };
             }
+            var requiredAssetManager = assetManagers.Where(a => a.OrganizationId == organizationOwner.OrganizationId).Select(a => a);
+            if (requiredAssetManager == null)
+            {
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponceData = new List<string> { "No asset managers found related to this organizations.", }
+                };
+            }
+            return new ApiResponceDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponceData = new
+                {
+                    count = requiredAssetManager.Count(),
+                    assetManagers = requiredAssetManager
+                }
+            };
+        }
 
+        public async Task<ApiResponceDTO> CreateNewUser(string OrganizationOwnerUserName, NewUserDTO employeeDTO)
+        {
+            var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
+            if (organizationOwner == null)
+            {
+                // Return error if user not found
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponceData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            return new ApiResponceDTO();
+        }
+
+        public async Task<ApiResponceDTO> GetAssetCategories(string OrganizationOwnerUserName)
+        {
+            var organizationOwner = await _userManager.FindByNameAsync(OrganizationOwnerUserName);
+            if (organizationOwner == null)
+            {
+                // Return error if user not found
+                return new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponceData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
             return new ApiResponceDTO();
         }
     }

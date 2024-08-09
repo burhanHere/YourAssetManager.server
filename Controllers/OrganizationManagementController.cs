@@ -22,11 +22,21 @@ namespace YourAssetManager.Server.Controllers
         public async Task<IActionResult> GetOrganizationsInfo()
         {
             // Call the repository method to get organizations related to the current user
-            ApiResponceDTO result = await _organizationManagementRepository.GetOrganizationsInfo(ClaimTypes.Name.ToString());
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userName))
+            {
+                // If the username is not found, return an unauthorized response
+                return Unauthorized(new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponceData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponceDTO result = await _organizationManagementRepository.GetOrganizationsInfo(userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if organizations were found
-                return Ok();
+                return Ok(result);
             }
             else if (result.Status == StatusCodes.Status404NotFound)
             {
@@ -42,7 +52,17 @@ namespace YourAssetManager.Server.Controllers
         public async Task<IActionResult> CreateOrganization([FromBody] OrganizationDTO newOrganization)
         {
             // Call the repository method to create a new organization with the current user's ID
-            ApiResponceDTO result = await _organizationManagementRepository.CreateOrganization(newOrganization, ClaimTypes.Name);
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userName))
+            {
+                // If the username is not found, return an unauthorized response
+                return Unauthorized(new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponceData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponceDTO result = await _organizationManagementRepository.CreateOrganization(newOrganization, userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if the organization was successfully created
@@ -62,7 +82,17 @@ namespace YourAssetManager.Server.Controllers
         public async Task<IActionResult> UpdateOrganization([FromBody] OrganizationDTO newOrganization)
         {
             // Call the repository method to update the organization with the current user's ID
-            ApiResponceDTO result = await _organizationManagementRepository.UpdateOrganization(newOrganization, ClaimTypes.Name);
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userName))
+            {
+                // If the username is not found, return an unauthorized response
+                return Unauthorized(new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponceData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponceDTO result = await _organizationManagementRepository.UpdateOrganization(newOrganization, userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if the organization was successfully updated
@@ -77,26 +107,21 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // Define the OrganizationOwnerDetails endpoint to get details about the organization owner (the current user)
-        [HttpPost("/OrganizationOwnerDetails")]
-        public async Task<IActionResult> OrganizationOwnerDetails()
-        {
-            // Call the repository method to get details of the organization owner
-            var result = await _organizationManagementRepository.OrganizationOwnerDetails(ClaimTypes.Name);
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response with the owner details if found
-                return Ok(result);
-            }
-            // Return a NotFound response if the owner details were not found
-            return NotFound(result);
-        }
-
         // Define the DeleteOrganization endpoint to delete and organization
         [HttpPost("/DeleteOrganization")]
         public async Task<IActionResult> DeleteOrganization(string organizationName)
         {
-            ApiResponceDTO result = await _organizationManagementRepository.DeactivateOrganization(organizationName, ClaimTypes.Name);
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (string.IsNullOrEmpty(userName))
+            {
+                // If the username is not found, return an unauthorized response
+                return Unauthorized(new ApiResponceDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponceData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponceDTO result = await _organizationManagementRepository.DeactivateOrganization(organizationName, userName);
             if (result.Status == StatusCodes.Status200OK)
             {
                 // Return an OK response if organization is deactivated

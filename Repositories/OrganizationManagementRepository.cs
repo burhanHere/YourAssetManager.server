@@ -47,12 +47,12 @@ namespace YourAssetManager.Server.Repositories
                                 .Where(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true)
                                 .ToListAsync();
 
-            if (resultontOrganization == null)
+            if (resultontOrganization.IsNullOrEmpty())
             {
                 // Return success but indicate no organizations found
                 return new ApiResponceDTO
                 {
-                    Status = StatusCodes.Status200OK,
+                    Status = StatusCodes.Status404NotFound,
                     ResponceData = new List<string>
                     {
                         "No Organization associated to this user.",
@@ -212,7 +212,7 @@ namespace YourAssetManager.Server.Repositories
 
             // Find the organization by name
             var organization = await _applicationDbContext.Organizations
-                                            .FirstOrDefaultAsync(x => x.OrganizationName == newOrganization.OrganizationName && x.ActiveOrganization == true);
+                                            .FirstOrDefaultAsync(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true);
             if (organization == null)
             {
                 // Return error if organization not found
@@ -229,8 +229,11 @@ namespace YourAssetManager.Server.Repositories
 
             // Update organization properties with new values if provided
             organization.OrganizationName = newOrganization.OrganizationName.IsNullOrEmpty() ? organization.OrganizationName : newOrganization.OrganizationName;
+
             organization.Description = newOrganization.Description.IsNullOrEmpty() ? organization.Description : newOrganization.Description;
+
             organization.OrganizationDomain = newOrganization.OrganizationDomain.IsNullOrEmpty() ? organization.OrganizationDomain : newOrganization.OrganizationDomain;
+
             organization.UpdatedDate = DateTime.Now;
 
             // Save changes to the database
@@ -258,42 +261,6 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
-
-
-        /// <summary>
-        /// Retrieves the details of the signed-in user who is an organization owner.
-        /// </summary>
-        /// <param name="SignedInUserName">The username of the signed-in user.</param>
-        /// <returns>An <see cref="ApiResponceDTO"/> indicating the status of the operation.</returns>
-        public async Task<ApiResponceDTO> OrganizationOwnerDetails(string SignedInUserName)
-        {
-            // Find the user by username
-            var user = await _userManager.FindByNameAsync(SignedInUserName);
-            if (user == null)
-            {
-                // Return error if user not found
-                return new ApiResponceDTO
-                {
-                    Status = StatusCodes.Status404NotFound,
-                    ResponceData = new List<string>
-                    {
-                        "Invalid user request.",
-                        "User not found."
-                    }
-                };
-            }
-
-            // Return the user's details
-            return new ApiResponceDTO
-            {
-                Status = StatusCodes.Status200OK,
-                ResponceData = new
-                {
-                    OrganizationOwnerData = user
-                }
-            };
-        }
-
         public async Task<ApiResponceDTO> DeactivateOrganization(string OrganizationName, string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
