@@ -11,7 +11,7 @@ namespace YourAssetManager.Server.Data
         public DbSet<Asset> Assets { get; set; }
         public DbSet<AssetAssignment> AssetAssignments { get; set; }
         public DbSet<AssetCategory> AssetCategories { get; set; }
-        public DbSet<AssetSubCategories> AssetSubCategories { get; set; }
+        public DbSet<AssetSubCategory> AssetSubCategories { get; set; }
         public DbSet<AssetMaintenance> AssetMaintenances { get; set; }
         public DbSet<AssetType> AssetTypes { get; set; }
         public DbSet<LogAction> LogActions { get; set; }

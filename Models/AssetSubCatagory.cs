@@ -4,7 +4,7 @@ using YourAssetManager.Server.DTOs;
 
 namespace YourAssetManager.Server.Models
 {
-    public class AssetSubCategories
+    public class AssetSubCategory
     {
         [Key]
         public int Id { get; set; }

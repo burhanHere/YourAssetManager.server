@@ -113,5 +113,72 @@ namespace YourAssetManager.Server.Controllers
             }
             return BadRequest(result);
         }
+        [HttpGet("/GetAllAssetSubCategoriesByAssetCaragoryId")]
+        public async Task<IActionResult> GetAllAssetSubCategoriesByAssetCaragoryId(int AssetCatagoryId)
+        {
+            ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAllAssetSubCategoriesByAssetCaragoryId(AssetCatagoryId);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        [HttpGet("/GetAssetSubCategoryById")]
+        public async Task<IActionResult> GetAssetSubCategoryById(int AssetSubCategoryId)
+        {
+            ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAssetSubCategoryById(AssetSubCategoryId);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+        [HttpGet("/CreateAssetSubCategory")]
+        public async Task<IActionResult> CreateAssetSubCategory(int assetCategoryId, AssetSubCatagoryDTO assetSubCatagoryDTO)
+        {
+            ApiResponseDTO result = await _assetCatagoryManagementRepository.CreateAssetSubCategory(assetCategoryId, assetSubCatagoryDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("/UpdateAssetSubCategory")]
+        public async Task<IActionResult> UpdateAssetSubCategory(int assetSubCategoryId, AssetSubCatagoryDTO assetSubCatagoryDTO)
+        {
+            ApiResponseDTO result = await _assetCatagoryManagementRepository.UpdateAssetSubCategory(assetSubCategoryId, assetSubCatagoryDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
+        [HttpDelete("/DeleteAssetSubCategory")]
+        public async Task<IActionResult> DeleteAssetSubCategory(int assetSubCategoryId)
+        {
+            ApiResponseDTO result = await _assetCatagoryManagementRepository.DeleteAssetSubCategory(assetSubCategoryId);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            else if (result.Status == StatusCodes.Status403Forbidden)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, result);
+            }
+            return BadRequest(result);
+        }
     }
 }

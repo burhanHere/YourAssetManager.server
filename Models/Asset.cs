@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using YourAssetManager.server.Data.Migrations;
 
 namespace YourAssetManager.Server.Models
 {
@@ -46,6 +47,9 @@ namespace YourAssetManager.Server.Models
         [ForeignKey("AssetCategory")]
         public int AssetCategoryId { get; set; }
 
+        [ForeignKey("AssetSubCategory")]
+        public int AssetSubCategoryId { get; set; }
+
         [ForeignKey("AssetType")]
         public int AssetTypeId { get; set; }
 
@@ -54,6 +58,7 @@ namespace YourAssetManager.Server.Models
 
         public Organization Organization { get; set; }
         public AssetCategory AssetCategory { get; set; }
+        public AssetSubCategory AssetSubCategory { get; set; }
         public AssetType AssetType { get; set; }
         public Vender Vender { get; set; }
     }
