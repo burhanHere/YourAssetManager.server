@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourAssetManager.Server.Models
 {
@@ -12,5 +13,10 @@ namespace YourAssetManager.Server.Models
 
         public string Description { get; set; }
         public string Features { get; set; }
+
+        [ForeignKey("Organization")]
+        public int CatagoryOrganizationId { get; set; }
+
+        public Organization Organization { get; set; }
     }
 }
