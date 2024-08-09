@@ -1,3 +1,0 @@
-namespace YourAssetManager.Server.Repositories
-{
-}
