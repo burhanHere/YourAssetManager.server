@@ -258,13 +258,19 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
+
+        /// <summary>
+        /// Deactivates the active organization associated with the signed-in user.
+        /// </summary>
+        /// <param name="SignedInUserId">The ID of the signed-in user.</param>
+        /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
         public async Task<ApiResponseDTO> DeactivateOrganization(string SignedInUserId)
         {
+            // Find the user by their ID
             var user = await _userManager.FindByIdAsync(SignedInUserId);
             if (user == null)
             {
-
-                // Return error if user not found
+                // Return error if the user is not found
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
@@ -274,8 +280,9 @@ namespace YourAssetManager.Server.Repositories
                         "User not found."
                     }
                 };
-
             }
+
+            // Find the active organization associated with the user
             var organization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true);
             if (organization == null)
             {
@@ -288,6 +295,7 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+            // Deactivate the organization
             organization.ActiveOrganization = false;
             var saveDbChanges = await _applicationDbContext.SaveChangesAsync();
             if (saveDbChanges == 0)
