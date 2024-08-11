@@ -12,8 +12,8 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240809093131_RemoveCyclicReferencesInOrganizationAndApplicationUser")]
-    partial class RemoveCyclicReferencesInOrganizationAndApplicationUser
+    [Migration("20240811085151_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -268,6 +268,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("AssetSubCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<int>("AssetTypeId")
                         .HasColumnType("int");
 
@@ -320,6 +323,8 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.HasIndex("AssetCategoryId");
 
+                    b.HasIndex("AssetSubCategoryId");
+
                     b.HasIndex("AssetTypeId");
 
                     b.HasIndex("OrganizationId");
@@ -367,13 +372,16 @@ namespace YourAssetManager.server.Data.Migrations
                     b.ToTable("AssetAssignments");
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.AssetCategories", b =>
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetCategory", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CatagoryOrganizationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("CategoryName")
                         .IsRequired()
@@ -383,11 +391,13 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Features")
+                    b.Property<string>("RelaventInputFields")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CatagoryOrganizationId");
 
                     b.ToTable("AssetCategories");
                 });
@@ -420,6 +430,28 @@ namespace YourAssetManager.server.Data.Migrations
                     b.HasIndex("LogActionId");
 
                     b.ToTable("AssetMaintenances");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetSubCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssetCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SubCategoryName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetCategoryId");
+
+                    b.ToTable("AssetSubCategories");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetType", b =>
@@ -592,9 +624,15 @@ namespace YourAssetManager.server.Data.Migrations
 
             modelBuilder.Entity("YourAssetManager.Server.Models.Asset", b =>
                 {
-                    b.HasOne("YourAssetManager.Server.Models.AssetCategories", "AssetCategory")
+                    b.HasOne("YourAssetManager.Server.Models.AssetCategory", "AssetCategory")
                         .WithMany()
                         .HasForeignKey("AssetCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("YourAssetManager.Server.Models.AssetSubCategory", "AssetSubCategory")
+                        .WithMany()
+                        .HasForeignKey("AssetSubCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -617,6 +655,8 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("AssetCategory");
+
+                    b.Navigation("AssetSubCategory");
 
                     b.Navigation("AssetType");
 
@@ -660,6 +700,17 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Navigation("LogAction");
                 });
 
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetCategory", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
+                        .WithMany("AssetCategories")
+                        .HasForeignKey("CatagoryOrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetMaintenance", b =>
                 {
                     b.HasOne("YourAssetManager.Server.Models.Asset", "Asset")
@@ -677,6 +728,17 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Navigation("Asset");
 
                     b.Navigation("LogAction");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetSubCategory", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.AssetCategory", "AssetCategory")
+                        .WithMany()
+                        .HasForeignKey("AssetCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AssetCategory");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.Organization", b =>
@@ -697,6 +759,8 @@ namespace YourAssetManager.server.Data.Migrations
 
             modelBuilder.Entity("YourAssetManager.Server.Models.Organization", b =>
                 {
+                    b.Navigation("AssetCategories");
+
                     b.Navigation("AssetManagers");
                 });
 #pragma warning restore 612, 618

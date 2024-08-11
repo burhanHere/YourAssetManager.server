@@ -57,7 +57,7 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Retrieve all categories associated with the organization
-            List<AssetCategory> requiredCategories = await _applicationDbContext.AssetCategories.Where(x => x.CatagoryOrganizationId == organization.Id).ToListAsync();
+            List<AssetCategory> requiredCategories = await _applicationDbContext.AssetCategories.Where(x => x.CatagoryOrganizationId == organization.Id).Select(x => x).ToListAsync();
             if (requiredCategories.Count == 0)
             {
                 // Return error if no categories found
@@ -146,7 +146,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status405MethodNotAllowed,
                     ResponseData = new List<string>
                     {
-                        "As no organization is allowed to this user so can create catagory"
+                        "As no organization is associated to this user so can create catagory"
                     }
                 };
             }
