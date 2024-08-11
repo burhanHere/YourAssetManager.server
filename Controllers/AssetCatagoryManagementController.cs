@@ -48,7 +48,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetAssetCategoryById endpoint to retrieve an asset category by its ID
         [HttpGet("/GetAssetCategoryById")]
-        public async Task<IActionResult> GetAssetCategoryById([FromBody] int AssetCatagoryId)
+        public async Task<IActionResult> GetAssetCategoryById(int AssetCatagoryId)
         {
             // Call the repository method to get an asset category by its ID
             ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAssetCategoryById(AssetCatagoryId);
@@ -97,7 +97,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the UpdateAssetCategory endpoint to update an existing asset category
         [HttpPut("/UpdateAssetCategory")]
-        public async Task<IActionResult> UpdateAssetCategory([FromBody] int AssetCatagoryId, [FromBody] AssetCatagoryDTO assetCatagoryDTO)
+        public async Task<IActionResult> UpdateAssetCategory(int AssetCatagoryId, [FromBody] AssetCatagoryDTO assetCatagoryDTO)
         {
             // Call the repository method to update an existing asset category
             ApiResponseDTO result = await _assetCatagoryManagementRepository.UpdateAssetCategory(AssetCatagoryId, assetCatagoryDTO);
