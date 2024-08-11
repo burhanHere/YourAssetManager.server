@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
@@ -51,7 +52,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No catagories found as noorganization is associated to this user."
+                        "No catagories found as no organization is associated to this user."
                     }
                 };
             }
@@ -66,7 +67,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No catagories found as no organization is associated to this user."
+                        "No catagories found in this organization of this user."
                     }
                 };
             }
@@ -212,9 +213,11 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Update category properties with new values
-            requiredAssetCatagory.CategoryName = assetCatagoryDTO.CategoryName.ToUpper();
-            requiredAssetCatagory.Description = assetCatagoryDTO.Description;
-            requiredAssetCatagory.RelaventInputFields = assetCatagoryDTO.RelaventInputFields;
+            requiredAssetCatagory.CategoryName = assetCatagoryDTO.CategoryName.IsNullOrEmpty() ? requiredAssetCatagory.CategoryName : assetCatagoryDTO.CategoryName.ToUpper();
+
+            requiredAssetCatagory.Description = assetCatagoryDTO.Description.IsNullOrEmpty() ? requiredAssetCatagory.Description : assetCatagoryDTO.Description;
+
+            requiredAssetCatagory.RelaventInputFields = assetCatagoryDTO.RelaventInputFields.IsNullOrEmpty() ? requiredAssetCatagory.RelaventInputFields : assetCatagoryDTO.RelaventInputFields;
 
             // Save changes to the database
             var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
@@ -342,7 +345,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No subcategories found for this category."
+                        "No Sub-category found for this category."
                     }
                 };
             }
@@ -373,7 +376,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No subcategory found with this id."
+                        "No Sub-category found with this id."
                     }
                 };
             }
@@ -429,7 +432,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status400BadRequest,
                     ResponseData = new List<string>
                     {
-                        "Unable to create new subcategory."
+                        "Unable to create new Sub-category."
                     }
                 };
             }
@@ -440,7 +443,7 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
                 {
-                    "New subcategory created successfully."
+                    "New Sub-category created successfully."
                 }
             };
         }
@@ -464,13 +467,13 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No subcategory found with this id."
+                        "No Sub-category found with this id."
                     }
                 };
             }
 
             // Update subcategory properties with new values
-            subCategory.SubCategoryName = assetSubCatagoryDTO.SubCategoryName.ToUpper();
+            subCategory.SubCategoryName = assetSubCatagoryDTO.SubCategoryName.IsNullOrEmpty() ? subCategory.SubCategoryName : assetSubCatagoryDTO.SubCategoryName.ToUpper();
 
             // Save changes to the database
             var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
@@ -482,7 +485,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status400BadRequest,
                     ResponseData = new List<string>
                     {
-                        "Unable to update subcategory."
+                        "Unable to update Sub-category."
                     }
                 };
             }
@@ -493,7 +496,7 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
                 {
-                    "Subcategory updated successfully."
+                    "Sub-category updated successfully."
                 }
             };
         }
@@ -516,7 +519,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
-                        "No subcategory found with this id."
+                        "No Sub-category found with this id."
                     }
                 };
             }
@@ -532,7 +535,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status403Forbidden,
                     ResponseData = new List<string>
                     {
-                        "Cannot delete subcategory as it is associated with one or more assets."
+                        "Cannot delete Sub-category as it is associated with one or more assets."
                     }
                 };
             }
@@ -549,7 +552,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status400BadRequest,
                     ResponseData = new List<string>
                     {
-                        "Unable to delete subcategory."
+                        "Unable to delete Sub-category."
                     }
                 };
             }
@@ -560,7 +563,7 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
                 {
-                    "Subcategory deleted successfully."
+                    "Sub-category deleted successfully."
                 }
             };
         }
