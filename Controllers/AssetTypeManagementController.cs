@@ -1,22 +1,22 @@
+
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
-    [Authorize(Roles = "OrganizationOwner")]
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("YourAssetManager.Server/{controller}")]
-    public class VenderManagementController(ApplicationDbContext applicationDbContext) : ControllerBase
+    [Authorize(Roles = "OrganizationOwner")]
+    public class AssetTypeController(AssetTypeRepository assetTypeRepository) : ControllerBase
     {
-        private readonly VenderManagementRepository _venderManagementRepository = new(applicationDbContext);
+        private readonly AssetTypeRepository _assetTypeRepository = assetTypeRepository;
 
-        [HttpPost("/CreateVender")]
-        public async Task<IActionResult> CreateVender(VenderDTO venderDTO)
+        [HttpPost("/CreateAssetType")]
+        public async Task<IActionResult> CreateAssetType(AssetTypeDTO assetType)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId.IsNullOrEmpty())
@@ -27,7 +27,9 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _venderManagementRepository.CreateVender(userId!, venderDTO);
+
+            ApiResponseDTO result = await _assetTypeRepository.CreateAssetType(userId!, assetType);
+
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -39,44 +41,63 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("/GetAllVenders")]
-        public async Task<ApiResponseDTO> GetAllVenders()
+        [HttpGet("/GetAllAssetTypes")]
+        public async Task<IActionResult> GetAllAssetTypes()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId.IsNullOrEmpty())
             {
-                return new ApiResponseDTO
+                return Unauthorized(new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
                     ResponseData = new List<string> { "User not found in token." }
-                };
+                });
             }
-            ApiResponseDTO result = await _venderManagementRepository.GetAllVenders(userId!);
-            return result;
-        }
+            ApiResponseDTO result = await _assetTypeRepository.GetAllAssetTypes(userId!);
 
-        [HttpPost("/UpdateVender")]
-        public async Task<IActionResult> UpdateVender(VenderDTO venderUpdate)
-        {
-            ApiResponseDTO result = await _venderManagementRepository.UpdateVender(venderUpdate);
             if (result.Status == StatusCodes.Status200OK)
             {
-                // Return an OK response if the organization was successfully updated
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status405MethodNotAllowed)
+            {
+                return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
+            }
+            return NotFound(result);
+        }
+
+        [HttpGet("/GetAssetTypeById")]
+        public async Task<IActionResult> GetAssetTypeById(int assetTypeId)
+        {
+            ApiResponseDTO result = await _assetTypeRepository.GetAssetTypeById(assetTypeId);
+
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            return NotFound(result);
+        }
+
+        [HttpPost("/UpdateAssetType")]
+        public async Task<IActionResult> UpdateAssetType(AssetTypeDTO assetType)
+        {
+            ApiResponseDTO result = await _assetTypeRepository.UpdateAssetType(assetType);
+
+            if (result.Status == StatusCodes.Status200OK)
+            {
                 return Ok(result);
             }
             else if (result.Status == StatusCodes.Status404NotFound)
             {
-                // Return a NotFound response if the organization to be updated was not found
                 return NotFound(result);
             }
-            // Return a BadRequest response for any other errors
             return BadRequest(result);
         }
 
-        [HttpPost("/DeleteVender")]
-        public async Task<IActionResult> DeleteVender(int venderId)
+        [HttpPost("/DeleteAssetType")]
+        public async Task<IActionResult> DeleteAssetType(int assetTypeId)
         {
-            ApiResponseDTO result = await _venderManagementRepository.DeleteVender(venderId);
+            ApiResponseDTO result = await _assetTypeRepository.DeleteAssetType(assetTypeId);
 
             if (result.Status == StatusCodes.Status200OK)
             {
@@ -91,13 +112,6 @@ namespace YourAssetManager.Server.Controllers
                 return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
             }
             return BadRequest(result);
-        }
-
-        [HttpGet("/GetVenderById")]
-        public async Task<ApiResponseDTO> GetVenderById(int venderId)
-        {
-            ApiResponseDTO result = await _venderManagementRepository.GetVenderById(venderId);
-            return result;
         }
     }
 }

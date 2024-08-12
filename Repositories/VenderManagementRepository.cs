@@ -112,6 +112,44 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
+        public async Task<ApiResponseDTO> GetVenderById(int venderId)
+        {
+            // Find the vender by its ID
+            Vender requiredVender = await _applicationDbContext.Venders.FirstOrDefaultAsync(x => x.Id == venderId);
+
+            // Check if the vender exists
+            if (requiredVender == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Vender not found."
+                    }
+                };
+            }
+
+            // Convert to DTO
+            VenderDTO venderDTO = new VenderDTO
+            {
+                Id = requiredVender.Id,
+                Name = requiredVender.Name,
+                Email = requiredVender.Email,
+                OfficeAddress = requiredVender.OfficeAddress,
+                PhoneNumber = requiredVender.PhoneNumber
+            };
+
+            // Return the vender DTO
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new
+                {
+                    Vender = venderDTO
+                }
+            };
+        }
         public async Task<ApiResponseDTO> UpdateVender(VenderDTO venderUpdate)
         {
             Vender requiredVender = await _applicationDbContext.Venders.FirstOrDefaultAsync(x => x.Id == venderUpdate.Id);
@@ -173,6 +211,19 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+            var associatedAsset = await _applicationDbContext.Assets.AnyAsync(x => x.VenderId == venderToDelete.Id);
+            if (associatedAsset)
+            {
+                // Return error if Vender is associated with assets
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Cannot delete Vender as it is associated with one or more assets."
+                    }
+                };
+            }
 
             // Remove the vender from the database
             _applicationDbContext.Venders.Remove(venderToDelete);
@@ -199,44 +250,6 @@ namespace YourAssetManager.Server.Repositories
                 ResponseData = new List<string>
                 {
                     "Vender deleted successfully."
-                }
-            };
-        }
-        public async Task<ApiResponseDTO> GetVenderById(int venderId)
-        {
-            // Find the vender by its ID
-            Vender requiredVender = await _applicationDbContext.Venders.FirstOrDefaultAsync(x => x.Id == venderId);
-
-            // Check if the vender exists
-            if (requiredVender == null)
-            {
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status404NotFound,
-                    ResponseData = new List<string>
-                    {
-                        "Vender not found."
-                    }
-                };
-            }
-
-            // Convert to DTO
-            VenderDTO venderDTO = new VenderDTO
-            {
-                Id = requiredVender.Id,
-                Name = requiredVender.Name,
-                Email = requiredVender.Email,
-                OfficeAddress = requiredVender.OfficeAddress,
-                PhoneNumber = requiredVender.PhoneNumber
-            };
-
-            // Return the vender DTO
-            return new ApiResponseDTO
-            {
-                Status = StatusCodes.Status200OK,
-                ResponseData = new
-                {
-                    Vender = venderDTO
                 }
             };
         }
