@@ -9,7 +9,7 @@ namespace YourAssetManager.Server.Repositories
 
         public async Task<ApiResponseDTO> CreateVender(VenderDTO venderDTO)
         {
-
+            return new ApiResponseDTO();
         }
     }
 }

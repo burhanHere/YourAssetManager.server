@@ -160,7 +160,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetAssetSubCategoryById endpoint to retrieve a subcategory by its ID
         [HttpGet("/GetAssetSubCategoryById")]
-        public async Task<IActionResult> GetAssetSubCategoryById(int AssetSubCategoryId)
+        public async Task<ApiResponseDTO> GetAssetSubCategoryById(int AssetSubCategoryId)
         {
             // Call the repository method to get a subcategory by its ID
             ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAssetSubCategoryById(AssetSubCategoryId);
