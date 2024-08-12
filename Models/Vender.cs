@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourAssetManager.Server.Models
 {
@@ -13,8 +14,11 @@ namespace YourAssetManager.Server.Models
         [Required(ErrorMessage = "Please add a valid email.")]
         [EmailAddress]
         public string Email { get; set; }
-
         public string OfficeAddress { get; set; }
         public string PhoneNumber { get; set; }
+
+        [ForeignKey("Organization")]
+        public int OrganizationId { get; set; }
+        public Organization Organization { get; set; }
     }
 }

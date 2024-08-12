@@ -46,7 +46,7 @@ namespace YourAssetManager.Server.Repositories
                                 .Where(x => x.ApplicationUserId == user.Id && x.ActiveOrganization == true)
                                 .ToListAsync();
 
-            if (resultontOrganization.IsNullOrEmpty())
+            if (resultontOrganization.Count == 0)
             {
                 // Return success but indicate no organizations found
                 return new ApiResponseDTO
@@ -87,7 +87,7 @@ namespace YourAssetManager.Server.Repositories
         /// Creates a new organization for the signed-in user.
         /// </summary>
         /// <param name="newOrganization">The new organization's data.</param>
-        /// <param name="SignedInUserName">The username of the signed-in user.</param>
+        /// <param name="SignedInUserName">The usernamh.e of the signed-in user.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
         public async Task<ApiResponseDTO> CreateOrganization(OrganizationDTO newOrganization, string SignedInUserId)
         {
