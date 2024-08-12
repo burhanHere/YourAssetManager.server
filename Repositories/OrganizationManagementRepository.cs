@@ -60,13 +60,25 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
+            // converting to DTO
+            List<OrganizationDTO> organizationsList = [];
+            foreach (var item in resultontOrganization)
+            {
+                organizationsList.Add(new OrganizationDTO
+                {
+                    OrganizationName = item.OrganizationName,
+                    Description = item.Description,
+                    OrganizationDomain = item.OrganizationDomain
+                });
+            }
+
             // Return the list of organizations
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponseData = new
                 {
-                    resultontOrganization
+                    organizations = organizationsList
                 }
             };
         }

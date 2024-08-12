@@ -151,15 +151,3 @@ namespace YourAssetManager.Server.Controllers
     }
 }
 
-
-// {
-//   "email": "burhanburewala@gmail.com",
-//   "userName": "Burhan123@",
-//   "password": "Burhan123@"
-// }
-
-// {
-//     "email": "burhanburewala@gmail.com",
-//   "password": "Burhan123@"
-// }
-

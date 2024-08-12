@@ -18,47 +18,49 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetAllAssetCategories endpoint to retrieve all asset categories for the current user
         [HttpGet("/GetAllAssetCategories")]
-        public async Task<IActionResult> GetAllAssetCategories()
+        public async Task<ApiResponseDTO> GetAllAssetCategories()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponseDTO
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
                     ResponseData = new List<string> { "User not found in token." }
-                });
+                };
             }
             // Call the repository method to get all asset categories for the current user
             ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAllAssetCategories(userId);
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if asset categories were found
-                return Ok(result);
-            }
-            else if (result.Status == StatusCodes.Status404NotFound)
-            {
-                // Return a NotFound response if no asset categories were found
-                return NotFound(result);
-            }
-            // Return a BadRequest response for any other errors
-            return BadRequest(result);
+            // if (result.Status == StatusCodes.Status200OK)
+            // {
+            //     // Return an OK response if asset categories were found
+            //     return Ok(result);
+            // }
+            // else if (result.Status == StatusCodes.Status404NotFound)
+            // {
+            //     // Return a NotFound response if no asset categories were found
+            //     return NotFound(result);
+            // }
+            // // Return a BadRequest response for any other errors
+            // return BadRequest(result);
+            return result;
         }
 
         // Define the GetAssetCategoryById endpoint to retrieve an asset category by its ID
         [HttpGet("/GetAssetCategoryById")]
-        public async Task<IActionResult> GetAssetCategoryById(int AssetCatagoryId)
+        public async Task<ApiResponseDTO> GetAssetCategoryById(int AssetCatagoryId)
         {
             // Call the repository method to get an asset category by its ID
             ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAssetCategoryById(AssetCatagoryId);
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if the asset category was found
-                return Ok(result);
-            }
-            // Return a NotFound response if the asset category was not found
-            return NotFound(result);
+            // if (result.Status == StatusCodes.Status200OK)
+            // {
+            //     // Return an OK response if the asset category was found
+            //     return Ok(result);
+            // }
+            // // Return a NotFound response if the asset category was not found
+            // return NotFound(result);
+            return result;
         }
 
         // Define the CreateAssetCategory endpoint to create a new asset category
@@ -142,17 +144,18 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetAllAssetSubCategoriesByAssetCaragoryId endpoint to retrieve all subcategories by asset category ID
         [HttpGet("/GetAllAssetSubCategoriesByAssetCaragoryId")]
-        public async Task<IActionResult> GetAllAssetSubCategoriesByAssetCaragoryId(int AssetCatagoryId)
+        public async Task<ApiResponseDTO> GetAllAssetSubCategoriesByAssetCaragoryId(int AssetCatagoryId)
         {
             // Call the repository method to get all subcategories for a given asset category
             ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAllAssetSubCategoriesByAssetCaragoryId(AssetCatagoryId);
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if subcategories were found
-                return Ok(result);
-            }
-            // Return a NotFound response if no subcategories were found
-            return NotFound(result);
+            // if (result.Status == StatusCodes.Status200OK)
+            // {
+            //     // Return an OK response if subcategories were found
+            //     return Ok(result);
+            // }
+            // // Return a NotFound response if no subcategories were found
+            // return NotFound(result);
+            return result;
         }
 
         // Define the GetAssetSubCategoryById endpoint to retrieve a subcategory by its ID
@@ -161,13 +164,14 @@ namespace YourAssetManager.Server.Controllers
         {
             // Call the repository method to get a subcategory by its ID
             ApiResponseDTO result = await _assetCatagoryManagementRepository.GetAssetSubCategoryById(AssetSubCategoryId);
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if the subcategory was found
-                return Ok(result);
-            }
-            // Return a NotFound response if the subcategory was not found
-            return NotFound(result);
+            // if (result.Status == StatusCodes.Status200OK)
+            // {
+            //     // Return an OK response if the subcategory was found
+            //     return Ok(result);
+            // }
+            // // Return a NotFound response if the subcategory was not found
+            // return NotFound(result);
+            return result;
         }
 
         // Define the CreateAssetSubCategory endpoint to create a new asset subcategory

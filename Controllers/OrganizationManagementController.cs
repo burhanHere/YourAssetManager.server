@@ -19,32 +19,38 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetMyOrganizations endpoint to retrieve all organizations related to the currently signed-in user
         [HttpGet("/GetOrganizationsInfo")]
-        public async Task<IActionResult> GetOrganizationsInfo()
+        public async Task<ApiResponseDTO> GetOrganizationsInfo()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 // If the username is not found, return an unauthorized response
-                return Unauthorized(new ApiResponseDTO
+                // return Unauthorized(new ApiResponseDTO
+                // {
+                //     Status = StatusCodes.Status401Unauthorized,
+                //     ResponseData = new List<string> { "User not found in token." }
+                // });
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
                     ResponseData = new List<string> { "User not found in token." }
-                });
+                };
             }
             // Call the repository method to get organizations related to the current user
             ApiResponseDTO result = await _organizationManagementRepository.GetOrganizationsInfo(userId);
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if organizations were found
-                return Ok(result);
-            }
-            else if (result.Status == StatusCodes.Status404NotFound)
-            {
-                // Return a NotFound response if no organizations were found
-                return NotFound(result);
-            }
-            // Return a BadRequest response for any other errors
-            return BadRequest(result);
+            // if (result.Status == StatusCodes.Status200OK)
+            // {
+            //     // Return an OK response if organizations were found
+            //     return Ok(result);
+            // }
+            // else if (result.Status == StatusCodes.Status404NotFound)
+            // {
+            //     // Return a NotFound response if no organizations were found
+            //     return NotFound(result);
+            // }
+            // // Return a BadRequest response for any other errors
+            // return BadRequest(result);
+            return result;
         }
 
         // Define the CreateOrganization endpoint to create a new organization for the current user
