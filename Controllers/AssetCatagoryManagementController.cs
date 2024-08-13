@@ -175,7 +175,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the CreateAssetSubCategory endpoint to create a new asset subcategory
-        [HttpGet("/CreateAssetSubCategory")]
+        [HttpPost("/CreateAssetSubCategory")]
         public async Task<IActionResult> CreateAssetSubCategory(int assetCategoryId, AssetSubCatagoryDTO assetSubCatagoryDTO)
         {
             // Call the repository method to create a new subcategory for a given asset category
@@ -195,7 +195,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the UpdateAssetSubCategory endpoint to update an existing asset subcategory
-        [HttpGet("/UpdateAssetSubCategory")]
+        [HttpPut("/UpdateAssetSubCategory")]
         public async Task<IActionResult> UpdateAssetSubCategory(int assetSubCategoryId, AssetSubCatagoryDTO assetSubCatagoryDTO)
         {
             // Call the repository method to update an existing asset subcategory

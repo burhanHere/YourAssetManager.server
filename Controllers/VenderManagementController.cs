@@ -73,7 +73,7 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("/DeleteVender")]
+        [HttpDelete("/DeleteVender")]
         public async Task<IActionResult> DeleteVender(int venderId)
         {
             ApiResponseDTO result = await _venderManagementRepository.DeleteVender(venderId);

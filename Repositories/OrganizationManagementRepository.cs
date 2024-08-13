@@ -61,10 +61,10 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // converting to DTO
-            List<OrganizationDTO> organizationsList = [];
+            List<OrganizationDTO> organizationsDTOList = [];
             foreach (var item in resultontOrganization)
             {
-                organizationsList.Add(new OrganizationDTO
+                organizationsDTOList.Add(new OrganizationDTO
                 {
                     OrganizationName = item.OrganizationName,
                     Description = item.Description,
@@ -78,7 +78,7 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponseData = new
                 {
-                    organizations = organizationsList
+                    organizations = organizationsDTOList
                 }
             };
         }

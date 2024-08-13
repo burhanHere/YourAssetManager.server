@@ -8,7 +8,7 @@ using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("YourAssetManager.Server /{controller}")]
     [ApiController]
     [Authorize(Roles = "OrganizationOwner")]
     public class AssetTypeController(AssetTypeRepository assetTypeRepository) : ControllerBase
@@ -78,7 +78,7 @@ namespace YourAssetManager.Server.Controllers
             return NotFound(result);
         }
 
-        [HttpPost("/UpdateAssetType")]
+        [HttpPut("/UpdateAssetType")]
         public async Task<IActionResult> UpdateAssetType(AssetTypeDTO assetType)
         {
             ApiResponseDTO result = await _assetTypeRepository.UpdateAssetType(assetType);
@@ -94,7 +94,7 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("/DeleteAssetType")]
+        [HttpDelete("/DeleteAssetType")]
         public async Task<IActionResult> DeleteAssetType(int assetTypeId)
         {
             ApiResponseDTO result = await _assetTypeRepository.DeleteAssetType(assetTypeId);

@@ -77,17 +77,21 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var assetTypeDTOs = assetTypes.ConvertAll(assetType => new AssetTypeDTO
+            List<AssetTypeDTO> assetTypeDTOList = new();
+            foreach (var item in assetTypes)
             {
-                Id = assetType.Id,
-                AssetTypeName = assetType.AssetTypeName,
-                Description = assetType.Description
-            });
+                assetTypeDTOList.Add(new AssetTypeDTO
+                {
+                    Id = item.Id,
+                    AssetTypeName = item.AssetTypeName,
+                    Description = item.Description
+                });
+            }
 
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = new { AssetTypes = assetTypeDTOs }
+                ResponseData = assetTypeDTOList
             };
         }
         // Get AssetType By Id
@@ -114,7 +118,7 @@ namespace YourAssetManager.Server.Repositories
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = new { AssetType = assetTypeDTO }
+                ResponseData = assetTypeDTO
             };
         }
         // Update AssetType

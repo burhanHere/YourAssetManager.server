@@ -72,11 +72,22 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
+            List<AssetCatagoryDTO> assetCatagoryDTOList = new();
+            foreach (var item in requiredCategories)
+            {
+                assetCatagoryDTOList.Add(new AssetCatagoryDTO
+                {
+                    Id = item.Id,
+                    CategoryName = item.CategoryName,
+                    Description = item.Description,
+                    RelaventInputFields = item.RelaventInputFields,
+                });
+            }
             // Return success with the list of categories
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = requiredCategories
+                ResponseData = assetCatagoryDTOList
             };
         }
 
@@ -102,14 +113,19 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
+            AssetCatagoryDTO assetCatagoryDTO = new()
+            {
+                Id = requiredAssetCatagory.Id,
+                CategoryName = requiredAssetCatagory.CategoryName,
+                Description = requiredAssetCatagory.Description,
+                RelaventInputFields = requiredAssetCatagory.RelaventInputFields,
+            };
+
             // Return success if the catagory was created successfully
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = new List<string>
-                    {
-                        "New Catagory created successfully."
-                    }
+                ResponseData = assetCatagoryDTO
             };
         }
 
@@ -349,12 +365,19 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-
+            List<AssetSubCatagoryDTO> assetSubCatagoryDTOList = new();
+            foreach (var item in subCategories)
+            {
+                assetSubCatagoryDTOList.Add(new AssetSubCatagoryDTO
+                {
+                    SubCategoryName = item.SubCategoryName
+                });
+            }
             // Return success with the list of subcategories
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = subCategories
+                ResponseData = assetSubCatagoryDTOList
             };
         }
 
@@ -380,12 +403,15 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-
+            AssetSubCatagoryDTO assetSubCatagoryDTO = new()
+            {
+                SubCategoryName = subCategory.SubCategoryName
+            };
             // Return success with the subcategory details
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = subCategory
+                ResponseData = assetSubCatagoryDTO
             };
         }
 

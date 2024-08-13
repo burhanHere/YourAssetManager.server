@@ -106,10 +106,7 @@ namespace YourAssetManager.Server.Repositories
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = new
-                {
-                    Venders = venderList
-                }
+                ResponseData = venderList
             };
         }
         public async Task<ApiResponseDTO> GetVenderById(int venderId)
@@ -144,10 +141,7 @@ namespace YourAssetManager.Server.Repositories
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = new
-                {
-                    Vender = venderDTO
-                }
+                ResponseData = venderDTO
             };
         }
         public async Task<ApiResponseDTO> UpdateVender(VenderDTO venderUpdate)

@@ -23,12 +23,6 @@ namespace YourAssetManager.Server.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
-                // If the username is not found, return an unauthorized response
-                // return Unauthorized(new ApiResponseDTO
-                // {
-                //     Status = StatusCodes.Status401Unauthorized,
-                //     ResponseData = new List<string> { "User not found in token." }
-                // });
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
@@ -37,18 +31,6 @@ namespace YourAssetManager.Server.Controllers
             }
             // Call the repository method to get organizations related to the current user
             ApiResponseDTO result = await _organizationManagementRepository.GetOrganizationsInfo(userId);
-            // if (result.Status == StatusCodes.Status200OK)
-            // {
-            //     // Return an OK response if organizations were found
-            //     return Ok(result);
-            // }
-            // else if (result.Status == StatusCodes.Status404NotFound)
-            // {
-            //     // Return a NotFound response if no organizations were found
-            //     return NotFound(result);
-            // }
-            // // Return a BadRequest response for any other errors
-            // return BadRequest(result);
             return result;
         }
 
@@ -83,7 +65,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the UpdateOrganization endpoint to update an existing organization for the current user
-        [HttpPost("/UpdateOrganization")]
+        [HttpPut("/UpdateOrganization")]
         public async Task<IActionResult> UpdateOrganization([FromBody] OrganizationDTO newOrganization)
         {
             // Call the repository method to update the organization with the current user's ID
@@ -113,7 +95,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the DeleteOrganization endpoint to delete and organization
-        [HttpPost("/DeleteOrganization")]
+        [HttpDelete("/DeleteOrganization")]
         public async Task<IActionResult> DeleteOrganization()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
