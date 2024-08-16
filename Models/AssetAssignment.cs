@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace YourAssetManager.Server.Models
 {
@@ -11,22 +12,25 @@ namespace YourAssetManager.Server.Models
         [Required]
         public DateTime AssignedDate { get; set; } = DateTime.Now;
 
-        [ForeignKey("Assignee")]
-        public string AssigneeId { get; set; }
+        [MaxLength(1000)]
+        public string Notes { get; set; }
 
-        [ForeignKey("Assigner")]
-        public string AssignerId { get; set; }
+        [Required]
+        public string AssignedToId { get; set; }
 
-        [ForeignKey("Asset")]
+        [ForeignKey("AssignedToId")]
+        public IdentityUser AssignedTo { get; set; }
+
+        [Required]
+        public string AssignedById { get; set; }
+
+        [ForeignKey("AssignedById")]
+        public IdentityUser AssignedBy { get; set; }
+
+        [Required]
         public int AssetId { get; set; }
 
-        [ForeignKey("LogAction")]
-        public int LogActionId { get; set; }
-
-        public ApplicationUser Assignee { get; set; }
-        public ApplicationUser Assigner { get; set; }
+        [ForeignKey("AssetId")]
         public Asset Asset { get; set; }
-        public LogAction LogAction { get; set; }
     }
-
 }

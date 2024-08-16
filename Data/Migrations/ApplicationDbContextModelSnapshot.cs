@@ -96,6 +96,70 @@ namespace YourAssetManager.server.Data.Migrations
                     b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex");
+
+                    b.ToTable("AspNetUsers", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -177,75 +241,6 @@ namespace YourAssetManager.server.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.ApplicationUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("longtext");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("varchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex");
-
-                    b.HasIndex("OrganizationId");
-
-                    b.ToTable("AspNetUsers", (string)null);
-                });
-
             modelBuilder.Entity("YourAssetManager.Server.Models.Asset", b =>
                 {
                     b.Property<int>("AssetId")
@@ -259,42 +254,44 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.Property<string>("AssetIdentificationNumber")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("AssetName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
-                    b.Property<int>("AssetSubCategoryId")
+                    b.Property<int>("AssetStatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("AssetTypeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CatagoryReleventFeildsData")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("LastServiced")
-                        .HasColumnType("datetime(6)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Model")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Problems")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime(6)");
@@ -304,29 +301,26 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.Property<string>("SerialNumber")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("VenderId")
+                    b.Property<int>("VendorId")
                         .HasColumnType("int");
 
                     b.HasKey("AssetId");
 
                     b.HasIndex("AssetCategoryId");
 
-                    b.HasIndex("AssetSubCategoryId");
+                    b.HasIndex("AssetStatusId");
 
                     b.HasIndex("AssetTypeId");
 
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("VenderId");
+                    b.HasIndex("VendorId");
 
                     b.ToTable("Assets");
                 });
@@ -342,29 +336,29 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Property<int>("AssetId")
                         .HasColumnType("int");
 
+                    b.Property<string>("AssignedById")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<DateTime>("AssignedDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("AssigneeId")
+                    b.Property<string>("AssignedToId")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<string>("AssignerId")
+                    b.Property<string>("Notes")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<int>("LogActionId")
-                        .HasColumnType("int");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AssetId");
 
-                    b.HasIndex("AssigneeId");
+                    b.HasIndex("AssignedById");
 
-                    b.HasIndex("AssignerId");
-
-                    b.HasIndex("LogActionId");
+                    b.HasIndex("AssignedToId");
 
                     b.ToTable("AssetAssignments");
                 });
@@ -377,24 +371,27 @@ namespace YourAssetManager.server.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CatagoryOrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CategoryName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<int>("CategoryOrganizationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
-                    b.Property<string>("RelaventInputFields")
+                    b.Property<string>("RelevantInputFields")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CatagoryOrganizationId");
+                    b.HasIndex("CategoryOrganizationId");
 
                     b.ToTable("AssetCategories");
                 });
@@ -412,10 +409,8 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("LogActionId")
-                        .HasColumnType("int");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<DateTime>("MaintenanceDate")
                         .HasColumnType("datetime(6)");
@@ -424,12 +419,10 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.HasIndex("AssetId");
 
-                    b.HasIndex("LogActionId");
-
                     b.ToTable("AssetMaintenances");
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.AssetSubCategory", b =>
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetRetire", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -437,18 +430,98 @@ namespace YourAssetManager.server.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AssetCategoryId")
+                    b.Property<int>("AssetId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SubCategoryName")
+                    b.Property<DateTime>("RetiredOn")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("RetirementReason")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssetCategoryId");
+                    b.HasIndex("AssetId");
 
-                    b.ToTable("AssetSubCategories");
+                    b.ToTable("AssetRetires");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetReturn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AssetAssignmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ReturnCondition")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<DateTime>("ReturnedDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AssetAssignmentId");
+
+                    b.ToTable("AssetReturns");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssetStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StatusName = "Assigned"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StatusName = "Retired"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StatusName = "UnderMaintenance"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            StatusName = "Returned"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            StatusName = "Idle"
+                        });
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetType", b =>
@@ -461,11 +534,13 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.Property<string>("AssetTypeName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
@@ -475,23 +550,6 @@ namespace YourAssetManager.server.Data.Migrations
                     b.HasIndex("OrganizationId");
 
                     b.ToTable("AssetTypes");
-                });
-
-            modelBuilder.Entity("YourAssetManager.Server.Models.LogAction", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ActionName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("LogActions");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.Organization", b =>
@@ -505,36 +563,57 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Property<bool>("ActiveOrganization")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("varchar(255)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("OrganizationDomain")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("OrganizationName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.ToTable("Organizations");
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.Vender", b =>
+            modelBuilder.Entity("YourAssetManager.Server.Models.UserOrganization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserOrganizations");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.Vendor", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -544,28 +623,32 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("OfficeAddress")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
 
-                    b.ToTable("Venders");
+                    b.ToTable("Vendors");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -579,7 +662,7 @@ namespace YourAssetManager.server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -588,7 +671,7 @@ namespace YourAssetManager.server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -603,7 +686,7 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -612,21 +695,11 @@ namespace YourAssetManager.server.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("YourAssetManager.Server.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
-                        .WithMany("AssetManagers")
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.Asset", b =>
@@ -637,9 +710,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.AssetSubCategory", "AssetSubCategory")
+                    b.HasOne("YourAssetManager.Server.Models.AssetStatus", "AssetStatus")
                         .WithMany()
-                        .HasForeignKey("AssetSubCategoryId")
+                        .HasForeignKey("AssetStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -655,21 +728,21 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.Vender", "Vender")
+                    b.HasOne("YourAssetManager.Server.Models.Vendor", "Vendor")
                         .WithMany()
-                        .HasForeignKey("VenderId")
+                        .HasForeignKey("VendorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AssetCategory");
 
-                    b.Navigation("AssetSubCategory");
+                    b.Navigation("AssetStatus");
 
                     b.Navigation("AssetType");
 
                     b.Navigation("Organization");
 
-                    b.Navigation("Vender");
+                    b.Navigation("Vendor");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetAssignment", b =>
@@ -680,38 +753,30 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "Assignee")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "AssignedBy")
                         .WithMany()
-                        .HasForeignKey("AssigneeId")
+                        .HasForeignKey("AssignedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "Assigner")
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "AssignedTo")
                         .WithMany()
-                        .HasForeignKey("AssignerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("YourAssetManager.Server.Models.LogAction", "LogAction")
-                        .WithMany()
-                        .HasForeignKey("LogActionId")
+                        .HasForeignKey("AssignedToId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Asset");
 
-                    b.Navigation("Assignee");
+                    b.Navigation("AssignedBy");
 
-                    b.Navigation("Assigner");
-
-                    b.Navigation("LogAction");
+                    b.Navigation("AssignedTo");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetCategory", b =>
                 {
                     b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
-                        .WithMany("AssetCategories")
-                        .HasForeignKey("CatagoryOrganizationId")
+                        .WithMany()
+                        .HasForeignKey("CategoryOrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -726,26 +791,29 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.LogAction", "LogAction")
+                    b.Navigation("Asset");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetRetire", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.Asset", "Asset")
                         .WithMany()
-                        .HasForeignKey("LogActionId")
+                        .HasForeignKey("AssetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Asset");
-
-                    b.Navigation("LogAction");
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.AssetSubCategory", b =>
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetReturn", b =>
                 {
-                    b.HasOne("YourAssetManager.Server.Models.AssetCategory", "AssetCategory")
+                    b.HasOne("YourAssetManager.Server.Models.AssetAssignment", "AssetAssignment")
                         .WithMany()
-                        .HasForeignKey("AssetCategoryId")
+                        .HasForeignKey("AssetAssignmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("AssetCategory");
+                    b.Navigation("AssetAssignment");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetType", b =>
@@ -759,18 +827,26 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.Organization", b =>
+            modelBuilder.Entity("YourAssetManager.Server.Models.UserOrganization", b =>
                 {
-                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("Organizations")
-                        .HasForeignKey("ApplicationUserId")
+                    b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ApplicationUser");
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("User");
                 });
 
-            modelBuilder.Entity("YourAssetManager.Server.Models.Vender", b =>
+            modelBuilder.Entity("YourAssetManager.Server.Models.Vendor", b =>
                 {
                     b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
                         .WithMany()
@@ -779,18 +855,6 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Organization");
-                });
-
-            modelBuilder.Entity("YourAssetManager.Server.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Organizations");
-                });
-
-            modelBuilder.Entity("YourAssetManager.Server.Models.Organization", b =>
-                {
-                    b.Navigation("AssetCategories");
-
-                    b.Navigation("AssetManagers");
                 });
 #pragma warning restore 612, 618
         }

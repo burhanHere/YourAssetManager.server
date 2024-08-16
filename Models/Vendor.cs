@@ -3,22 +3,29 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourAssetManager.Server.Models
 {
-    public class Vender
+    public class Vendor
     {
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please add a Vender Name.")]
+        [Required]
+        [MaxLength(255)]
         public string Name { get; set; }
 
-        [Required(ErrorMessage = "Please add a valid email.")]
         [EmailAddress]
+        [MaxLength(255)]
         public string Email { get; set; }
+
+        [MaxLength(1000)]
         public string OfficeAddress { get; set; }
+
+        [MaxLength(20)]
         public string PhoneNumber { get; set; }
 
-        [ForeignKey("Organization")]
+        [Required]
         public int OrganizationId { get; set; }
+
+        [ForeignKey("OrganizationId")]
         public Organization Organization { get; set; }
     }
 }

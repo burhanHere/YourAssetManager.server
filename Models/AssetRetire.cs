@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourAssetManager.Server.Models
 {
-    public class AssetMaintenance
+    public class AssetRetire
     {
         [Key]
         public int Id { get; set; }
 
         [Required]
-        public DateTime MaintenanceDate { get; set; }
+        public DateTime RetiredOn { get; set; }
 
         [MaxLength(1000)]
-        public string Description { get; set; }
+        public string RetirementReason { get; set; }
 
         [Required]
         public int AssetId { get; set; }

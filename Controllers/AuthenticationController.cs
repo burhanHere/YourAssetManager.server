@@ -11,7 +11,7 @@ namespace YourAssetManager.Server.Controllers
     [AllowAnonymous]
     [ApiController]
     [Route("YourAssetManager.Server/{controller}")]
-    public class AuthenticationController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration) : ControllerBase
+    public class AuthenticationController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration) : ControllerBase
     {
         // Initialize the authentication repository using the provided services
         private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration);

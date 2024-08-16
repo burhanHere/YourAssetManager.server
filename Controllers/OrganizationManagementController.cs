@@ -4,15 +4,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
-using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
-    [Route("YourAssetManager.Server /{controller}")]
+    [Route("YourAssetManager.Serverg/{controller}")]
     [Authorize(Roles = "OrganizationOwner")]
     [ApiController]
-    public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager) : ControllerBase
+    public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
         private readonly OrganizationManagementRepository _organizationManagementRepository = new(applicationDbContext, userManager);
 
@@ -59,6 +58,14 @@ namespace YourAssetManager.Server.Controllers
             {
                 // Return a NotFound response if something went wrong and the organization was not created
                 return NotFound(result);
+            }
+            else if (result.Status == StatusCodes.Status409Conflict)
+            {
+                return Conflict(result);
+            }
+            else if (result.Status == StatusCodes.Status500InternalServerError)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, result);
             }
             // Return a BadRequest response for any other errors
             return BadRequest(result);

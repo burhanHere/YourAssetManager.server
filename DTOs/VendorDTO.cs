@@ -1,6 +1,6 @@
 namespace YourAssetManager.Server.DTOs
 {
-    public class VenderDTO
+    public class VendorDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -34,7 +34,7 @@ internal class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 2))));
         // adding idnetity
-        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         {
             // Password settings
             options.Password.RequireNonAlphanumeric = true;

@@ -13,9 +13,9 @@ namespace YourAssetManager.Server.Controllers
     [Authorize(Roles = "OrganizationOwner")]
     [ApiController]
     [Route("YourAssetManager.Server/{controller}")]
-    public class AssetManagementController(ApplicationDbContext applicationDbContext) : ControllerBase
+    public class AssetManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
-        private readonly AssetManagementRepository _assetManagementRepository = new(applicationDbContext);
+        private readonly AssetManagementRepository _assetManagementRepository = new(applicationDbContext, userManager);
 
         [HttpGet("/GetAllAssets")]
         public async Task<ApiResponseDTO> GetAllAssets()

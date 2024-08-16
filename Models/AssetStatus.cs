@@ -2,12 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YourAssetManager.Server.Models
 {
-    public class LogAction
+    public class AssetStatus
     {
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please add Action Name.")]
-        public string ActionName { get; set; }
+        [Required]
+        [MaxLength(255)]
+        public string StatusName { get; set; }
     }
 }

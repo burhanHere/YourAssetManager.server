@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace YourAssetManager.Server.Models
 {
@@ -9,56 +8,72 @@ namespace YourAssetManager.Server.Models
         [Key]
         public int AssetId { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset Name.")]
+        [Required]
+        [MaxLength(255)]
         public string AssetName { get; set; }
 
+        [Required]
+        [MaxLength(1000)]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset status.")]
-        public string Status { get; set; }
-
-        [Required(ErrorMessage = "Please add Asset Purchase Date.")]
+        [Required]
         public DateTime PurchaseDate { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset Purchase Price.")]
+        [Required]
         public double PurchasePrice { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset Serial Number.")]
+        [Required]
+        [MaxLength(255)]
         public string SerialNumber { get; set; }
 
+        [Required]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
-        public DateTime UpdatedDate { get; set; }
-        public DateTime LastServiced { get; set; }
-        public string Problems { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset Identification Number.")]
+        [Required]
+        public DateTime UpdatedDate { get; set; }
+
+        [Required]
+        [MaxLength(255)]
         public string AssetIdentificationNumber { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset Manufacturer.")]
+        [Required]
+        [MaxLength(255)]
         public string Manufacturer { get; set; }
 
-        [Required(ErrorMessage = "Please add Asset Model.")]
+        [Required]
+        [MaxLength(255)]
         public string Model { get; set; }
 
-        [ForeignKey("Organization")]
+        [Required]
+        public int AssetStatusId { get; set; }
+
+        [ForeignKey("AssetStatusId")]
+        public AssetStatus AssetStatus { get; set; }
+
+        [Required]
         public int OrganizationId { get; set; }
 
-        [ForeignKey("AssetCategory")]
+        public string CatagoryReleventFeildsData { get; set; }
+
+        [ForeignKey("OrganizationId")]
+        public Organization Organization { get; set; }
+
+        [Required]
         public int AssetCategoryId { get; set; }
 
-        [ForeignKey("AssetSubCategory")]
-        public int AssetSubCategoryId { get; set; }
+        [ForeignKey("AssetCategoryId")]
+        public AssetCategory AssetCategory { get; set; }
 
-        [ForeignKey("AssetType")]
+        [Required]
         public int AssetTypeId { get; set; }
 
-        [ForeignKey("Vender")]
-        public int VenderId { get; set; }
-
-        public Organization Organization { get; set; }
-        public AssetCategory AssetCategory { get; set; }
-        public AssetSubCategory AssetSubCategory { get; set; }
+        [ForeignKey("AssetTypeId")]
         public AssetType AssetType { get; set; }
-        public Vender Vender { get; set; }
+
+        [Required]
+        public int VendorId { get; set; }
+
+        [ForeignKey("VendorId")]
+        public Vendor Vendor { get; set; }
     }
 }

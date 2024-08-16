@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace YourAssetManager.Server.Models
@@ -9,25 +8,23 @@ namespace YourAssetManager.Server.Models
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please add Organization Name.")]
+        [Required]
+        [MaxLength(255)]
         public string OrganizationName { get; set; }
 
+        [MaxLength(1000)]
         public string Description { get; set; }
+
+        [Required]
         public bool ActiveOrganization { get; set; }
+
+        [Required]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        [Required]
         public DateTime UpdatedDate { get; set; }
 
-        [Required(ErrorMessage = "Please enter Organization Domain.")]
+        [MaxLength(255)]
         public string OrganizationDomain { get; set; }
-
-        [ForeignKey("ApplicationUser")]
-        public string ApplicationUserId { get; set; }
-
-        [JsonIgnore]
-        public ApplicationUser ApplicationUser { get; set; }
-
-        [JsonIgnore]
-        public ICollection<ApplicationUser> AssetManagers { get; set; } = new List<ApplicationUser>();  // Asset Managers in this organization
-        public ICollection<AssetCategory> AssetCategories { get; set; } = new List<AssetCategory>();  // Asset Managers in this organization
     }
 }

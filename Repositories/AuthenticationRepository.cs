@@ -1,9 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.server.Services;
 using YourAssetManager.Server.DTOs;
@@ -15,7 +13,7 @@ namespace YourAssetManager.Server.Repositories
     /// <summary>
     /// Repository for handling authentication-related tasks.
     /// </summary>
-    public class AuthenticationRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration)
+    public class AuthenticationRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration)
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationRepository"/> class.
@@ -23,7 +21,7 @@ namespace YourAssetManager.Server.Repositories
         /// <param name="userManager">The user manager for handling user-related tasks.</param>
         /// <param name="roleManager">The role manager for handling role-related tasks.</param>
         /// <param name="appSettings">Application settings for configuring services.</param>
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly EmailService _emailService = new(mailSettings);
         private readonly IConfiguration _configuration = configuration;
@@ -51,7 +49,7 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Create a new user
-            ApplicationUser newUser = new()
+            IdentityUser newUser = new()
             {
                 Email = signUpModel.Email,
                 UserName = signUpModel.UserName,
@@ -69,7 +67,8 @@ namespace YourAssetManager.Server.Repositories
                     {
                         "Unable to register new user.",
                         "Please try again later."
-                    }
+                    },
+                    Errors = createUser.Errors
                 };
             }
 
