@@ -1,7 +1,9 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Repositories;
 
@@ -10,9 +12,9 @@ namespace YourAssetManager.Server.Controllers
     [Route("YourAssetManager.Server/{controller}")]
     [ApiController]
     [Authorize(Roles = "OrganizationOwner")]
-    public class AssetTypeManagementController(AssetTypeManagementRepository assetTypeRepository) : ControllerBase
+    public class AssetTypeManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
-        private readonly AssetTypeManagementRepository _assetTypeRepository = assetTypeRepository;
+        private readonly AssetTypeManagementRepository _assetTypeRepository = new(applicationDbContext, userManager);
 
         // Define the CreateAssetType endpoint to create a new asset type for the current user's organization
         [HttpPost("/CreateAssetType")]
