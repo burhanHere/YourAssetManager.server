@@ -1,11 +1,7 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Data;
-using YourAssetManager.Server.DTOs;
-using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
@@ -17,22 +13,8 @@ namespace YourAssetManager.Server.Controllers
     {
         private readonly AssetManagementRepository _assetManagementRepository = new(applicationDbContext, userManager);
 
-        [HttpGet("/GetAllAssets")]
-        public async Task<ApiResponseDTO> GetAllAssets()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                // If the username is not found, return an unauthorized response
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status401Unauthorized,
-                    ResponseData = new List<string> { "User not found in token." }
-                };
-            }
-            ApiResponseDTO result = await _assetManagementRepository.GetAllAssets(userId);
-            return result;
-        }
+        // [HttpGet("/GetAllAssets")]
+        // public async Task<ApiResponseDTO> GetAllAssets() { return Ok(); }
 
         // [HttpGet("/GetAssetById")]
         // public async Task<IActionResult> GetAssetById() { return Ok(); }

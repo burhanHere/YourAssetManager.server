@@ -3,10 +3,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using YourAssetManager.server.Services;
+using YourAssetManager.Server.Services;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Helpers;
-using YourAssetManager.Server.Models;
 
 namespace YourAssetManager.Server.Repositories
 {
@@ -324,11 +323,19 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
+        /// <summary>
+        /// Initiates the password reset process for the user with the specified email.
+        /// This method checks if the user exists, generates a password reset token, 
+        /// and sends a reset password email to the user with a link to reset their password.
+        /// </summary>
+        /// <param name="forgetPasswordRequest">The request model containing the user's email address.</param>
+        /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the password reset initiation.</returns>
         public async Task<ApiResponseDTO> ForgetPassword(ForgetPasswordRequestDTO forgetPasswordRequest)
-        {
+        {// Find the user by email
             var user = await _userManager.FindByEmailAsync(forgetPasswordRequest.Email);
             if (user == null)
             {
+                // User not found
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
@@ -339,18 +346,19 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            // creating forget password token
+            // Generate a password reset token for the user
             var forgetPasswordToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            // Sending confirmation link for email confirmation
+            // Create a reset password link using the generated token
             // string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ResetPassword", forgetPasswordToken, user.Email!)}>Click</a>";
             string message = $"Please click the link below to reset your password.\nPassowrd Reset Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:4200/auth", "resetpassword", forgetPasswordToken, user.Email!)}>Click</a>";
             string subject = "Reset password E-Mail (No Reply)";
+            // Send the reset password email
             bool emailStatus = await _emailService.SendEmailAsync(user.Email!, subject, message);
 
             if (!emailStatus)
             {
-                // Failed to send confirmation email
+                // Failed to send the reset password email
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
@@ -360,6 +368,8 @@ namespace YourAssetManager.Server.Repositories
                         }
                 };
             }
+
+            // Successful initiation of password reset process
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
@@ -371,8 +381,15 @@ namespace YourAssetManager.Server.Repositories
             };
         }
 
+        /// <summary>
+        /// Resets the user's password using the provided reset token and new password.
+        /// This method verifies if the user exists, validates the reset token, and updates the password.
+        /// </summary>
+        /// <param name="resetPasswordModel">The model containing the user's email, reset token, and new password.</param>
+        /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the password reset operation.</returns>
         public async Task<ApiResponseDTO> ResetPassword(ResetPasswordDTO resetPassowrdModel)
         {
+            // Find the user by email
             var user = await _userManager.FindByEmailAsync(resetPassowrdModel.Email!);
             if (user == null)
             {
@@ -386,9 +403,12 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+
+            // Reset the user's password using the provided token and new password
             var passwordResetResult = await _userManager.ResetPasswordAsync(user, resetPassowrdModel.Token!, resetPassowrdModel.NewPassword!);
             if (!passwordResetResult.Succeeded)
             {
+                // Password reset failed
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
@@ -400,6 +420,9 @@ namespace YourAssetManager.Server.Repositories
                     Errors = passwordResetResult.Errors
                 };
             }
+
+
+            // Successful password reset
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,

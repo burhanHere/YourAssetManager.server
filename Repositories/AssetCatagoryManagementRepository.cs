@@ -17,8 +17,8 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="userManager">The user manager to handle user-related operations.</param>
         /// <param name="applicationDbContext">The database context for accessing application data.</param>
-        UserManager<IdentityUser> _userManager = userManager;
-        ApplicationDbContext _applicationDbContext = applicationDbContext;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
         /// <summary>
         /// Retrieves all asset categories associated with the signed-in user.
         /// </summary>

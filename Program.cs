@@ -4,10 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using YourAssetManager.server.Services;
+using YourAssetManager.Server.Services;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
-using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Services.Interfaces;
 
 internal class Program
