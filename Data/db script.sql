@@ -16,35 +16,8 @@ CREATE TABLE `AspNetRoles` (
     CONSTRAINT `PK_AspNetRoles` PRIMARY KEY (`Id`)
 ) CHARACTER SET = utf8mb4;
 
-CREATE TABLE `AssetStatuses` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `StatusName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    CONSTRAINT `PK_AssetStatuses` PRIMARY KEY (`Id`)
-) CHARACTER SET = utf8mb4;
-
-CREATE TABLE `Organizations` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `OrganizationName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `Description` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
-    `ActiveOrganization` tinyint(1) NOT NULL,
-    `CreatedDate` datetime(6) NOT NULL,
-    `UpdatedDate` datetime(6) NOT NULL,
-    `OrganizationDomain` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    CONSTRAINT `PK_Organizations` PRIMARY KEY (`Id`)
-) CHARACTER SET = utf8mb4;
-
-CREATE TABLE `AspNetRoleClaims` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `RoleId` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `ClaimType` longtext CHARACTER SET utf8mb4 NULL,
-    `ClaimValue` longtext CHARACTER SET utf8mb4 NULL,
-    CONSTRAINT `PK_AspNetRoleClaims` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_AspNetRoleClaims_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `AspNetRoles` (`Id`) ON DELETE CASCADE
-) CHARACTER SET = utf8mb4;
-
 CREATE TABLE `AspNetUsers` (
-    `Id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `OrganizationId` int NOT NULL,
+`Id` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `UserName` varchar(256) CHARACTER SET utf8mb4 NULL,
     `NormalizedUserName` varchar(256) CHARACTER SET utf8mb4 NULL,
     `Email` varchar(256) CHARACTER SET utf8mb4 NULL,
@@ -59,38 +32,33 @@ CREATE TABLE `AspNetUsers` (
     `LockoutEnd` datetime(6) NULL,
     `LockoutEnabled` tinyint(1) NOT NULL,
     `AccessFailedCount` int NOT NULL,
-    CONSTRAINT `PK_AspNetUsers` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_AspNetUsers_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE RESTRICT
+CONSTRAINT `PK_AspNetUsers` PRIMARY KEY (`Id`)
 ) CHARACTER SET = utf8mb4;
 
-CREATE TABLE `AssetCategories` (
+CREATE TABLE `AssetStatuses` ( 
     `Id` int NOT NULL AUTO_INCREMENT,
-    `CategoryName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+`StatusName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+CONSTRAINT `PK_AssetStatuses` PRIMARY KEY (`Id`)
+) CHARACTER SET = utf8mb4;
+
+CREATE TABLE `Organizations` ( 
+    `Id` int NOT NULL AUTO_INCREMENT,
+`OrganizationName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `Description` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
-    `RelevantInputFields` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
-    `CategoryOrganizationId` int NOT NULL,
-    CONSTRAINT `PK_AssetCategories` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_AssetCategories_Organizations_CategoryOrganizationId` FOREIGN KEY (`CategoryOrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
+`ActiveOrganization` tinyint(1) NOT NULL,
+`CreatedDate` datetime(6) NOT NULL,
+`UpdatedDate` datetime(6) NOT NULL,
+`OrganizationDomain` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+CONSTRAINT `PK_Organizations` PRIMARY KEY (`Id`)
 ) CHARACTER SET = utf8mb4;
 
-CREATE TABLE `AssetTypes` (
+CREATE TABLE `AspNetRoleClaims` ( 
     `Id` int NOT NULL AUTO_INCREMENT,
-    `AssetTypeName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `Description` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
-    `OrganizationId` int NOT NULL,
-    CONSTRAINT `PK_AssetTypes` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_AssetTypes_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
-) CHARACTER SET = utf8mb4;
-
-CREATE TABLE `Vendors` (
-    `Id` int NOT NULL AUTO_INCREMENT,
-    `Name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `Email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
-    `OfficeAddress` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
-    `PhoneNumber` varchar(20) CHARACTER SET utf8mb4 NOT NULL,
-    `OrganizationId` int NOT NULL,
-    CONSTRAINT `PK_Vendors` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_Vendors_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
+`RoleId` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+`ClaimType` longtext CHARACTER SET utf8mb4 NULL,
+`ClaimValue` longtext CHARACTER SET utf8mb4 NULL,
+CONSTRAINT `PK_AspNetRoleClaims` PRIMARY KEY (`Id`),
+CONSTRAINT `FK_AspNetRoleClaims_AspNetRoles_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `AspNetRoles` (`Id`) ON DELETE CASCADE
 ) CHARACTER SET = utf8mb4;
 
 CREATE TABLE `AspNetUserClaims` (
@@ -135,13 +103,43 @@ CREATE TABLE `AspNetUserTokens` (
     CONSTRAINT `FK_AspNetUserTokens_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE
 ) CHARACTER SET = utf8mb4;
 
-CREATE TABLE `DeactivatedOrganizations` (
+CREATE TABLE `AssetCategories` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `CategoryName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+    `Description` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
+    `RelevantInputFields` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
+    `CategoryOrganizationId` int NOT NULL,
+    CONSTRAINT `PK_AssetCategories` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_AssetCategories_Organizations_CategoryOrganizationId` FOREIGN KEY (`CategoryOrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
+) CHARACTER SET = utf8mb4;
+
+CREATE TABLE `AssetTypes` (
+    `Id` int NOT NULL AUTO_INCREMENT,
+    `AssetTypeName` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+    `Description` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
+    `OrganizationId` int NOT NULL,
+    CONSTRAINT `PK_AssetTypes` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_AssetTypes_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
+) CHARACTER SET = utf8mb4;
+
+CREATE TABLE `UserOrganizations` (
     `Id` int NOT NULL AUTO_INCREMENT,
     `OrganizationId` int NOT NULL,
-    `ApplicationUserId` varchar(256) CHARACTER SET utf8mb4 NOT NULL,
-    CONSTRAINT `PK_DeactivatedOrganizations` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_DeactivatedOrganizations_AspNetUsers_ApplicationUserId` FOREIGN KEY (`ApplicationUserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE RESTRICT,
-    CONSTRAINT `FK_DeactivatedOrganizations_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE RESTRICT
+    `UserId` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+    CONSTRAINT `PK_UserOrganizations` PRIMARY KEY (`Id`),
+    CONSTRAINT `FK_UserOrganizations_AspNetUsers_UserId` FOREIGN KEY (`UserId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_UserOrganizations_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
+) CHARACTER SET = utf8mb4;
+
+CREATE TABLE `Vendors` ( 
+    `Id` int NOT NULL AUTO_INCREMENT,
+`Name` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+`Email` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
+`OfficeAddress` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
+`PhoneNumber` varchar(20) CHARACTER SET utf8mb4 NOT NULL,
+    `OrganizationId` int NOT NULL,
+CONSTRAINT `PK_Vendors` PRIMARY KEY (`Id`),
+CONSTRAINT `FK_Vendors_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE
 ) CHARACTER SET = utf8mb4;
 
 CREATE TABLE `Assets` (
@@ -152,22 +150,22 @@ CREATE TABLE `Assets` (
     `PurchasePrice` double NOT NULL,
     `SerialNumber` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `CreatedDate` datetime(6) NOT NULL,
-    `UpdatedDate` datetime(6) NOT NULL,
-    `Problems` varchar(1000) CHARACTER SET utf8mb4 NOT NULL,
+`UpdatedDate` datetime(6) NOT NULL,
     `AssetIdentificationNumber` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `Manufacturer` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `Model` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `AssetStatusId` int NOT NULL,
     `OrganizationId` int NOT NULL,
+`CatagoryReleventFeildsData` longtext CHARACTER SET utf8mb4 NOT NULL,
     `AssetCategoryId` int NOT NULL,
     `AssetTypeId` int NOT NULL,
     `VendorId` int NOT NULL,
     CONSTRAINT `PK_Assets` PRIMARY KEY (`AssetId`),
     CONSTRAINT `FK_Assets_AssetCategories_AssetCategoryId` FOREIGN KEY (`AssetCategoryId`) REFERENCES `AssetCategories` (`Id`) ON DELETE CASCADE,
-    CONSTRAINT `FK_Assets_AssetStatuses_AssetStatusId` FOREIGN KEY (`AssetStatusId`) REFERENCES `AssetStatuses` (`Id`) ON DELETE SET NULL,
+CONSTRAINT `FK_Assets_AssetStatuses_AssetStatusId` FOREIGN KEY (`AssetStatusId`) REFERENCES `AssetStatuses` (`Id`) ON DELETE CASCADE,
     CONSTRAINT `FK_Assets_AssetTypes_AssetTypeId` FOREIGN KEY (`AssetTypeId`) REFERENCES `AssetTypes` (`Id`) ON DELETE CASCADE,
     CONSTRAINT `FK_Assets_Organizations_OrganizationId` FOREIGN KEY (`OrganizationId`) REFERENCES `Organizations` (`Id`) ON DELETE CASCADE,
-    CONSTRAINT `FK_Assets_Vendors_VendorId` FOREIGN KEY (`VendorId`) REFERENCES `Vendors` (`Id`) ON DELETE SET NULL
+CONSTRAINT `FK_Assets_Vendors_VendorId` FOREIGN KEY (`VendorId`) REFERENCES `Vendors` (`Id`) ON DELETE CASCADE
 ) CHARACTER SET = utf8mb4;
 
 CREATE TABLE `AssetAssignments` (
@@ -178,8 +176,8 @@ CREATE TABLE `AssetAssignments` (
     `AssignedById` varchar(255) CHARACTER SET utf8mb4 NOT NULL,
     `AssetId` int NOT NULL,
     CONSTRAINT `PK_AssetAssignments` PRIMARY KEY (`Id`),
-    CONSTRAINT `FK_AssetAssignments_AspNetUsers_AssignedById` FOREIGN KEY (`AssignedById`) REFERENCES `AspNetUsers` (`Id`) ON DELETE SET NULL,
-    CONSTRAINT `FK_AssetAssignments_AspNetUsers_AssignedToId` FOREIGN KEY (`AssignedToId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE SET NULL,
+CONSTRAINT `FK_AssetAssignments_AspNetUsers_AssignedById` FOREIGN KEY (`AssignedById`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE,
+CONSTRAINT `FK_AssetAssignments_AspNetUsers_AssignedToId` FOREIGN KEY (`AssignedToId`) REFERENCES `AspNetUsers` (`Id`) ON DELETE CASCADE,
     CONSTRAINT `FK_AssetAssignments_Assets_AssetId` FOREIGN KEY (`AssetId`) REFERENCES `Assets` (`AssetId`) ON DELETE CASCADE
 ) CHARACTER SET = utf8mb4;
 
@@ -257,11 +255,9 @@ CREATE INDEX `IX_AspNetUserRoles_RoleId` ON `AspNetUserRoles` (`RoleId`);
 
 CREATE INDEX `EmailIndex` ON `AspNetUsers` (`NormalizedEmail`);
 
-CREATE INDEX `IX_AspNetUsers_OrganizationId` ON `AspNetUsers` (`OrganizationId`);
-
 CREATE UNIQUE INDEX `UserNameIndex` ON `AspNetUsers` (`NormalizedUserName`);
 
-CREATE UNIQUE INDEX `IX_AssetAssignments_AssetId` ON `AssetAssignments` (`AssetId`);
+CREATE INDEX `IX_AssetAssignments_AssetId` ON `AssetAssignments` (`AssetId`);
 
 CREATE INDEX `IX_AssetAssignments_AssignedById` ON `AssetAssignments` (`AssignedById`);
 
@@ -269,11 +265,11 @@ CREATE INDEX `IX_AssetAssignments_AssignedToId` ON `AssetAssignments` (`Assigned
 
 CREATE INDEX `IX_AssetCategories_CategoryOrganizationId` ON `AssetCategories` (`CategoryOrganizationId`);
 
-CREATE UNIQUE INDEX `IX_AssetMaintenances_AssetId` ON `AssetMaintenances` (`AssetId`);
+CREATE INDEX `IX_AssetMaintenances_AssetId` ON `AssetMaintenances` (`AssetId`);
 
-CREATE UNIQUE INDEX `IX_AssetRetires_AssetId` ON `AssetRetires` (`AssetId`);
+CREATE INDEX `IX_AssetRetires_AssetId` ON `AssetRetires` (`AssetId`);
 
-CREATE UNIQUE INDEX `IX_AssetReturns_AssetAssignmentId` ON `AssetReturns` (`AssetAssignmentId`);
+CREATE INDEX `IX_AssetReturns_AssetAssignmentId` ON `AssetReturns` (`AssetAssignmentId`);
 
 CREATE INDEX `IX_Assets_AssetCategoryId` ON `Assets` (`AssetCategoryId`);
 
@@ -287,9 +283,9 @@ CREATE INDEX `IX_Assets_VendorId` ON `Assets` (`VendorId`);
 
 CREATE INDEX `IX_AssetTypes_OrganizationId` ON `AssetTypes` (`OrganizationId`);
 
-CREATE INDEX `IX_DeactivatedOrganizations_ApplicationUserId` ON `DeactivatedOrganizations` (`ApplicationUserId`);
+CREATE INDEX `IX_UserOrganizations_OrganizationId` ON `UserOrganizations` (`OrganizationId`);
 
-CREATE UNIQUE INDEX `IX_DeactivatedOrganizations_OrganizationId` ON `DeactivatedOrganizations` (`OrganizationId`);
+CREATE INDEX `IX_UserOrganizations_UserId` ON `UserOrganizations` (`UserId`);
 
 CREATE INDEX `IX_Vendors_OrganizationId` ON `Vendors` (`OrganizationId`);
 
@@ -299,7 +295,7 @@ INSERT INTO
         `ProductVersion`
     )
 VALUES (
-        '20240816060638_InitialCreate',
+'20240816141158_InitialCreate',
         '8.0.7'
     );
 
