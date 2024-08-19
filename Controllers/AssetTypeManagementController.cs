@@ -48,49 +48,30 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetAllAssetTypes endpoint to retrieve all asset types for the current user's organization
         [HttpGet("/GetAllAssetTypes")]
-        public async Task<IActionResult> GetAllAssetTypes()
+        public async Task<ApiResponseDTO> GetAllAssetTypes()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId.IsNullOrEmpty())
             {
                 // If the user ID is not found in the token, return an unauthorized response
-                return Unauthorized(new ApiResponseDTO
+                return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status401Unauthorized,
                     ResponseData = new List<string> { "User not found in token." }
-                });
+                };
             }
             // Call the repository method to get all asset types associated with the current user
             ApiResponseDTO result = await _assetTypeRepository.GetAllAssetTypes(userId!);
-
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if asset types were successfully retrieved
-                return Ok(result);
-            }
-            else if (result.Status == StatusCodes.Status404NotFound)
-            {
-                // Return a NotFound response if no asset types were found
-                return NotFound(result);
-            }
-            // Return a badrequest response 
-            return BadRequest(result);
+            return result;
         }
 
         // Define the GetAssetTypeById endpoint to retrieve a specific asset type by its ID
         [HttpGet("/GetAssetTypeById")]
-        public async Task<IActionResult> GetAssetTypeById(int assetTypeId)
+        public async Task<ApiResponseDTO> GetAssetTypeById(int assetTypeId)
         {
             // Call the repository method to get the asset type by its ID
             ApiResponseDTO result = await _assetTypeRepository.GetAssetTypeById(assetTypeId);
-
-            if (result.Status == StatusCodes.Status200OK)
-            {
-                // Return an OK response if the asset type was successfully retrieved
-                return Ok(result);
-            }
-            // Return a NotFound response if the asset type was not found
-            return NotFound(result);
+            return result;
         }
 
         // Define the UpdateAssetType endpoint to update an existing asset type
