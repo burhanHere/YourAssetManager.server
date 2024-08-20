@@ -10,12 +10,12 @@ namespace YourAssetManager.Server.Controllers
 {
     [Authorize(Roles = "OrganizationOwner")]
     [ApiController]
-    [Route("YourAssetManager.Server/{controller}")]
+    [Route("YourAssetManager.Server/[controller]")]
     public class AssetManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
         private readonly AssetManagementRepository _assetManagementRepository = new(applicationDbContext, userManager);
 
-        [HttpPost("/CreateAsset")]
+        [HttpPost("CreateAsset")]
         public async Task<IActionResult> CreateAsset([FromBody] AssetDTO newAssetDTO)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -48,7 +48,7 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpPut("/UpdateAsset")]
+        [HttpPut("UpdateAsset")]
         public async Task<IActionResult> UpdateAsset([FromBody] AssetDTO newAssetDTO)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -77,7 +77,7 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("/GetAllAssets")]
+        [HttpGet("GetAllAssets")]
         public async Task<ApiResponseDTO> GetAllAssets()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -97,7 +97,7 @@ namespace YourAssetManager.Server.Controllers
             return result;
         }
 
-        [HttpGet("/GetAssetById")]
+        [HttpGet("GetAssetById")]
         public async Task<ApiResponseDTO> GetAssetById(int assetId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -117,7 +117,7 @@ namespace YourAssetManager.Server.Controllers
             return result;
         }
 
-        [HttpDelete("/DeleteAsset")]
+        [HttpDelete("DeleteAsset")]
         public async Task<IActionResult> DeleteAsset(int assetId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -145,19 +145,19 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // [HttpPost("/AssignAsset")]
+        // [HttpPost("AssignAsset")]
         // public async Task<IActionResult> AssignAsset([FromBody] AssetRequestDTO request) { return Ok(); }
 
-        // [HttpPost("/UnassignAsset")]
+        // [HttpPost("UnassignAsset")]
         // public async Task<IActionResult> UnassignAsset([FromBody] AssetRequestDTO request) { return Ok(); }
 
-        // [HttpGet("/GetAssetsAssignedToUser/{userId}")]
+        // [HttpGet("GetAssetsAssignedToUser/{userId}")]
         // public async Task<IActionResult> GetAssetsAssignedToUser(int userId) { return Ok(); }
 
-        // [HttpGet("/GetAssetAssignmentDetails/{assetId}")]
+        // [HttpGet("GetAssetAssignmentDetails/{assetId}")]
         // public async Task<IActionResult> GetAssetAssignmentDetails(int assetId) { return Ok(); }
 
-        // [HttpPut("/UpdateAssetAssignment")]
+        // [HttpPut("UpdateAssetAssignment")]
         // public async Task<IActionResult> UpdateAssetAssignment([FromBody] AssetRequestDTO request) { return Ok(); }
     }
 }

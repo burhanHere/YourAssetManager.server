@@ -11,5 +11,7 @@ namespace YourAssetManager.Server.DTOs
 
         [Required]
         public string? Password { get; set; }
+
+        public string? requiredRole { get; set; }
     }
 }

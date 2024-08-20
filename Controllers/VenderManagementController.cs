@@ -11,13 +11,13 @@ namespace YourAssetManager.Server.Controllers
 {
     [Authorize(Roles = "OrganizationOwner")]
     [ApiController]
-    [Route("YourAssetManager.Server/{controller}")]
+    [Route("YourAssetManager.Server/[controller]")]
     public class VendorManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
         private readonly VendorManagementRepository _vendorManagementRepository = new(applicationDbContext, userManager);
 
         // Define the CreateVendor endpoint to create a new vendor for the current user's organization
-        [HttpPost("/CreateVendor")]
+        [HttpPost("CreateVendor")]
         public async Task<IActionResult> CreateVendor([FromBody]VendorDTO VendorDTO)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -47,7 +47,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the GetAllVendors endpoint to retrieve all vendors for the current user's organization
-        [HttpGet("/GetAllVendors")]
+        [HttpGet("GetAllVendors")]
         public async Task<ApiResponseDTO> GetAllVendors()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -67,7 +67,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the UpdateVendor endpoint to update an existing vendor
-        [HttpPost("/UpdateVendor")]
+        [HttpPost("UpdateVendor")]
         public async Task<IActionResult> UpdateVendor([FromBody]VendorDTO VendorUpdate)
         {
             // Call the repository method to update the vendor information
@@ -87,7 +87,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the DeleteVendor endpoint to delete an existing vendor by its ID
-        [HttpDelete("/DeleteVendor")]
+        [HttpDelete("DeleteVendor")]
         public async Task<IActionResult> DeleteVendor(int VendorId)
         {
             // Call the repository method to delete the vendor by its ID
@@ -113,7 +113,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the GetVendorById endpoint to retrieve a specific vendor by its ID
-        [HttpGet("/GetVendorById")]
+        [HttpGet("GetVendorById")]
         public async Task<ApiResponseDTO> GetVendorById(int VendorId)
         {
             // Call the repository method to get the vendor by its ID

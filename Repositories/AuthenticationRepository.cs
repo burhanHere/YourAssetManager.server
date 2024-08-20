@@ -108,7 +108,6 @@ namespace YourAssetManager.Server.Repositories
                         ResponseData = new List<string>
                         {
                             "Account created successfully.",
-                            $"Reset password link has been sent to your email: {newUser.Email[..3]}...{newUser.Email[newUser.Email.IndexOf("@")..]}",
                             "Confirmation email sent. Please check your email.",
                             "Failed to assign role to the user.",
                             "Please try again later."

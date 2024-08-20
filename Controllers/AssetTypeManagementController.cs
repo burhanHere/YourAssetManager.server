@@ -8,7 +8,7 @@ using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
-    [Route("YourAssetManager.Server/{controller}")]
+    [Route("YourAssetManager.Server/[controller]")]
     [ApiController]
     [Authorize(Roles = "OrganizationOwner")]
     public class AssetTypeManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
@@ -16,7 +16,7 @@ namespace YourAssetManager.Server.Controllers
         private readonly AssetTypeManagementRepository _assetTypeRepository = new(applicationDbContext, userManager);
 
         // Define the CreateAssetType endpoint to create a new asset type for the current user's organization
-        [HttpPost("/CreateAssetType")]
+        [HttpPost("CreateAssetType")]
         public async Task<IActionResult> CreateAssetType(AssetTypeDTO assetType)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -46,7 +46,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the GetAllAssetTypes endpoint to retrieve all asset types for the current user's organization
-        [HttpGet("/GetAllAssetTypes")]
+        [HttpGet("GetAllAssetTypes")]
         public async Task<ApiResponseDTO> GetAllAssetTypes()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -65,7 +65,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the GetAssetTypeById endpoint to retrieve a specific asset type by its ID
-        [HttpGet("/GetAssetTypeById")]
+        [HttpGet("GetAssetTypeById")]
         public async Task<ApiResponseDTO> GetAssetTypeById(int assetTypeId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -84,7 +84,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the UpdateAssetType endpoint to update an existing asset type
-        [HttpPut("/UpdateAssetType")]
+        [HttpPut("UpdateAssetType")]
         public async Task<IActionResult> UpdateAssetType([FromBody] AssetTypeDTO assetType)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -115,7 +115,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the DeleteAssetType endpoint to delete an existing asset type by its ID
-        [HttpDelete("/DeleteAssetType")]
+        [HttpDelete("DeleteAssetType")]
         public async Task<IActionResult> DeleteAssetType(int assetTypeId)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

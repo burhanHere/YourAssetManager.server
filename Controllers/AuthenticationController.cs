@@ -9,14 +9,14 @@ namespace YourAssetManager.Server.Controllers
 {
     [AllowAnonymous]
     [ApiController]
-    [Route("YourAssetManager.Server/{controller}")]
+    [Route("YourAssetManager.Server/[controller]")]
     public class AuthenticationController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration, ApplicationDbContext applicationDbContext) : ControllerBase
     {
         // Initialize the authentication repository using the provided services
         private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration, applicationDbContext);
 
         // Define a simple endpoint to check if the API is alive
-        [HttpGet("/IsAlive")]
+        [HttpGet("IsAlive")]
         public IActionResult Get()
         {
             // Return a simple OK response indicating the API is alive
@@ -24,7 +24,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the SignUp endpoint to handle user registration
-        [HttpPost("/SignUp")]
+        [HttpPost("SignUp")]
         public async Task<IActionResult> SignUp([FromBody] SignUpDTO signUpModel)
         {
             // Call the SignUp method from the authentication repository
@@ -46,7 +46,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the ConfirmEmail endpoint to handle email confirmation
-        [HttpGet("/ConfirmEmail")]
+        [HttpGet("ConfirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string token, string email)
         {
             // Call the ConfirmEmail method from the authentication repository
@@ -74,7 +74,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the SignIn endpoint to handle user SignIn
-        [HttpPost("/SignIn")]
+        [HttpPost("SignIn")]
         public async Task<IActionResult> SignIn([FromBody] SignInDTO signInModel)
         {
             // Call the SignIn method from the authentication repository
@@ -106,7 +106,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the ForgetPassword endpoint to handle passwords reset after forgetting
-        [HttpPost("/ForgetPassword")]
+        [HttpPost("ForgetPassword")]
         public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequestDTO forgetPasswordRequest)
         {
             ApiResponseDTO result = await _authenticationRepository.ForgetPassword(forgetPasswordRequest);
@@ -133,7 +133,7 @@ namespace YourAssetManager.Server.Controllers
         //     return Ok(resetPassowrdModel);
         // }
         // Define the ResetPassword Post endpoint to handle passwords reset
-        [HttpPost("/ResetPassword")]
+        [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPassowrdModel)
         {
             var result = await _authenticationRepository.ResetPassword(resetPassowrdModel);

@@ -10,13 +10,13 @@ namespace YourAssetManager.Server.Controllers
 {
     [Authorize(Roles = "OrganizationOwner")]
     [ApiController]
-    [Route("YourAssetManager.Server/{controller}")]
+    [Route("YourAssetManager.Server/[controller]")]
     public class AssetCatagoryManagementController(UserManager<IdentityUser> userManager, ApplicationDbContext applicationDbContext) : ControllerBase
     {
         private readonly AssetCatagoryManagementRepository _assetCatagoryManagementRepository = new(userManager, applicationDbContext);
 
         // Define the GetAllAssetCategories endpoint to retrieve all asset categories for the current user
-        [HttpGet("/GetAllAssetCategories")]
+        [HttpGet("GetAllAssetCategories")]
         public async Task<ApiResponseDTO> GetAllAssetCategories()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -35,7 +35,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the GetAssetCategoryById endpoint to retrieve an asset category by its ID
-        [HttpGet("/GetAssetCategoryById")]
+        [HttpGet("GetAssetCategoryById")]
         public async Task<ApiResponseDTO> GetAssetCategoryById(int AssetCatagoryId)
         {
             // Call the repository method to get an asset category by its ID
@@ -44,7 +44,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the CreateAssetCategory endpoint to create a new asset category
-        [HttpPost("/CreateAssetCategory")]
+        [HttpPost("CreateAssetCategory")]
         public async Task<IActionResult> CreateAssetCategory([FromBody] AssetCatagoryDTO assetCatagoryDTO)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -73,7 +73,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the UpdateAssetCategory endpoint to update an existing asset category
-        [HttpPut("/UpdateAssetCategory")]
+        [HttpPut("UpdateAssetCategory")]
         public async Task<IActionResult> UpdateAssetCategory([FromBody] AssetCatagoryDTO assetCatagoryDTO)
         {
             // Call the repository method to update an existing asset category
@@ -93,7 +93,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         // Define the DeleteAssetCategory endpoint to delete an asset category
-        [HttpDelete("/DeleteAssetCategory")]
+        [HttpDelete("DeleteAssetCategory")]
         public async Task<IActionResult> DeleteAssetCategory(int AssetCatagoryId)
         {
             // Call the repository method to delete an asset category
