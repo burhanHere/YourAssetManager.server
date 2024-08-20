@@ -337,6 +337,8 @@ namespace YourAssetManager.Server.Repositories
                 ResponseData = new
                 {
                     message = "Sign-in successful.",
+                    email = user.Email,
+                    userName = user.UserName,
                     jwtToken = finalJwtToken
                 }
             };
