@@ -25,10 +25,19 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the SignUp endpoint to handle user registration
         [HttpPost("SignUp")]
-        public async Task<IActionResult> SignUp([FromBody] SignUpDTO signUpModel)
+        public async Task<IActionResult> SignUp([FromBody] SignUpDTO signUpDTO)
         {
-            // Call the SignUp method from the authentication repository
-            ApiResponseDTO result = await _authenticationRepository.SignUp(signUpModel);
+            ApiResponseDTO result;
+            if (signUpDTO.requiredRole == "ORGANIZATIONOWNER")
+            {
+                // Call the SignUpAsOrganizationOwner method from the authentication repository
+                result = await _authenticationRepository.SignUpAsOrganizationOwner(signUpDTO);
+            }
+            else
+            {
+                // Call the SignUpAsEmployee method from the authentication repository
+                result = await _authenticationRepository.SignUpAsEmployee(signUpDTO);
+            }
             // Check the status of the result and return the appropriate response
             if (result.Status == StatusCodes.Status200OK)
             {
@@ -39,6 +48,10 @@ namespace YourAssetManager.Server.Controllers
             {
                 // Return a response with status 403 Forbidden and the result as the body
                 return StatusCode(StatusCodes.Status403Forbidden, result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
             }
 
             // Return a BadRequest response with the result for any other status

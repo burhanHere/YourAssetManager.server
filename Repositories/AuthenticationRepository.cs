@@ -8,6 +8,7 @@ using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Helpers;
 using YourAssetManager.Server.Data;
 using Microsoft.EntityFrameworkCore;
+using YourAssetManager.Server.Models;
 
 namespace YourAssetManager.Server.Repositories
 {
@@ -29,14 +30,14 @@ namespace YourAssetManager.Server.Repositories
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
 
         /// <summary>
-        /// Signs up a new user with the specified signup model.
+        /// Signs up a new user as organizatin owner with the specified signup DTO.
         /// </summary>
-        /// <param name="signUpModel">The signup model containing user information.</param>
+        /// <param name="signUpDTO">The signup model containing user information.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the signup operation.</returns>
-        public async Task<ApiResponseDTO> SignUp(SignUpDTO signUpModel)
+        public async Task<ApiResponseDTO> SignUpAsOrganizationOwner(SignUpDTO signUpDTO)
         {
             // Check if a user already exists with this email
-            var checkUser = await _userManager.FindByEmailAsync(signUpModel.Email!);
+            var checkUser = await _userManager.FindByEmailAsync(signUpDTO.Email!);
             if (checkUser != null)
             {
                 return new ApiResponseDTO
@@ -53,11 +54,154 @@ namespace YourAssetManager.Server.Repositories
             // Create a new user
             IdentityUser newUser = new()
             {
-                Email = signUpModel.Email,
-                UserName = signUpModel.UserName,
+                Email = signUpDTO.Email,
+                UserName = signUpDTO.UserName,
                 SecurityStamp = Guid.NewGuid().ToString(),
             };
-            var createUser = await _userManager.CreateAsync(newUser, signUpModel.Password!);
+            var createUser = await _userManager.CreateAsync(newUser, signUpDTO.Password!);
+
+            if (!createUser.Succeeded)
+            {
+                // User creation failed
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Unable to register new user.",
+                        "Please try again later."
+                    },
+                    Errors = createUser.Errors
+                };
+            }
+            // assigning OrganizationOwner role to the registerer
+            var roleName = "OrganizationOwner";
+            var organizationOwnerRole = await _roleManager.FindByNameAsync(roleName);
+            if (organizationOwnerRole == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    ResponseData = new List<string>
+                        {
+                            $"Role '{roleName}' does not exist. Please contact support."
+                        }
+                };
+            }
+
+            var addToUserRoleResult = await _userManager.AddToRoleAsync(newUser, organizationOwnerRole.Name!);
+            if (!addToUserRoleResult.Succeeded)
+            {
+                var temp = await _userManager.FindByEmailAsync(newUser.Email!);
+                _ = await _userManager.DeleteAsync(temp!);
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    ResponseData = new List<string>
+                        {
+                            "Account created successfully.",
+                            "Confirmation email sent. Please check your email.",
+                            "Failed to assign role to the user.",
+                            "Please try registering your account again."
+                        }
+                };
+            }
+            // Generating confirmation token
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+
+            // Sending confirmation link for email confirmation
+            // string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:5235", "ConfirmEmail", token, newUser.Email!)}>Click</a>";
+            string message = $"Please click the link below to confirm your email address.\nConfirmation Link: <a href ={HelperFunctions.TokenLinkCreated("http://localhost:4200/auth", "EmailConfirmation", token, newUser.Email!)}>Click</a>";
+            string subject = "Confirmation E-Mail (No Reply)";
+            bool emailStatus = await _emailService.SendEmailAsync(newUser.Email!, subject, message);
+
+            if (!emailStatus)
+            {
+                // Account created, but email sending failed
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status200OK,
+                    ResponseData = new List<string>
+                    {
+                        "Account created successfully.",
+                        "Role assigned as OrganizationOwner Role",
+                        "Unable to send confirmation email. Please try to log in later to confirm your email."
+                    }
+                };
+            }
+            // Account created, Email sent and role assigned successfully 
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                    {
+                        "Account created successfully.",
+                        "Confirmation email sent.",
+                        "Role assigned as OrganizationOwner Role"
+                    }
+            };
+        }
+
+        /// <summary>
+        /// Signs up a new user as organizatin owner with the specified signup DTO.
+        /// </summary>
+        /// <param name="signUpDTO">The signup model containing user information.</param>
+        /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the signup operation.</returns>
+        public async Task<ApiResponseDTO> SignUpAsEmployee(SignUpDTO signUpDTO)
+        {
+            // extracting domin to check
+            string email = signUpDTO.Email;
+            string domain = email[email.IndexOf("@")..];
+            if (domain.IsNullOrEmpty())
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid email domain.",
+                        "please chack you email domain."
+                    }
+                };
+            }
+
+            var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationDomain == domain);
+            if (targetOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid email domain.",
+                        "Please chack you email domain"
+                    }
+                };
+            }
+
+            // Check if a user already exists with this email
+            var checkUser = await _userManager.FindByEmailAsync(signUpDTO.Email!);
+            if (checkUser != null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string>
+                    {
+                        "An account is already associated with this email.",
+                        "Please use a different email."
+                    }
+                };
+            }
+
+            // Create a new user
+            IdentityUser newUser = new()
+            {
+                Email = signUpDTO.Email,
+                UserName = signUpDTO.UserName,
+                SecurityStamp = Guid.NewGuid().ToString(),
+            };
+            var createUser = await _userManager.CreateAsync(newUser, signUpDTO.Password!);
 
             if (!createUser.Succeeded)
             {
@@ -74,6 +218,60 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
+            var targetUser = await _userManager.FindByEmailAsync(newUser.Email);
+            // assigning user organziation  to the registerer
+            _applicationDbContext.UserOrganizations.Add(new UserOrganization()
+            {
+                OrganizationId = targetOrganization.Id,
+                UserId = targetUser.Id
+            });
+
+            var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
+            if (savedDbChanges == 0)
+            {
+                await _userManager.DeleteAsync(targetUser);
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Unable to assign organization.",
+                        "UserCreation failed."
+                    }
+                };
+            }
+
+            // assigning Employee role to the registerer
+            var roleName = "Employee";
+            var employeeRole = await _roleManager.FindByNameAsync(roleName);
+            if (employeeRole == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    ResponseData = new List<string>
+                        {
+                            $"Role '{roleName}' does not exist. Please contact support."
+                        }
+                };
+            }
+
+            var addToUserRoleResult = await _userManager.AddToRoleAsync(newUser, employeeRole.Name!);
+            if (!addToUserRoleResult.Succeeded)
+            {
+                var temp = await _userManager.FindByEmailAsync(newUser.Email!);
+                _ = await _userManager.DeleteAsync(temp!);
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    ResponseData = new List<string>
+                        {
+                            "Failed to assign role to the user.",
+                            "Please try registering your account again."
+                        }
+                };
+            }
+
             // Generating confirmation token
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
 
@@ -83,60 +281,30 @@ namespace YourAssetManager.Server.Repositories
             string subject = "Confirmation E-Mail (No Reply)";
             bool emailStatus = await _emailService.SendEmailAsync(newUser.Email!, subject, message);
 
-            if (emailStatus)
+            if (!emailStatus)
             {
-                // assigning OrganizationOwner role to the registerer
-                var roleName = "OrganizationOwner";
-                var organizationOwnerRole = await _roleManager.FindByNameAsync(roleName);
-                if (organizationOwnerRole == null)
-                {
-                    return new ApiResponseDTO
-                    {
-                        Status = StatusCodes.Status500InternalServerError,
-                        ResponseData = new List<string>
-                        {
-                            $"Role '{roleName}' does not exist. Please contact support."
-                        }
-                    };
-                }
-                var addToRoleResult = await _userManager.AddToRoleAsync(newUser, organizationOwnerRole.Name!);
-                if (!addToRoleResult.Succeeded)
-                {
-                    return new ApiResponseDTO
-                    {
-                        Status = StatusCodes.Status500InternalServerError,
-                        ResponseData = new List<string>
-                        {
-                            "Account created successfully.",
-                            "Confirmation email sent. Please check your email.",
-                            "Failed to assign role to the user.",
-                            "Please try again later."
-                        }
-                    };
-                }
-
-                // Account created, Email sent and role assigned successfully 
+                // Account created, but email sending failed
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status200OK,
                     ResponseData = new List<string>
                     {
                         "Account created successfully.",
-                        "Confirmation email sent.",
-                        "Role assigned as OrganizationOwner Role"
+                        "Role assigned as OrganizationOwner Role",
+                        "Unable to send confirmation email. Please try to log in later to confirm your email."
                     }
                 };
             }
-
-            // Account created, but email sending failed
+            // Account created, Email sent and role assigned successfully 
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
-                {
-                    "Account created successfully.",
-                    "Unable to send confirmation email. Please try to log in later to confirm your email."
-                }
+                    {
+                        "Account created successfully.",
+                        "Confirmation email sent.",
+                        "Role assigned as OrganizationOwner Role"
+                    }
             };
         }
 
@@ -222,22 +390,6 @@ namespace YourAssetManager.Server.Repositories
             if (user == null)
             {
                 // User not found
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status404NotFound,
-                    ResponseData = new List<string>
-                    {
-                        "User not found.",
-                        "Please check your email address."
-                    }
-                };
-            }
-
-            // check is organzation is active or exists to associated to that user
-            var userOrganization = await _applicationDbContext.UserOrganizations.AnyAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization);
-            if (!userOrganization)
-            {
-                // organization not found or organization not active
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,
