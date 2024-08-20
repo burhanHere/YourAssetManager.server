@@ -28,7 +28,7 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            var userOrganization = await _applicationDbContext.UserOrganizations.FirstOrDefaultAsync(uo => uo.UserId == userId && uo.OrganizationId == int.Parse(newAssetDTO.OrganizationData) && uo.Organization.ActiveOrganization);
+            var userOrganization = await _applicationDbContext.UserOrganizations.FirstOrDefaultAsync(uo => uo.UserId == userId && uo.Organization.ActiveOrganization);
             if (userOrganization == null)
             {
                 // Return error if organization and user association not found or if organization is deleted(deactivated)
@@ -42,7 +42,7 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var catagory = await _applicationDbContext.AssetCategories.AnyAsync(x => x.Id == int.Parse(newAssetDTO.AssetCategoryData) && x.CategoryOrganizationId == int.Parse(newAssetDTO.OrganizationData));
+            var catagory = await _applicationDbContext.AssetCategories.AnyAsync(x => x.Id == int.Parse(newAssetDTO.AssetCategoryData) && x.CategoryOrganizationId == userOrganization.OrganizationId);
             if (!catagory)
             {
                 // Return error if catagory not fount or if this catagory is not associated to this the give(input) organizatio id
@@ -56,7 +56,7 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var assetType = await _applicationDbContext.AssetTypes.AnyAsync(x => x.Id == int.Parse(newAssetDTO.AssetTypeData) && x.OrganizationId == int.Parse(newAssetDTO.OrganizationData));
+            var assetType = await _applicationDbContext.AssetTypes.AnyAsync(x => x.Id == int.Parse(newAssetDTO.AssetTypeData) && x.OrganizationId == userOrganization.OrganizationId);
             if (!assetType)
             {
                 // Return error if assetType not fount or if this assetType is not associated to this the give(input) organizatio id
@@ -70,7 +70,7 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var vendor = await _applicationDbContext.Vendors.AnyAsync(v => v.Id == int.Parse(newAssetDTO.VendorData) && v.OrganizationId == int.Parse(newAssetDTO.OrganizationData));
+            var vendor = await _applicationDbContext.Vendors.AnyAsync(v => v.Id == int.Parse(newAssetDTO.VendorData) && v.OrganizationId == userOrganization.OrganizationId);
             if (!vendor)
             {
                 // Return error if vendor not fount or if this vendor is not associated to this the give(input) organizatio id
@@ -98,7 +98,7 @@ namespace YourAssetManager.Server.Repositories
                 Manufacturer = newAssetDTO.Manufacturer,
                 Model = newAssetDTO.Model,
                 CatagoryReleventFeildsData = newAssetDTO.CatagoryReleventFeildsData,
-                AssetStatusId = 5,// 5 is the id of available; byu default asset will be available
+                AssetStatusId = 5,// 5 is the id of available; by default asset will be available
                 OrganizationId = userOrganization.OrganizationId,
                 AssetCategoryId = int.Parse(newAssetDTO.AssetCategoryData),
                 AssetTypeId = int.Parse(newAssetDTO.AssetTypeData),
