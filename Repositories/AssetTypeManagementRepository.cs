@@ -160,10 +160,41 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="assetTypeId">The ID of the asset type.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
-        public async Task<ApiResponseDTO> GetAssetTypeById(int assetTypeId)
+        public async Task<ApiResponseDTO> GetAssetTypeById(string userId, int assetTypeId)
         {
+            // Find the organization associated with the user
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+
+            // Find the user's active organization
+            var userOrganization = await _applicationDbContext.UserOrganizations
+                .FirstOrDefaultAsync(uo => uo.UserId == user.Id && uo.Organization.ActiveOrganization);
+
+            if (userOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No active organization found for the user."
+                    }
+                };
+            }
             // Find the asset type by its ID
-            var assetType = await _applicationDbContext.AssetTypes.FirstOrDefaultAsync(x => x.Id == assetTypeId);
+            var assetType = await _applicationDbContext.AssetTypes.FirstOrDefaultAsync(x => x.Id == assetTypeId && x.OrganizationId == userOrganization.OrganizationId);
 
             // Check if the asset type exists
             if (assetType == null)
@@ -196,10 +227,42 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="assetTypeUpdate">The asset type's updated data.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
-        public async Task<ApiResponseDTO> UpdateAssetType(AssetTypeDTO assetTypeUpdate)
+        public async Task<ApiResponseDTO> UpdateAssetType(string userId, AssetTypeDTO assetTypeUpdate)
         {
+            // Find the organization associated with the user
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+
+            // Find the user's active organization
+            var userOrganization = await _applicationDbContext.UserOrganizations
+                .FirstOrDefaultAsync(uo => uo.UserId == user.Id && uo.Organization.ActiveOrganization);
+
+            if (userOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No active organization found for the user."
+                    }
+                };
+            }
+
             // Find the asset type by its ID
-            var existingAssetType = await _applicationDbContext.AssetTypes.FirstOrDefaultAsync(x => x.Id == assetTypeUpdate.Id);
+            var existingAssetType = await _applicationDbContext.AssetTypes.FirstOrDefaultAsync(x => x.Id == assetTypeUpdate.Id && x.OrganizationId == userOrganization.OrganizationId);
 
             // Check if the asset type exists
             if (existingAssetType == null)
@@ -239,10 +302,42 @@ namespace YourAssetManager.Server.Repositories
         /// </summary>
         /// <param name="assetTypeId">The ID of the asset type to delete.</param>
         /// <returns>An <see cref="ApiResponseDTO"/> indicating the status of the operation.</returns>
-        public async Task<ApiResponseDTO> DeleteAssetType(int assetTypeId)
+        public async Task<ApiResponseDTO> DeleteAssetType(string userId, int assetTypeId)
         {
+            // Find the organization associated with the user
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+
+            // Find the user's active organization
+            var userOrganization = await _applicationDbContext.UserOrganizations
+                .FirstOrDefaultAsync(uo => uo.UserId == user.Id && uo.Organization.ActiveOrganization);
+
+            if (userOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No active organization found for the user."
+                    }
+                };
+            }
+
             // Find the asset type by its ID
-            var assetType = await _applicationDbContext.AssetTypes.FirstOrDefaultAsync(x => x.Id == assetTypeId);
+            var assetType = await _applicationDbContext.AssetTypes.FirstOrDefaultAsync(x => x.Id == assetTypeId && x.OrganizationId == userOrganization.OrganizationId);
             if (assetType == null)
             {
                 return new ApiResponseDTO

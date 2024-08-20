@@ -6,13 +6,15 @@ using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Services;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Helpers;
+using YourAssetManager.Server.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace YourAssetManager.Server.Repositories
 {
     /// <summary>
     /// Repository for handling authentication-related tasks.
     /// </summary>
-    public class AuthenticationRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration)
+    public class AuthenticationRepository(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration, ApplicationDbContext applicationDbContext)
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthenticationRepository"/> class.
@@ -24,6 +26,7 @@ namespace YourAssetManager.Server.Repositories
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly EmailService _emailService = new(mailSettings);
         private readonly IConfiguration _configuration = configuration;
+        private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
 
         /// <summary>
         /// Signs up a new user with the specified signup model.
@@ -220,6 +223,22 @@ namespace YourAssetManager.Server.Repositories
             if (user == null)
             {
                 // User not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "User not found.",
+                        "Please check your email address."
+                    }
+                };
+            }
+
+            // check is organzation is active or exists to associated to that user
+            var userOrganization = await _applicationDbContext.UserOrganizations.AnyAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization);
+            if (!userOrganization)
+            {
+                // organization not found or organization not active
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status404NotFound,

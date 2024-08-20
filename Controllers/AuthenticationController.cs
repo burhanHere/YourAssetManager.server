@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Repositories;
 
@@ -9,10 +10,10 @@ namespace YourAssetManager.Server.Controllers
     [AllowAnonymous]
     [ApiController]
     [Route("YourAssetManager.Server/{controller}")]
-    public class AuthenticationController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration) : ControllerBase
+    public class AuthenticationController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MailSettingsDTO mailSettings, IConfiguration configuration, ApplicationDbContext applicationDbContext) : ControllerBase
     {
         // Initialize the authentication repository using the provided services
-        private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration);
+        private readonly AuthenticationRepository _authenticationRepository = new(userManager, roleManager, mailSettings, configuration, applicationDbContext);
 
         // Define a simple endpoint to check if the API is alive
         [HttpGet("/IsAlive")]

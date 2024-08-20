@@ -34,7 +34,7 @@ namespace YourAssetManager.Server.Models
 
         [Required]
         [MaxLength(255)]
-        public string AssetIdentificationNumber { get; set; }
+        public string? AssetIdentificationNumber { get; set; }
 
         [Required]
         [MaxLength(255)]
@@ -53,7 +53,7 @@ namespace YourAssetManager.Server.Models
         [Required]
         public int OrganizationId { get; set; }
 
-        public string CatagoryReleventFeildsData { get; set; }
+        public string? CatagoryReleventFeildsData { get; set; }
 
         [ForeignKey("OrganizationId")]
         public Organization Organization { get; set; }

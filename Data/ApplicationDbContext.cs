@@ -24,6 +24,10 @@ namespace YourAssetManager.Server.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Asset>()
+                .HasIndex(a => a.AssetIdentificationNumber)
+                .IsUnique();
+
             // Seed roles
             modelBuilder.Entity<IdentityRole>().HasData(
                 new IdentityRole { Id = "1", Name = "OrganizationOwner", ConcurrencyStamp = "1", NormalizedName = "ORGANIZATIONOWNER" },
@@ -37,7 +41,7 @@ namespace YourAssetManager.Server.Data
                 new AssetStatus { Id = 2, StatusName = "Retired" },
                 new AssetStatus { Id = 3, StatusName = "UnderMaintenance" },
                 new AssetStatus { Id = 4, StatusName = "Returned" },
-                new AssetStatus { Id = 5, StatusName = "Idle" }
+                new AssetStatus { Id = 5, StatusName = "Available" }
             );
         }
     }

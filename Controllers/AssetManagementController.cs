@@ -16,7 +16,7 @@ namespace YourAssetManager.Server.Controllers
         private readonly AssetManagementRepository _assetManagementRepository = new(applicationDbContext, userManager);
 
         [HttpPost("/CreateAsset")]
-        public async Task<IActionResult> CreateAsset(AssetDTO newAssetDTO)
+        public async Task<IActionResult> CreateAsset([FromBody] AssetDTO newAssetDTO)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
@@ -48,23 +48,102 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // [HttpGet("/GetAllAssets")]
-        // public async Task<ApiResponseDTO> GetAllAssets() { return Ok(); }
+        [HttpPut("/UpdateAsset")]
+        public async Task<IActionResult> UpdateAsset([FromBody] AssetDTO newAssetDTO)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // If the username is not found, return an unauthorized response
+                    return Unauthorized(new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status401Unauthorized,
+                        ResponseData = new List<string> { "User not found in token." }
+                    });
+                }
+            }
 
-        // [HttpGet("/GetAssetById")]
-        // public async Task<IActionResult> GetAssetById() { return Ok(); }
+            var result = await _assetManagementRepository.UpdateAsset(userId, newAssetDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
 
-        // [HttpPut("/UpdateAsset")]
-        // public async Task<IActionResult> UpdateAsset(int id) { return Ok(); }
+        [HttpGet("/GetAllAssets")]
+        public async Task<ApiResponseDTO> GetAllAssets()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // If the username is not found, return an unauthorized response
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status401Unauthorized,
+                        ResponseData = new List<string> { "User not found in token." }
+                    };
+                }
+            }
+            var result = await _assetManagementRepository.GetAllAssets(userId);
+            return result;
+        }
 
-        // [HttpDelete("/DeleteAsset")]
-        // public async Task<IActionResult> DeleteAsset(int id) { return Ok(); }
+        [HttpGet("/GetAssetById")]
+        public async Task<ApiResponseDTO> GetAssetById(int assetId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // If the username is not found, return an unauthorized response
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status401Unauthorized,
+                        ResponseData = new List<string> { "User not found in token." }
+                    };
+                }
+            }
+            var result = await _assetManagementRepository.GetAssetsById(userId, assetId);
+            return result;
+        }
 
-        // [HttpPut("/UpdateAssetStatusById")]
-        // public async Task<IActionResult> UpdateAssetStatus(int id) { return Ok(); }
-
-        // [HttpGet("GetAssetStatistics")]
-        // public async Task<IActionResult> GetAssetStatistics() { return Ok(); }
+        [HttpDelete("/DeleteAsset")]
+        public async Task<IActionResult> DeleteAsset(int assetId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // If the username is not found, return an unauthorized response
+                    return Unauthorized(new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status401Unauthorized,
+                        ResponseData = new List<string> { "User not found in token." }
+                    });
+                }
+            }
+            var result = await _assetManagementRepository.DeleteAsset(userId, assetId);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
 
         // [HttpPost("/AssignAsset")]
         // public async Task<IActionResult> AssignAsset([FromBody] AssetRequestDTO request) { return Ok(); }

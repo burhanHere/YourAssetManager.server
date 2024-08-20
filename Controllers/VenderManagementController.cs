@@ -18,7 +18,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the CreateVendor endpoint to create a new vendor for the current user's organization
         [HttpPost("/CreateVendor")]
-        public async Task<IActionResult> CreateVendor(VendorDTO VendorDTO)
+        public async Task<IActionResult> CreateVendor([FromBody]VendorDTO VendorDTO)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userId.IsNullOrEmpty())
@@ -68,7 +68,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the UpdateVendor endpoint to update an existing vendor
         [HttpPost("/UpdateVendor")]
-        public async Task<IActionResult> UpdateVendor(VendorDTO VendorUpdate)
+        public async Task<IActionResult> UpdateVendor([FromBody]VendorDTO VendorUpdate)
         {
             // Call the repository method to update the vendor information
             ApiResponseDTO result = await _vendorManagementRepository.UpdateVendor(VendorUpdate);
