@@ -99,7 +99,7 @@ namespace YourAssetManager.Server.Repositories
                 Model = newAssetDTO.Model,
                 CatagoryReleventFeildsData = newAssetDTO.CatagoryReleventFeildsData,
                 AssetStatusId = 5,// 5 is the id of available; byu default asset will be available
-                OrganizationId = int.Parse(newAssetDTO.OrganizationData),
+                OrganizationId = userOrganization.OrganizationId,
                 AssetCategoryId = int.Parse(newAssetDTO.AssetCategoryData),
                 AssetTypeId = int.Parse(newAssetDTO.AssetTypeData),
                 VendorId = int.Parse(newAssetDTO.VendorData),

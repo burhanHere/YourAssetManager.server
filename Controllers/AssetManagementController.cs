@@ -31,7 +31,6 @@ namespace YourAssetManager.Server.Controllers
                     });
                 }
             }
-
             var result = await _assetManagementRepository.CreateAsset(userId, newAssetDTO);
             if (result.Status == StatusCodes.Status200OK)
             {
