@@ -9,7 +9,6 @@ using YourAssetManager.Server.Repositories;
 namespace YourAssetManager.Server.Controllers
 {
     [Route("YourAssetManager.Server/[controller]")]
-    [Authorize(Roles = "OrganizationOwner")]
     [ApiController]
     public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
@@ -17,6 +16,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetMyOrganizations endpoint to retrieve all organizations related to the currently signed-in user
         [HttpGet("GetOrganizationsInfo")]
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
         public async Task<ApiResponseDTO> GetOrganizationsInfo()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -35,6 +35,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the CreateOrganization endpoint to create a new organization for the current user
         [HttpPost("CreateOrganization")]
+        [Authorize(Policy = "RequireOrganizationOwnerAccess")]
         public async Task<IActionResult> CreateOrganization([FromBody] OrganizationDTO newOrganization)
         {
             // Call the repository method to create a new organization with the current user's ID
@@ -73,6 +74,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the UpdateOrganization endpoint to update an existing organization for the current user
         [HttpPut("UpdateOrganization")]
+        [Authorize(Policy = "RequireOrganizationOwnerAccess")]
         public async Task<IActionResult> UpdateOrganization([FromBody] OrganizationDTO newOrganization)
         {
             // Call the repository method to update the organization with the current user's ID
@@ -103,6 +105,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the DeleteOrganization endpoint to delete and organization
         [HttpDelete("DeleteOrganization")]
+        [Authorize(Policy = "RequireOrganizationOwnerAccess")]
         public async Task<IActionResult> DeleteOrganization()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

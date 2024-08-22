@@ -57,17 +57,24 @@ internal class Program
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new()
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = builder.Configuration["JWT:ValidAudience"],
-                ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!)),
-            };
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
+                    ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]!)),
+                };
+            });
+        // adding authorization
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("RequireOrganizationOwnerAccess", policy => policy.RequireRole("OrganizationOwner"));
+            options.AddPolicy("RequireOrganizationOwnerOrAssetManagerAccess", policy => policy.RequireRole("OrganizationOwner", "AssetManager"));
+            options.AddPolicy("RequireOrganizationOwnerOrAssetManagerEmployeeAccess", policy => policy.RequireRole("Employee"));
         });
         // ading CORS
         builder.Services.AddCors(options =>
@@ -91,17 +98,17 @@ internal class Program
             });
             option.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer" // Corrected ID closing
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer" // Corrected ID closing
+                        }
+                    },
+                    new string[] { }
                 }
-            },
-            new string[] { }
-        }
             });
         });
 

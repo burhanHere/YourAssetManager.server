@@ -9,7 +9,7 @@ using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
-    [Authorize(Roles = "OrganizationOwner")]
+    [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
     public class VendorManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase

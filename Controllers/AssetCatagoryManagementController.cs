@@ -8,7 +8,7 @@ using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
-    [Authorize(Roles = "OrganizationOwner")]
+    [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
     public class AssetCatagoryManagementController(UserManager<IdentityUser> userManager, ApplicationDbContext applicationDbContext) : ControllerBase

@@ -10,7 +10,7 @@ namespace YourAssetManager.Server.Controllers
 {
     [Route("YourAssetManager.Server/[controller]")]
     [ApiController]
-    [Authorize(Roles = "OrganizationOwner")]
+    [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
     public class AssetTypeManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
     {
         private readonly AssetTypeManagementRepository _assetTypeRepository = new(applicationDbContext, userManager);
