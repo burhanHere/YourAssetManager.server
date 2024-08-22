@@ -165,7 +165,7 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var targetOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.OrganizationDomain == domain);
+            var targetOrganization = await _applicationDbContext.OrganizationDomains.Where(x => x.OrganizationDomainString == domain && x.Organization.ActiveOrganization == true).Select(x => x.Organization).FirstAsync();
             if (targetOrganization == null)
             {
                 return new ApiResponseDTO

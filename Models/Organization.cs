@@ -24,7 +24,6 @@ namespace YourAssetManager.Server.Models
         [Required]
         public DateTime UpdatedDate { get; set; }
 
-        [MaxLength(255)]
-        public string OrganizationDomain { get; set; }
+        //organizations also have domains in OrganizationDomains table
     }
 }

@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YourAssetManager.Server.DTOs
 {
@@ -11,6 +10,6 @@ namespace YourAssetManager.Server.DTOs
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Organization domain is required")]
-        public string OrganizationDomain { get; set; }
+        public List<string> OrganizationDomains { get; set; }
     }
 }

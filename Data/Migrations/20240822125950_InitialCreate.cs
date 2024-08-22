@@ -98,9 +98,7 @@ namespace YourAssetManager.server.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ActiveOrganization = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    OrganizationDomain = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,6 +284,28 @@ namespace YourAssetManager.server.Data.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "OrganizationDomains",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    OrganizationDomainString = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    OrganizationId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrganizationDomains", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrganizationDomains_Organizations_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "UserOrganizations",
                 columns: table => new
                 {
@@ -365,7 +385,7 @@ namespace YourAssetManager.server.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssetStatusId = table.Column<int>(type: "int", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
-                    CatagoryReleventFeildsData = table.Column<string>(type: "longtext", nullable: false)
+                    CatagoryReleventFeildsData = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssetCategoryId = table.Column<int>(type: "int", nullable: false),
                     AssetTypeId = table.Column<int>(type: "int", nullable: false),
@@ -536,7 +556,7 @@ namespace YourAssetManager.server.Data.Migrations
                     { 2, "Retired" },
                     { 3, "UnderMaintenance" },
                     { 4, "Returned" },
-                    { 5, "Idle" }
+                    { 5, "Available" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -617,6 +637,12 @@ namespace YourAssetManager.server.Data.Migrations
                 column: "AssetCategoryId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Assets_AssetIdentificationNumber",
+                table: "Assets",
+                column: "AssetIdentificationNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Assets_AssetStatusId",
                 table: "Assets",
                 column: "AssetStatusId");
@@ -639,6 +665,11 @@ namespace YourAssetManager.server.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AssetTypes_OrganizationId",
                 table: "AssetTypes",
+                column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganizationDomains_OrganizationId",
+                table: "OrganizationDomains",
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
@@ -683,6 +714,9 @@ namespace YourAssetManager.server.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AssetReturns");
+
+            migrationBuilder.DropTable(
+                name: "OrganizationDomains");
 
             migrationBuilder.DropTable(
                 name: "UserOrganizations");

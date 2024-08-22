@@ -38,8 +38,8 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var userOrganizations = await _applicationDbContext.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization == true);
-            if (userOrganizations == null)
+            var userOrganization = await _applicationDbContext.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization == true);
+            if (userOrganization == null)
             {
                 // Return success but indicate no organizations found
                 return new ApiResponseDTO
@@ -52,13 +52,14 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            var requiredOrganization = await _applicationDbContext.Organizations.FirstOrDefaultAsync(x => x.Id == userOrganizations.OrganizationId);
+            var requiredOrganization = await _applicationDbContext.Organizations.FirstAsync(x => x.Id == userOrganization.OrganizationId);
+            var requiredOrganizationDomainsList = await _applicationDbContext.OrganizationDomains.Where(x => x.OrganizationId == requiredOrganization.Id).Select(x => x.OrganizationDomainString).ToListAsync();
             // converting to DTO
             OrganizationDTO organizationsDTO = new()
             {
                 OrganizationName = requiredOrganization.OrganizationName,
                 Description = requiredOrganization.Description,
-                OrganizationDomain = requiredOrganization.OrganizationDomain
+                OrganizationDomains = requiredOrganizationDomainsList.Count == 0 ? ["No Domain Associcated to this organization"] : requiredOrganizationDomainsList
             };
 
             // Return the list of organizations
@@ -98,7 +99,6 @@ namespace YourAssetManager.Server.Repositories
             // Check if the user already has an active organization
             var existingOrganizations = await _applicationDbContext.UserOrganizations
                 .AnyAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization == true);
-
             if (existingOrganizations)
             {
                 return new ApiResponseDTO
@@ -114,8 +114,7 @@ namespace YourAssetManager.Server.Repositories
 
             // Check if an organization with the same name already exists
             var existingOrganizationByName = await _applicationDbContext.Organizations
-                .FirstOrDefaultAsync(x => x.OrganizationName == newOrganization.OrganizationName);
-
+                .FirstOrDefaultAsync(x => x.OrganizationName == newOrganization.OrganizationName && x.ActiveOrganization == true);
             if (existingOrganizationByName != null)
             {
                 return new ApiResponseDTO
@@ -130,10 +129,9 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Check if an organization with the same domain already exists
-            var existingOrganizationByDomain = await _applicationDbContext.Organizations
-                .FirstOrDefaultAsync(x => x.OrganizationDomain == newOrganization.OrganizationDomain);
-
-            if (existingOrganizationByDomain != null)
+            var existingOrganizationByDomain = await _applicationDbContext.OrganizationDomains
+                .AnyAsync(x => newOrganization.OrganizationDomains.Contains(x.OrganizationDomainString));
+            if (existingOrganizationByDomain)
             {
                 return new ApiResponseDTO
                 {
@@ -141,26 +139,25 @@ namespace YourAssetManager.Server.Repositories
                     ResponseData = new List<string>
                     {
                         "Organization domain must be unique.",
-                        "Another organization exists with the same domain."
+                        "one multiple domains already associated to other organizations"
                     }
                 };
             }
 
             // Create the new organization
-            var organization = new Organization
+            Organization organization = new()
             {
                 OrganizationName = newOrganization.OrganizationName,
                 Description = newOrganization.Description,
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
-                OrganizationDomain = newOrganization.OrganizationDomain,
                 ActiveOrganization = true,
             };
 
             // Add the organization to the database
-            await _applicationDbContext.Organizations.AddAsync(organization);
-            var saveChangesResult = await _applicationDbContext.SaveChangesAsync();
-            if (saveChangesResult == 0)
+            var newAddedOrganization = await _applicationDbContext.Organizations.AddAsync(organization);
+            var savedChangesResult = await _applicationDbContext.SaveChangesAsync();
+            if (savedChangesResult == 0)
             {
                 return new ApiResponseDTO
                 {
@@ -171,16 +168,41 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+
+            List<OrganizationDomains> newOrganizationDoamins = [];
+            foreach (var item in newOrganization.OrganizationDomains)
+            {
+                newOrganizationDoamins.Add(new OrganizationDomains
+                {
+                    OrganizationDomainString = item,
+                    OrganizationId = newAddedOrganization.Entity.Id
+                });
+            }
+            await _applicationDbContext.OrganizationDomains.AddRangeAsync(newOrganizationDoamins);
+
+            savedChangesResult = await _applicationDbContext.SaveChangesAsync();
+            if (savedChangesResult == 0)
+            {
+                _applicationDbContext.Organizations.Remove(organization);
+                _applicationDbContext.SaveChanges();
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = "Failed to crete organziation."
+                };
+            }
+
             var userOrganization = new UserOrganization
             {
                 UserId = user.Id,
-                OrganizationId = organization.Id
+                OrganizationId = newAddedOrganization.Entity.Id
             };
             await _applicationDbContext.UserOrganizations.AddAsync(userOrganization);
-            saveChangesResult = await _applicationDbContext.SaveChangesAsync();
-            if (saveChangesResult == 0)
+            savedChangesResult = await _applicationDbContext.SaveChangesAsync();
+            if (savedChangesResult == 0)
             {
-                _applicationDbContext.Organizations.Remove(organization);
+                _applicationDbContext.OrganizationDomains.RemoveRange(_applicationDbContext.OrganizationDomains.Where(x => x.OrganizationId == newAddedOrganization.Entity.Id).ToList());
+                _applicationDbContext.Organizations.Remove(newAddedOrganization.Entity);
                 _applicationDbContext.SaveChanges();
                 return new ApiResponseDTO
                 {
@@ -226,9 +248,9 @@ namespace YourAssetManager.Server.Repositories
             }
 
             // Find the organization IDs related to the user
-            var userOrganizations = await _applicationDbContext.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization == true);
+            var userOrganizationToUpdate = await _applicationDbContext.UserOrganizations.Where(x => x.UserId == user.Id && x.Organization.ActiveOrganization == true).Select(x => x.Organization).FirstOrDefaultAsync();
 
-            if (userOrganizations == null)
+            if (userOrganizationToUpdate == null)
             {
                 return new ApiResponseDTO
                 {
@@ -240,43 +262,76 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            // Find the active organization to update
-            var organizationToUpdate = await _applicationDbContext.Organizations
-                .FirstOrDefaultAsync(x => x.ActiveOrganization && x.Id == userOrganizations.Id);
+            // // Find the active organization to update
+            // var organizationToUpdate = await _applicationDbContext.Organizations
+            //     .FirstOrDefaultAsync(x => x.ActiveOrganization && x.Id == userOrganizations.Id);
 
-            if (organizationToUpdate == null)
-            {
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status404NotFound,
-                    ResponseData = new List<string>
-                    {
-                        "Active organization not found."
-                    }
-                };
-            }
+            // if (organizationToUpdate == null)
+            // {
+            //     return new ApiResponseDTO
+            //     {
+            //         Status = StatusCodes.Status404NotFound,
+            //         ResponseData = new List<string>
+            //         {
+            //             "Active organization not found."
+            //         }
+            //     };
+            // }
 
             // Update organization properties with new values if provided
             if (!string.IsNullOrEmpty(updatedOrganization.OrganizationName))
             {
-                organizationToUpdate.OrganizationName = updatedOrganization.OrganizationName;
+                userOrganizationToUpdate.OrganizationName = updatedOrganization.OrganizationName;
             }
 
             if (!string.IsNullOrEmpty(updatedOrganization.Description))
             {
-                organizationToUpdate.Description = updatedOrganization.Description;
+                userOrganizationToUpdate.Description = updatedOrganization.Description;
             }
 
-            if (!string.IsNullOrEmpty(updatedOrganization.OrganizationDomain))
+            if (updatedOrganization.OrganizationDomains.Count > 0)
             {
-                organizationToUpdate.OrganizationDomain = updatedOrganization.OrganizationDomain;
+                // Retrieve existing domains from the database
+                var existingOrganizationDomains = await _applicationDbContext.OrganizationDomains
+                    .Where(x => x.OrganizationId == userOrganizationToUpdate.Id)
+                    .ToListAsync();
+                // Convert the list to a dictionary for efficient lookups and removals
+                var domainsStringUpdateDict = existingOrganizationDomains
+                    .ToDictionary(x => x.OrganizationDomainString, x => false);
+
+                foreach (var item in updatedOrganization.OrganizationDomains)
+                {
+                    if (!domainsStringUpdateDict.Remove(item))
+                    {
+                        domainsStringUpdateDict.Add(item, true);
+                    }
+                }
+
+
+                var domainsStringToRemoveList = domainsStringUpdateDict.Where(x => !x.Value).Select(x => x.Key).ToList();
+                var organizationDomainsToRemoveList = existingOrganizationDomains.Where(x => domainsStringToRemoveList.Contains(x.OrganizationDomainString)).ToList();
+                _applicationDbContext.OrganizationDomains.RemoveRange(organizationDomainsToRemoveList);
+
+                var domainsStringToAddList = domainsStringUpdateDict.Where(x => x.Value).Select(x => x.Key).ToList();
+                List<OrganizationDomains> organizationDomainsToAddList = [];
+                foreach (var item in domainsStringToAddList)
+                {
+                    organizationDomainsToAddList.Add(new OrganizationDomains
+                    {
+                        OrganizationDomainString = item,
+                        OrganizationId = userOrganizationToUpdate.Id
+                    });
+                }
+                _applicationDbContext.OrganizationDomains.AddRange(organizationDomainsToAddList);
+
+
             }
 
-            organizationToUpdate.UpdatedDate = DateTime.UtcNow;
+            userOrganizationToUpdate.UpdatedDate = DateTime.UtcNow;
 
             // Save changes to the database
-            var saveDbChanges = await _applicationDbContext.SaveChangesAsync();
-            if (saveDbChanges <= 0)
+            var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
+            if (savedDbChanges <= 0)
             {
                 return new ApiResponseDTO
                 {

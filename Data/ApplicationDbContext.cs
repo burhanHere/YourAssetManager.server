@@ -9,6 +9,7 @@ namespace YourAssetManager.Server.Data
     {
         // Define your DbSet properties
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<OrganizationDomains> OrganizationDomains { get; set; }
         public DbSet<UserOrganization> UserOrganizations { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
         public DbSet<AssetType> AssetTypes { get; set; }

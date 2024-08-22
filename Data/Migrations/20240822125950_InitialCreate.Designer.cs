@@ -12,8 +12,8 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240819133551_UpdatedAssetStatusSeeding")]
-    partial class UpdatedAssetStatusSeeding
+    [Migration("20240822125950_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -576,11 +576,6 @@ namespace YourAssetManager.server.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
 
-                    b.Property<string>("OrganizationDomain")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
                     b.Property<string>("OrganizationName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -592,6 +587,28 @@ namespace YourAssetManager.server.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.OrganizationDomains", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("OrganizationDomainString")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("OrganizationDomains");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.UserOrganization", b =>
@@ -822,6 +839,17 @@ namespace YourAssetManager.server.Data.Migrations
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetType", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.OrganizationDomains", b =>
                 {
                     b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
                         .WithMany()
