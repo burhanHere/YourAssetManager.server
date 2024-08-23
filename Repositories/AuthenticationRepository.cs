@@ -151,7 +151,7 @@ namespace YourAssetManager.Server.Repositories
         {
             // extracting domin to check
             string email = signUpDTO.Email;
-            string domain = email[email.IndexOf("@")..];
+            string domain = email[(email.IndexOf("@") + 1)..];
             if (domain.IsNullOrEmpty())
             {
                 return new ApiResponseDTO

@@ -14,8 +14,8 @@ namespace YourAssetManager.Server.Controllers
     {
         private readonly UserManagementRepository _userManagementRepository = new(userManager, roleManager, applicationDbContext);
 
-        [HttpPost("AssignAssetManagerRole")]
-        [Authorize(Policy = "OrganizationOwner")]
+        [HttpPost("AssignAssetManager")]
+        [Authorize(Policy = "RequireOrganizationOwnerAccess")]
         public async Task<IActionResult> AppointAssetManager(string AppointeeId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -44,7 +44,7 @@ namespace YourAssetManager.Server.Controllers
         }
 
         [HttpPost("DismissAssetManager")]
-        [Authorize(Policy = "OrganizationOwner")]
+        [Authorize(Policy = "RequireOrganizationOwnerAccess")]
         public async Task<IActionResult> DismissAssetManager(string AppointeeId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
