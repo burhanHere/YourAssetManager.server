@@ -41,8 +41,7 @@ namespace YourAssetManager.Server.Data
                 new AssetStatus { Id = 1, StatusName = "Assigned" },
                 new AssetStatus { Id = 2, StatusName = "Retired" },
                 new AssetStatus { Id = 3, StatusName = "UnderMaintenance" },
-                new AssetStatus { Id = 4, StatusName = "Returned" },
-                new AssetStatus { Id = 5, StatusName = "Available" }
+                new AssetStatus { Id = 4, StatusName = "Available" }
             );
         }
     }

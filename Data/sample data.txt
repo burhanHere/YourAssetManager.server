@@ -1,0 +1,333 @@
+/*
+[
+  {
+    "id": 1,
+    "assetName": "Laptop X1",
+    "description": "High-performance laptop for development.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 1200.00,
+    "serialNumber": "LAP123456",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "X1-001",
+    "manufacturer": "TechCorp",
+    "model": "X1 Pro",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "2",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "1"
+  }
+  {
+    "id": 2,
+    "assetName": "Office Desk",
+    "description": "Ergonomic office desk.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 350.00,
+    "serialNumber": "DESK78910",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "DESK-002",
+    "manufacturer": "FurniCo",
+    "model": "ErgoDesk",
+    "catagoryReleventFeildsData": "Furniture",
+    "organizationData": "1",
+    "assetStatusData": "1",
+    "assetCategoryData": "2",
+    "assetTypeData": "2",
+    "vendorData": "2"
+  }
+  {
+    "id": 3,
+    "assetName": "Projector 4K",
+    "description": "4K projector for presentations.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 800.00,
+    "serialNumber": "PROJ456789",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "PROJ-003",
+    "manufacturer": "VisionTech",
+    "model": "Ultra4K",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "3",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "3"
+  }
+  {
+    "id": 4,
+    "assetName": "Office Chair",
+    "description": "Comfortable office chair with adjustable settings.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 200.00,
+    "serialNumber": "CHAIR12345",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "CHAIR-004",
+    "manufacturer": "SeatCo",
+    "model": "ComfyChair",
+    "catagoryReleventFeildsData": "Furniture",
+    "organizationData": "1",
+    "assetStatusData": "5",
+    "assetCategoryData": "2",
+    "assetTypeData": "2",
+    "vendorData": "1"
+  }
+  {
+    "id": 5,
+    "assetName": "Monitor 27\"",
+    "description": "27-inch 4K monitor for high-definition displays.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 600.00,
+    "serialNumber": "MON123456",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "MON-005",
+    "manufacturer": "ScreenPro",
+    "model": "27K Ultra",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "4",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "2"
+  }
+  {
+    "id": 6,
+    "assetName": "External Hard Drive",
+    "description": "2TB external hard drive for backups.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 150.00,
+    "serialNumber": "HDD67890",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "HDD-006",
+    "manufacturer": "DataSafe",
+    "model": "X2TB",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "2",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "3"
+  }
+  {
+    "id": 7,
+    "assetName": "Conference Table",
+    "description": "Large table for conference room meetings.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 500.00,
+    "serialNumber": "TABLE56789",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "TABLE-007",
+    "manufacturer": "FurniCo",
+    "model": "ConfTable",
+    "catagoryReleventFeildsData": "Furniture",
+    "organizationData": "1",
+    "assetStatusData": "3",
+    "assetCategoryData": "2",
+    "assetTypeData": "2",
+    "vendorData": "1"
+  }
+  {
+    "id": 8,
+    "assetName": "Wireless Mouse",
+    "description": "Ergonomic wireless mouse with USB receiver.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 25.00,
+    "serialNumber": "MOUSE23456",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "MOUSE-008",
+    "manufacturer": "ClickTech",
+    "model": "ProMouse",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "1",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "2"
+  }
+  {
+    "id": 9,
+    "assetName": "Whiteboard",
+    "description": "Magnetic whiteboard for office use.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 100.00,
+    "serialNumber": "BOARD34567",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "BOARD-009",
+    "manufacturer": "OfficeGoods",
+    "model": "MagniBoard",
+    "catagoryReleventFeildsData": "Furniture",
+    "organizationData": "1",
+    "assetStatusData": "5",
+    "assetCategoryData": "2",
+    "assetTypeData": "2",
+    "vendorData": "3"
+  }
+  {
+    "id": 10,
+    "assetName": "Smartphone X",
+    "description": "Latest model smartphone with advanced features.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 999.00,
+    "serialNumber": "PHONE12345",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "PHONE-010",
+    "manufacturer": "MobileTech",
+    "model": "X-2024",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "4",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "1"
+  }
+]
+*/
+
+/*
+
+Sample Data
+VendorDTO
+json
+Copy code
+[
+  {
+    "id": 1,
+    "name": "TechSupply Co.",
+    "email": "contact@techsupply.com",
+    "officeAddress": "123 Tech Lane, Silicon Valley, CA",
+    "phoneNumber": "+1-800-555-1234"
+  },
+  {
+    "id": 2,
+    "name": "Furniture World",
+    "email": "support@furnitureworld.com",
+    "officeAddress": "456 Furni St., Office City, TX",
+    "phoneNumber": "+1-800-555-5678"
+  },
+  {
+    "id": 3,
+    "name": "GadgetPro",
+    "email": "info@gadgetpro.com",
+    "officeAddress": "789 Gadget Blvd., Tech Town, NY",
+    "phoneNumber": "+1-800-555-9012"
+  }
+]
+OrganizationDTO
+json
+Copy code
+[
+  {
+    "organizationName": "InnovateTech Inc.",
+    "description": "A leading technology innovation company.",
+    "organizationDomains": [
+      "innovatech.com",
+      "techinnovate.org"
+    ]
+  }
+]
+AssetTypeDTO
+json
+Copy code
+[
+  {
+    "id": 1,
+    "assetTypeName": "Electronics",
+    "description": "Devices that operate using electrical power."
+  },
+  {
+    "id": 2,
+    "assetTypeName": "Furniture",
+    "description": "Furniture items used in office settings."
+  }
+]
+AssetCatagoryDTO
+json
+Copy code
+[
+  {
+    "id": 1,
+    "categoryName": "Office Equipment",
+    "description": "Equipment used in office environments.",
+    "relaventInputFields": "manufacturer, model, purchaseDate, purchasePrice"
+  },
+  {
+    "id": 2,
+    "categoryName": "Office Furniture",
+    "description": "Furniture used in office settings.",
+    "relaventInputFields": "manufacturer, model, purchaseDate, purchasePrice"
+  }
+]
+AssetDTO
+json
+Copy code
+[
+  {
+    "id": 1,
+    "assetName": "Laptop X1",
+    "description": "High-performance laptop for development.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 1200.00,
+    "serialNumber": "LAP123456",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "X1-001",
+    "manufacturer": "TechCorp",
+    "model": "X1 Pro",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "2",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "1"
+  },
+  {
+    "id": 2,
+    "assetName": "Office Desk",
+    "description": "Ergonomic office desk.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 350.00,
+    "serialNumber": "DESK78910",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "DESK-002",
+    "manufacturer": "FurniCo",
+    "model": "ErgoDesk",
+    "catagoryReleventFeildsData": "Furniture",
+    "organizationData": "1",
+    "assetStatusData": "1",
+    "assetCategoryData": "2",
+    "assetTypeData": "2",
+    "vendorData": "2"
+  },
+  {
+    "id": 3,
+    "assetName": "Projector 4K",
+    "description": "4K projector for presentations.",
+    "purchaseDate": "2024-08-23T09:35:12.567Z",
+    "purchasePrice": 800.00,
+    "serialNumber": "PROJ456789",
+    "createdDate": "2024-08-23T09:35:12.567Z",
+    "updatedDate": "2024-08-23T09:35:12.567Z",
+    "assetIdentificationNumber": "PROJ-003",
+    "manufacturer": "VisionTech",
+    "model": "Ultra4K",
+    "catagoryReleventFeildsData": "Electronics",
+    "organizationData": "1",
+    "assetStatusData": "3",
+    "assetCategoryData": "1",
+    "assetTypeData": "1",
+    "vendorData": "3"
+  }
+]
+
+*/

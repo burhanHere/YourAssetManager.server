@@ -41,33 +41,54 @@ namespace YourAssetManager.Server.Models
                 };
             }
 
-            int vendorCount = await _applicationDbContext.Vendors.CountAsync(x => x.OrganizationId == userOrganization.OrganizationId);
             int CatagoryCount = await _applicationDbContext.AssetCategories.CountAsync(x => x.CategoryOrganizationId == userOrganization.OrganizationId);
+
+            int vendorCount = await _applicationDbContext.Vendors.CountAsync(x => x.OrganizationId == userOrganization.OrganizationId);
+
             int AssetTypeCount = await _applicationDbContext.AssetTypes.CountAsync(x => x.OrganizationId == userOrganization.OrganizationId);
+
             int AssetCount = await _applicationDbContext.Assets.CountAsync(x => x.OrganizationId == userOrganization.OrganizationId);
-            int AssignedAssetCount = await _applicationDbContext.Assets.CountAsync(x => x.AssetStatusId == 1 && x.OrganizationId == userOrganization.OrganizationId);
-            int RetiredAssetCount = await _applicationDbContext.Assets.CountAsync(x => x.AssetStatusId == 2 && x.OrganizationId == userOrganization.OrganizationId);
-            int UnderMaintenanceAssetCount = await _applicationDbContext.Assets.CountAsync(x => x.AssetStatusId == 3 && x.OrganizationId == userOrganization.OrganizationId);
-            int AvailableAssetCount = await _applicationDbContext.Assets.CountAsync(x => x.AssetStatusId == 5 && x.OrganizationId == userOrganization.OrganizationId);
-            int userCount = await _applicationDbContext.UserOrganizations.CountAsync(x => x.OrganizationId == userOrganization.OrganizationId && x.Organization.ActiveOrganization == true);
+
+            var tempAssetStatusIdNameList = await _applicationDbContext.AssetStatuses.ToListAsync();
+
+            var assetCountByStatus = new Dictionary<string, int>();
+            int temp = 0;
+            foreach (var status in tempAssetStatusIdNameList)
+            {
+                temp = await _applicationDbContext.Assets.CountAsync(x => x.AssetStatusId == status.Id);
+                assetCountByStatus.Add(status.StatusName, temp);
+                temp = 0;
+            }
+
+            var tempCatagoryIdNameList = await _applicationDbContext.AssetCategories.Where(x => x.CategoryOrganizationId == userOrganization.Id).Select(x => new { x.Id, x.CategoryName }).ToListAsync();
+            var assetCountByCatagoryNames = new Dictionary<string, int>();
+            foreach (var item in tempCatagoryIdNameList)
+            {
+                temp = await _applicationDbContext.Assets.CountAsync(x => x.OrganizationId == userOrganization.OrganizationId && x.AssetCategoryId == item.Id);
+                assetCountByCatagoryNames.Add(item.CategoryName, temp);
+                temp = 0;
+            }
+
+            var resultData = new
+            {
+                vendorCount = vendorCount,
+                CatagoryCount = CatagoryCount,
+                AssetTypeCount = AssetTypeCount,
+                AssetCountByStatus = assetCountByStatus.Select(item => new
+                {
+                    name = item.Key,
+                    value = item.Value
+                }).ToList(),
+                AssetCountByCatagory = assetCountByCatagoryNames.Select(item => new
+                {
+                    name = item.Key,
+                    value = item.Value
+                }).ToList()
+            };
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = new
-                {
-                    vendorCount = vendorCount,
-                    CatagoryCount = CatagoryCount,
-                    AssetTypeCount = AssetTypeCount,
-                    userCount = userCount,
-                    Asset = new
-                    {
-                        AssetCount = AssetCount,
-                        AssignedAssetCount = AssignedAssetCount,
-                        RetiredAssetCount = RetiredAssetCount,
-                        UnderMaintenanceAssetCount = UnderMaintenanceAssetCount,
-                        AvailableAssetCount = AvailableAssetCount,
-                    }
-                }
+                ResponseData = resultData
             };
         }
 

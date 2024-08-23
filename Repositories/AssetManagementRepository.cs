@@ -98,7 +98,7 @@ namespace YourAssetManager.Server.Repositories
                 Manufacturer = newAssetDTO.Manufacturer,
                 Model = newAssetDTO.Model,
                 CatagoryReleventFeildsData = newAssetDTO.CatagoryReleventFeildsData,
-                AssetStatusId = 5,// 5 is the id of available; by default asset will be available
+                AssetStatusId = 4,// 5 is the id of available; by default asset will be available
                 OrganizationId = userOrganization.OrganizationId,
                 AssetCategoryId = int.Parse(newAssetDTO.AssetCategoryData),
                 AssetTypeId = int.Parse(newAssetDTO.AssetTypeData),

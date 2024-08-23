@@ -12,7 +12,7 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240822125950_InitialCreate")]
+    [Migration("20240823101905_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -520,11 +520,6 @@ namespace YourAssetManager.server.Data.Migrations
                         new
                         {
                             Id = 4,
-                            StatusName = "Returned"
-                        },
-                        new
-                        {
-                            Id = 5,
                             StatusName = "Available"
                         });
                 });

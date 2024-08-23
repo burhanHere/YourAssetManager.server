@@ -555,8 +555,7 @@ namespace YourAssetManager.server.Data.Migrations
                     { 1, "Assigned" },
                     { 2, "Retired" },
                     { 3, "UnderMaintenance" },
-                    { 4, "Returned" },
-                    { 5, "Available" }
+                    { 4, "Available" }
                 });
 
             migrationBuilder.CreateIndex(

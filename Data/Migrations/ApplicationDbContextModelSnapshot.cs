@@ -517,11 +517,6 @@ namespace YourAssetManager.server.Data.Migrations
                         new
                         {
                             Id = 4,
-                            StatusName = "Returned"
-                        },
-                        new
-                        {
-                            Id = 5,
                             StatusName = "Available"
                         });
                 });
