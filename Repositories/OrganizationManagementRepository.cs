@@ -9,11 +9,11 @@ namespace YourAssetManager.Server.Repositories
     /// <summary>
     /// Repository for handling organization-related tasks.
     /// </summary>
-    public class OrganizationManagementRepository(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
+    public class OrganizationManagementRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
     {
         // Fields for database context and user manager
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         /// <summary>
         /// Retrieves the organizations associated with the signed-in user.

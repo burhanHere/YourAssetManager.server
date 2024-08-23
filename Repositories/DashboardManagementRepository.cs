@@ -5,10 +5,10 @@ using YourAssetManager.Server.DTOs;
 
 namespace YourAssetManager.Server.Models
 {
-    public class DashboardManagementRepository(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
+    public class DashboardManagementRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
     {
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
         public async Task<ApiResponseDTO> GetDashBoardStatiticsData(string signedInUserId)
         {
             // Find the user by ID

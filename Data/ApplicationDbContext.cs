@@ -5,7 +5,7 @@ using YourAssetManager.Server.Models;
 
 namespace YourAssetManager.Server.Data
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<IdentityUser>(options)
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
     {
         // Define your DbSet properties
         public DbSet<Organization> Organizations { get; set; }

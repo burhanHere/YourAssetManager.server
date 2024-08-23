@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
@@ -12,7 +13,7 @@ namespace YourAssetManager.Server.Controllers
     [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
-    public class VendorManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
+    public class VendorManagementController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager) : ControllerBase
     {
         private readonly VendorManagementRepository _vendorManagementRepository = new(applicationDbContext, userManager);
 

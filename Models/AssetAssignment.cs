@@ -19,13 +19,13 @@ namespace YourAssetManager.Server.Models
         public string AssignedToId { get; set; }
 
         [ForeignKey("AssignedToId")]
-        public IdentityUser AssignedTo { get; set; }
+        public ApplicationUser AssignedTo { get; set; }
 
         [Required]
         public string AssignedById { get; set; }
 
         [ForeignKey("AssignedById")]
-        public IdentityUser AssignedBy { get; set; }
+        public ApplicationUser AssignedBy { get; set; }
 
         [Required]
         public int AssetId { get; set; }

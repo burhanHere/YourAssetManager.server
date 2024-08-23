@@ -10,11 +10,11 @@ namespace YourAssetManager.Server.Repositories
     /// <summary>
     /// Repository for handling vendor-related tasks.
     /// </summary>
-    public class VendorManagementRepository(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
+    public class VendorManagementRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
     {
         // Field for database context
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
         /// <summary>
         /// Creates a new vendor for the signed-in user's organization.

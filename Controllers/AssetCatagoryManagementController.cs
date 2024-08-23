@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
@@ -11,7 +12,7 @@ namespace YourAssetManager.Server.Controllers
     [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
-    public class AssetCatagoryManagementController(UserManager<IdentityUser> userManager, ApplicationDbContext applicationDbContext) : ControllerBase
+    public class AssetCatagoryManagementController(UserManager<ApplicationUser> userManager, ApplicationDbContext applicationDbContext) : ControllerBase
     {
         private readonly AssetCatagoryManagementRepository _assetCatagoryManagementRepository = new(userManager, applicationDbContext);
 

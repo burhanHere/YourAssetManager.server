@@ -8,6 +8,7 @@ using YourAssetManager.Server.Services;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Services.Interfaces;
+using YourAssetManager.Server.Models;
 
 internal class Program
 {
@@ -33,7 +34,7 @@ internal class Program
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 2))));
         // adding idnetity
-        builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+        builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         {
             // Password settings
             options.Password.RequireNonAlphanumeric = true;
@@ -49,7 +50,8 @@ internal class Program
             options.Lockout.AllowedForNewUsers = true;
             // SignIn Settings
             options.SignIn.RequireConfirmedEmail = true;
-        }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+        }).AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddDefaultTokenProviders();
         // adding jwt bearer authenticatin and authorization
         builder.Services.AddAuthentication(options =>
         {

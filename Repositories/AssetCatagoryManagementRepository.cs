@@ -10,14 +10,14 @@ namespace YourAssetManager.Server.Repositories
     /// <summary>
     /// Repository for managing asset categories and subcategories.
     /// </summary>
-    public class AssetCatagoryManagementRepository(UserManager<IdentityUser> userManager, ApplicationDbContext applicationDbContext)
+    public class AssetCatagoryManagementRepository(UserManager<ApplicationUser> userManager, ApplicationDbContext applicationDbContext)
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetCategoryManagementRepository"/> class.
         /// </summary>
         /// <param name="userManager">The user manager to handle user-related operations.</param>
         /// <param name="applicationDbContext">The database context for accessing application data.</param>
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
         /// <summary>
         /// Retrieves all asset categories associated with the signed-in user.

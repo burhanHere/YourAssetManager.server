@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
+using YourAssetManager.Server.Models;
 using YourAssetManager.Server.Repositories;
 
 namespace YourAssetManager.Server.Controllers
 {
     [Route("YourAssetManager.Server/[controller]")]
     [ApiController]
-    public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
+    public class OrganizationManagementController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager) : ControllerBase
     {
         private readonly OrganizationManagementRepository _organizationManagementRepository = new(applicationDbContext, userManager);
 

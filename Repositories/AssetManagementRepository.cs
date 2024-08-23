@@ -8,10 +8,10 @@ using YourAssetManager.Server.Models;
 
 namespace YourAssetManager.Server.Repositories
 {
-    public class AssetManagementRepository(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager)
+    public class AssetManagementRepository(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager)
     {
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
-        private readonly UserManager<IdentityUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
         public async Task<ApiResponseDTO> CreateAsset(string userId, AssetDTO newAssetDTO)
         {
             var user = await _userManager.FindByIdAsync(userId);

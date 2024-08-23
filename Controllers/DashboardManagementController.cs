@@ -11,7 +11,7 @@ namespace YourAssetManager.Server.Controllers
     [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
-    public class DashboardManagementController(ApplicationDbContext applicationDbContext, UserManager<IdentityUser> userManager) : ControllerBase
+    public class DashboardManagementController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager) : ControllerBase
     {
         private readonly DashboardManagementRepository _dashboardManagementRepository = new(applicationDbContext, userManager);
 
