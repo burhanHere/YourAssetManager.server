@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
@@ -341,6 +342,81 @@ namespace YourAssetManager.Server.Repositories
                     {
                         "Target user Activated successfully."
                     }
+            };
+        }
+
+        public async Task<ApiResponseDTO> GetAllUsers(string currectLogedInUserId)
+        {
+            // Find the organization owner by user ID
+            var user = await _userManager.FindByIdAsync(currectLogedInUserId);
+            if (user == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            // Find the user's active organization
+            var userOrganization = await _applicationDbContext.UserOrganizations
+               .FirstOrDefaultAsync(uo => uo.UserId == user.Id && uo.Organization.ActiveOrganization);
+
+            if (userOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No active organization found for the user."
+                    }
+                };
+            }
+
+            HashSet<UserDTO> requireduserAccounts = _applicationDbContext.UserOrganizations.Where(x => x.OrganizationId == userOrganization.OrganizationId)
+            .Select(x => new UserDTO
+            {
+                Id = x.User.Id,
+                UserName = x.User.UserName,
+                Email = x.User.Email,
+                PhoneNumber = x.User.PhoneNumber
+            }).ToHashSet();
+
+            var userIds = requireduserAccounts.Select(x => x.Id).ToList();
+
+            var userRoles = await _applicationDbContext.UserRoles.Where(x => userIds.Contains(x.UserId)).ToListAsync();
+
+            var Roles = await _applicationDbContext.Roles.ToDictionaryAsync(x => x.Id, x => x.Name);
+
+            foreach (var item in userRoles)
+            {
+                var roleName = Roles[item.RoleId];
+                if (!roleName.IsNullOrEmpty())
+                {
+                    var temp = requireduserAccounts.First(x => x.Id == item.UserId);
+                    if (temp.Roles == null)
+                    {
+                        temp.Roles = new List<string>
+                        {
+                            roleName
+                        };
+                    }
+                    else
+                    {
+                        temp.Roles.Add(roleName);
+                    }
+                }
+            }
+            Console.WriteLine(requireduserAccounts);
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = requireduserAccounts
             };
         }
     }
