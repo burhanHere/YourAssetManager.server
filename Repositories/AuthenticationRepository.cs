@@ -490,6 +490,7 @@ namespace YourAssetManager.Server.Repositories
                     message = "Sign-in successful.",
                     email = user.Email,
                     userName = user.UserName,
+                    userRole = userRoles,
                     jwtToken = finalJwtToken
                 }
             };
