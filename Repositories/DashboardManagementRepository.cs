@@ -74,6 +74,7 @@ namespace YourAssetManager.Server.Models
                 vendorCount = vendorCount,
                 CatagoryCount = CatagoryCount,
                 AssetTypeCount = AssetTypeCount,
+                AssetCount = AssetCount,
                 AssetCountByStatus = assetCountByStatus.Select(item => new
                 {
                     name = item.Key,
