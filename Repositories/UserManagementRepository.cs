@@ -421,7 +421,62 @@ namespace YourAssetManager.Server.Repositories
         }
         public async Task<ApiResponseDTO> GetUserById(string currectLogedInUserId, string targetUserId)
         {
+            // Find the organization owner by user ID
+            var user = await _userManager.FindByIdAsync(currectLogedInUserId);
+            if (user == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            // Find the user's active organization
+            var userOrganization = await _applicationDbContext.UserOrganizations
+               .FirstOrDefaultAsync(uo => uo.UserId == user.Id && uo.Organization.ActiveOrganization);
 
+            if (userOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No active organization found for the user."
+                    }
+                };
+            }
+            var targetUser = await _userManager.FindByIdAsync(targetUserId);
+            if (targetUser == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string> { "Target User not found." }
+                };
+            }
+            var Roles = await _applicationDbContext.Roles.ToDictionaryAsync(x => x.Id, x => x.Name);
+
+            var userRole = await _userManager.GetRolesAsync(targetUser);
+
+            UserDTO reaponseData = new()
+            {
+                Id = targetUser.Id,
+                UserName = targetUser.UserName,
+                Email = targetUser.Email,
+                PhoneNumber = targetUser.PhoneNumber,
+                Roles = userRole.ToList(),
+            };
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = reaponseData
+            };
         }
     }
 }
