@@ -290,7 +290,7 @@ namespace YourAssetManager.Server.Repositories
                     ResponseData = new List<string>
                     {
                         "Account created successfully.",
-                        "Role assigned as OrganizationOwner Role",
+                        "Role assigned as Employee Role",
                         "Unable to send confirmation email. Please try to log in later to confirm your email."
                     }
                 };
@@ -303,7 +303,7 @@ namespace YourAssetManager.Server.Repositories
                     {
                         "Account created successfully.",
                         "Confirmation email sent.",
-                        "Role assigned as OrganizationOwner Role"
+                        "Role assigned as Employee Role"
                     }
             };
         }
