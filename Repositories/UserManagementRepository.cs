@@ -419,5 +419,9 @@ namespace YourAssetManager.Server.Repositories
                 ResponseData = requireduserAccounts
             };
         }
+        public async Task<ApiResponseDTO> GetUserById(string currectLogedInUserId, string targetUserId)
+        {
+
+        }
     }
 }
