@@ -384,7 +384,8 @@ namespace YourAssetManager.Server.Repositories
                 Id = x.User.Id,
                 UserName = x.User.UserName,
                 Email = x.User.Email,
-                PhoneNumber = x.User.PhoneNumber
+                PhoneNumber = x.User.PhoneNumber,
+                ActiveUser = x.User.ActiveUser,
             }).ToHashSet();
 
             var userIds = requireduserAccounts.Select(x => x.Id).ToList();
@@ -470,6 +471,7 @@ namespace YourAssetManager.Server.Repositories
                 UserName = targetUser.UserName,
                 Email = targetUser.Email,
                 PhoneNumber = targetUser.PhoneNumber,
+                ActiveUser = targetUser.ActiveUser,
                 Roles = userRole.ToList(),
             };
             return new ApiResponseDTO

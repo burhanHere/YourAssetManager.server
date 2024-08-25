@@ -6,6 +6,7 @@ namespace YourAssetManager.Server.DTOs
         public string UserName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public bool ActiveUser { get; set; }
         public List<string> Roles { get; set; }
     }
 }
