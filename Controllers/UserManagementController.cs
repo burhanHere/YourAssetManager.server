@@ -17,7 +17,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("AssignAssetManager")]
         [Authorize(Policy = "RequireOrganizationOwnerAccess")]
-        public async Task<IActionResult> AppointAssetManager(string AppointeeId)
+        public async Task<IActionResult> AppointAssetManager([FromBody] string AppointeeId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -46,7 +46,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("DismissAssetManager")]
         [Authorize(Policy = "RequireOrganizationOwnerAccess")]
-        public async Task<IActionResult> DismissAssetManager(string AppointeeId)
+        public async Task<IActionResult> DismissAssetManager([FromBody] string AppointeeId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -75,7 +75,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("DeactivateAccount")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<IActionResult> DeactivateAccount(string targetUserId)
+        public async Task<IActionResult> DeactivateAccount([FromBody] string targetUserId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -115,7 +115,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("ActivateAccount")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<IActionResult> ActivateAccount(string targetUserId)
+        public async Task<IActionResult> ActivateAccount([FromBody] string targetUserId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
