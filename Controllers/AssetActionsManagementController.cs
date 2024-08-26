@@ -40,9 +40,33 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // public async Task<IActionResult> AcceptAssetRequest()
-        // {
-
-        // }
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
+        [HttpPost("DeclineAssetRequest")]
+        public async Task<IActionResult> DeclineAssetRequest(int reqiestId)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponseDTO result = await _assetActionsManagementRepository.DeclineAssetRequest(currectLogedInUserId, reqiestId);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            else if (result.Status == StatusCodes.Status405MethodNotAllowed)
+            {
+                return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
+            }
+            return BadRequest(result);
+        }
     }
 }
