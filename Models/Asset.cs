@@ -44,6 +44,8 @@ namespace YourAssetManager.Server.Models
         [MaxLength(255)]
         public string Model { get; set; }
 
+        public string? ImagePath { get; set; }
+
         [Required]
         public int AssetStatusId { get; set; }
 

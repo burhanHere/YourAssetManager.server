@@ -5,5 +5,6 @@ namespace YourAssetManager.Server.Models
     public class ApplicationUser : IdentityUser
     {
         public bool ActiveUser { get; set; } = true;
+        public string? ImagePath { get; set; }
     }
 }

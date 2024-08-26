@@ -24,6 +24,8 @@ namespace YourAssetManager.Server.Models
         [Required]
         public DateTime UpdatedDate { get; set; }
 
+        public string? ImagePath { get; set; }
+
         //organizations also have domains in OrganizationDomains table
     }
 }
