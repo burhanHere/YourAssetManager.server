@@ -31,8 +31,8 @@ namespace YourAssetManager.Server.Controllers
             return result;
         }
 
-        [HttpGet("GetAllPandingAssetRequests")]
-        public async Task<ApiResponseDTO> GetAllPandingAssetRequests()
+        [HttpGet("GetAllPendingAssetRequests")]
+        public async Task<ApiResponseDTO> GetAllPendingAssetRequests()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
