@@ -42,7 +42,7 @@ namespace YourAssetManager.Server.Controllers
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
         [HttpPost("DeclineAssetRequest")]
-        public async Task<IActionResult> DeclineAssetRequest(int reqiestId)
+        public async Task<IActionResult> DeclineAssetRequest(int requestId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -68,5 +68,22 @@ namespace YourAssetManager.Server.Controllers
             }
             return BadRequest(result);
         }
+
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("AssignAsset")]
+        // public async Task<IActionResult> AssignAsset(AssetAssignmentDTO assetAssignmentDTO)
+        // {
+        //     var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     if (string.IsNullOrEmpty(currectLogedInUserId))
+        //     {
+        //         return Unauthorized(new ApiResponseDTO
+        //         {
+        //             Status = StatusCodes.Status401Unauthorized,
+        //             ResponseData = new List<string> { "User not found in token." }
+        //         });
+        //     }
+        //     ApiResponseDTO result = await _assetActionsManagementRepository.AssignAsset()
+        //     return Ok(result);
+        // }
     }
 }
