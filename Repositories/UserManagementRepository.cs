@@ -579,11 +579,21 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-
+            var targetUserRoles = (List<string>)await _userManager.GetRolesAsync(targetUser);
+            UserDTO targetUserData = new()
+            {
+                Id = targetUser.Id,
+                UserName = targetUser.UserName,
+                Email = targetUser.Email,
+                PhoneNumber = targetUser.PhoneNumber,
+                ActiveUser = targetUser.ActiveUser,
+                Roles = targetUserRoles,
+                ImagePath = targetUser.ImagePath
+            };
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = targetUser
+                ResponseData = targetUserData
             };
         }
     }
