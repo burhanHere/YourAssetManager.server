@@ -92,6 +92,66 @@ namespace YourAssetManager.Server.Models
                 ResponseData = resultData
             };
         }
+        public async Task<ApiResponseDTO> GetAllAssetRequests(string signedInUserId)
+        {
+            // Find the user by ID
+            var user = await _userManager.FindByIdAsync(signedInUserId);
+            if (user == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
 
+            // Check if the user already has an active organization
+            var userOrganization = await _applicationDbContext.UserOrganizations
+                .FirstOrDefaultAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization == true);
+            if (userOrganization == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No active organization found for the user."
+                    }
+                };
+            }
+
+            var requiredAssetrequests = await _applicationDbContext.AssetRequests
+            .Where(x => x.OrganizationId == userOrganization.OrganizationId && x.RequestStatus == "PENDING")
+            .Select(x => new
+            {
+                RequestId = x.Id,
+                RequestDescription = x.RequestDescription,
+                RequestStatus = x.RequestStatus,
+                RequesterId = x.RequesterId,
+                RequesterUserName = x.Requester.UserName,
+
+            })
+            .ToListAsync();
+            if (requiredAssetrequests.Count == 0)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No request found in."
+                    }
+                };
+            }
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = requiredAssetrequests
+            };
+        }
     }
 }

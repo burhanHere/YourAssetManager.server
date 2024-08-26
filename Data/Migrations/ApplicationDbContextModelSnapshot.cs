@@ -441,7 +441,14 @@ namespace YourAssetManager.server.Data.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("RequestDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RequestStatus")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -450,6 +457,8 @@ namespace YourAssetManager.server.Data.Migrations
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("RequesterId");
 
@@ -845,11 +854,19 @@ namespace YourAssetManager.server.Data.Migrations
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetRequest", b =>
                 {
+                    b.HasOne("YourAssetManager.Server.Models.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "Requester")
                         .WithMany()
                         .HasForeignKey("RequesterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Organization");
 
                     b.Navigation("Requester");
                 });

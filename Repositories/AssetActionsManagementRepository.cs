@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
@@ -12,8 +13,8 @@ namespace YourAssetManager.Server.Repositories
 
         public async Task<ApiResponseDTO> RequestAsset(string currentLogedInUser, AssetRequestDTO assetRequestDTO)
         {
-            var targetUser = await _userManager.FindByIdAsync(currentLogedInUser);
-            if (targetUser == null)
+            var targetUserOrganization = await _applicationRepository.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == currentLogedInUser);
+            if (targetUserOrganization == null)
             {
                 return new ApiResponseDTO
                 {
@@ -24,12 +25,23 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-
+            if (string.IsNullOrEmpty(assetRequestDTO.RequestDescription))
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Request Description cant be empty!"
+                    }
+                };
+            }
             AssetRequest newRequest = new()
             {
                 RequestDescription = assetRequestDTO.RequestDescription,
                 RequestStatus = "PENDING",
-                RequesterId = targetUser.Id
+                RequesterId = targetUserOrganization.UserId,
+                OrganizationId = targetUserOrganization.OrganizationId
             };
 
             _applicationRepository.AssetRequests.Add(newRequest);
@@ -55,5 +67,6 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
+
     }
 }

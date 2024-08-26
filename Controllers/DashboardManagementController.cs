@@ -30,5 +30,22 @@ namespace YourAssetManager.Server.Controllers
             ApiResponseDTO result = await _dashboardManagementRepository.GetDashBoardStatiticsData(userId);
             return result;
         }
+
+        [HttpGet("GetAllAssetRequests")]
+        public async Task<ApiResponseDTO> GetAllAssetRequests()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                };
+            }
+            ApiResponseDTO result = await _dashboardManagementRepository.GetAllAssetRequests(userId);
+            return result;
+        }
+
     }
 }

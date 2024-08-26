@@ -39,5 +39,10 @@ namespace YourAssetManager.Server.Controllers
             }
             return BadRequest(result);
         }
+
+        // public async Task<IActionResult> AcceptAssetRequest()
+        // {
+
+        // }
     }
 }
