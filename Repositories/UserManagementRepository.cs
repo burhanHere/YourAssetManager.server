@@ -498,6 +498,8 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+
+
             //check us userName is unique or not
             bool duplicateUserName = await _applicationDbContext.Users.AnyAsync(x => x.UserName == userProfileUpdateDTO.UserName);
             if (duplicateUserName)
