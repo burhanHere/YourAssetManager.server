@@ -253,6 +253,57 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
+        public async Task<ApiResponseDTO> GetAssetRequestsByUserId(string targetUserId)
+        {
+            var targetUser = await _userManager.FindByIdAsync(targetUserId);
+            if (targetUser == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            var userOrganization = await _applicationRepository.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == targetUser.Id && x.Organization.ActiveOrganization);
+            if (userOrganization == null)
+            {
 
+                // Return error if organization and user association not found or if organization is deleted(deactivated)
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can perform this action as organization is not active or associated to this user.",
+                    }
+                };
+            }
+
+            var requiredAssetRequests = await _applicationRepository.AssetRequests
+            .Where(x => x.RequesterId == targetUser.Id)
+            .Select(x => new
+            {
+                RequestId = x.Id,
+                RequestDescription = x.RequestDescription,
+                RequestStatus = x.RequestStatus,
+                RequesterId = x.RequesterId,
+                RequesterUserName = x.Requester.UserName,
+            }).ToListAsync();
+
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = requiredAssetRequests,
+            };
+        }
+        // public async Task<ApiResponceDTO> ReturnAsset()
+        // {
+        //     return new ApiResponceDTO();
+        // }
     }
 }

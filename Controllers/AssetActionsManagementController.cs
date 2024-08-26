@@ -17,7 +17,7 @@ namespace YourAssetManager.Server.Controllers
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
         [HttpPost("RequestAsset")]
-        public async Task<IActionResult> RequestAsset(AssetRequestDTO assetRequestDTO)
+        public async Task<IActionResult> RequestAsset([FromBody] AssetRequestDTO assetRequestDTO)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -42,7 +42,7 @@ namespace YourAssetManager.Server.Controllers
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
         [HttpPost("ProcessAssetRequest")]
-        public async Task<IActionResult> ProcessAssetRequest(int requestId, bool action)
+        public async Task<IActionResult> ProcessAssetRequest([FromBody] AssetRequestProcessDTO assetRequestProcessDTO)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -53,7 +53,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _assetActionsManagementRepository.ProcessAssetRequest(currectLogedInUserId, requestId, action);
+            ApiResponseDTO result = await _assetActionsManagementRepository.ProcessAssetRequest(currectLogedInUserId, assetRequestProcessDTO.RequestId, assetRequestProcessDTO.Action);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -71,7 +71,7 @@ namespace YourAssetManager.Server.Controllers
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
         [HttpPost("AssignAsset")]
-        public async Task<IActionResult> AssignAsset(AssetAssignmentDTO assetAssignmentDTO)
+        public async Task<IActionResult> AssignAsset([FromBody] AssetAssignmentDTO assetAssignmentDTO)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -85,5 +85,37 @@ namespace YourAssetManager.Server.Controllers
             ApiResponseDTO result = await _assetActionsManagementRepository.AssetAssign(currectLogedInUserId, assetAssignmentDTO);
             return Ok(result);
         }
+
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
+        [HttpGet("GetAssetRequestsByUserId")]
+        public async Task<ApiResponseDTO> GetAssetRequestsByUserId()
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                };
+            }
+
+            ApiResponseDTO result = await _assetActionsManagementRepository.GetAssetRequestsByUserId(currectLogedInUserId);
+            return result;
+        }
+
+        // public async Task<ApiResponseDTO> ReturnAsset(AssetReturnDTO assetReturnDTO)
+        // {
+        //     var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        //     if (string.IsNullOrEmpty(currectLogedInUserId))
+        //     {
+        //         return new ApiResponseDTO
+        //         {
+        //             Status = StatusCodes.Status401Unauthorized,
+        //             ResponseData = new List<string> { "User not found in token." }
+        //         };
+        //     }
+
+        // }
     }
 }
