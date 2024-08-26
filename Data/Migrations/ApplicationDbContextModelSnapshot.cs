@@ -433,6 +433,29 @@ namespace YourAssetManager.server.Data.Migrations
                     b.ToTable("AssetMaintenances");
                 });
 
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RequestDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RequesterId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequesterId");
+
+                    b.ToTable("AssetRequests");
+                });
+
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetRetire", b =>
                 {
                     b.Property<int>("Id")
@@ -818,6 +841,17 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Asset");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetRequest", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "Requester")
+                        .WithMany()
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Requester");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetRetire", b =>

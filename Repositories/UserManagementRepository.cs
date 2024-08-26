@@ -552,5 +552,39 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
+
+        public async Task<ApiResponseDTO> GetMyData(string currectLogedInUserId)
+        {
+            ApplicationUser targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
+            if (targetUser == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Target user not found!"
+                    }
+                };
+            }
+
+            if (!targetUser.ActiveUser)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Accounbt Deactivated, can't get data!"
+                    }
+                };
+            }
+
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = targetUser
+            };
+        }
     }
 }

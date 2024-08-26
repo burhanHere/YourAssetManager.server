@@ -42,6 +42,9 @@ namespace YourAssetManager.server.Data.Migrations
                 {
                     Id = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    ActiveUser = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    ImagePath = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
@@ -98,7 +101,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ActiveOrganization = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ImagePath = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -227,6 +232,29 @@ namespace YourAssetManager.server.Data.Migrations
                     table.ForeignKey(
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "AssetRequests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    RequestDescription = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    RequesterId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AssetRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AssetRequests_AspNetUsers_RequesterId",
+                        column: x => x.RequesterId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -382,6 +410,8 @@ namespace YourAssetManager.server.Data.Migrations
                     Manufacturer = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Model = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ImagePath = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssetStatusId = table.Column<int>(type: "int", nullable: false),
                     OrganizationId = table.Column<int>(type: "int", nullable: false),
@@ -621,6 +651,11 @@ namespace YourAssetManager.server.Data.Migrations
                 column: "AssetId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AssetRequests_RequesterId",
+                table: "AssetRequests",
+                column: "RequesterId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AssetRetires_AssetId",
                 table: "AssetRetires",
                 column: "AssetId");
@@ -707,6 +742,9 @@ namespace YourAssetManager.server.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AssetMaintenances");
+
+            migrationBuilder.DropTable(
+                name: "AssetRequests");
 
             migrationBuilder.DropTable(
                 name: "AssetRetires");

@@ -20,6 +20,7 @@ namespace YourAssetManager.Server.Data
         public DbSet<AssetRetire> AssetRetires { get; set; }
         public DbSet<AssetMaintenance> AssetMaintenances { get; set; }
         public DbSet<AssetAssignment> AssetAssignments { get; set; }
+        public DbSet<AssetRequest> AssetRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

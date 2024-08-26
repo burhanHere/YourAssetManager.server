@@ -12,8 +12,8 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240823174050_UpdatedApplicationUserCutomePropertyDefaultValueAsTrue")]
-    partial class UpdatedApplicationUserCutomePropertyDefaultValueAsTrue
+    [Migration("20240826124655_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,6 +202,9 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("longtext");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
 
@@ -284,6 +287,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
@@ -430,6 +436,29 @@ namespace YourAssetManager.server.Data.Migrations
                     b.ToTable("AssetMaintenances");
                 });
 
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("RequestDescription")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RequesterId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequesterId");
+
+                    b.ToTable("AssetRequests");
+                });
+
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetRetire", b =>
                 {
                     b.Property<int>("Id")
@@ -573,6 +602,9 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("ImagePath")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("OrganizationName")
                         .IsRequired()
@@ -812,6 +844,17 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Asset");
+                });
+
+            modelBuilder.Entity("YourAssetManager.Server.Models.AssetRequest", b =>
+                {
+                    b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "Requester")
+                        .WithMany()
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Requester");
                 });
 
             modelBuilder.Entity("YourAssetManager.Server.Models.AssetRetire", b =>

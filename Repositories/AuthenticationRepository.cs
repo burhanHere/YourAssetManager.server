@@ -400,6 +400,18 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
+            if (!user.ActiveUser)
+            {
+                // User not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status403Forbidden,
+                    ResponseData = new List<string>
+                    {
+                        "User not active."
+                    }
+                };
+            }
 
             // Check if the user's email is confirmed
             if (!user.EmailConfirmed)

@@ -215,5 +215,21 @@ namespace YourAssetManager.Server.Controllers
             }
             return BadRequest(result);
         }
+
+        [HttpGet("GetMyData")]
+        public async Task<ApiResponseDTO> GetMyData()
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                };
+            }
+            ApiResponseDTO result = await _userManagementRepository.GetMyData(currectLogedInUserId);
+            return result;
+        }
     }
 }
