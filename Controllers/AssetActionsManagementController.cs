@@ -40,7 +40,7 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
         [HttpPost("DeclineAssetRequest")]
         public async Task<IActionResult> DeclineAssetRequest(int reqiestId)
         {
