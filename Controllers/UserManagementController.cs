@@ -17,7 +17,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("AssignAssetManager")]
         [Authorize(Policy = "RequireOrganizationOwnerAccess")]
-        public async Task<IActionResult> AppointAssetManager([FromBody] string AppointeeId)
+        public async Task<IActionResult> AppointAssetManager([FromBody] UserManagementDTO Appointee)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -28,7 +28,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _userManagementRepository.AppointAssetManager(currectLogedInUserId, AppointeeId);
+            ApiResponseDTO result = await _userManagementRepository.AppointAssetManager(currectLogedInUserId, Appointee.Id);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -46,7 +46,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("DismissAssetManager")]
         [Authorize(Policy = "RequireOrganizationOwnerAccess")]
-        public async Task<IActionResult> DismissAssetManager([FromBody] string AppointeeId)
+        public async Task<IActionResult> DismissAssetManager([FromBody] UserManagementDTO Appointee)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -57,7 +57,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _userManagementRepository.DismissAssetManager(currectLogedInUserId, AppointeeId);
+            ApiResponseDTO result = await _userManagementRepository.DismissAssetManager(currectLogedInUserId, Appointee.Id);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -75,7 +75,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("DeactivateAccount")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<IActionResult> DeactivateAccount([FromBody] string targetUserId)
+        public async Task<IActionResult> DeactivateAccount([FromBody] UserManagementDTO targetUser)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -86,7 +86,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            if (currectLogedInUserId == targetUserId)
+            if (currectLogedInUserId == targetUser.Id)
             {
                 return StatusCode(StatusCodes.Status405MethodNotAllowed, new ApiResponseDTO
                 {
@@ -97,7 +97,7 @@ namespace YourAssetManager.Server.Controllers
                     }
                 });
             }
-            ApiResponseDTO result = await _userManagementRepository.DeactivateAccount(currectLogedInUserId, targetUserId);
+            ApiResponseDTO result = await _userManagementRepository.DeactivateAccount(currectLogedInUserId, targetUser.Id);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -115,7 +115,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPost("ActivateAccount")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<IActionResult> ActivateAccount([FromBody] string targetUserId)
+        public async Task<IActionResult> ActivateAccount([FromBody] UserManagementDTO targetUser)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -126,7 +126,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            if (currectLogedInUserId == targetUserId)
+            if (currectLogedInUserId == targetUser.Id)
             {
                 return StatusCode(StatusCodes.Status405MethodNotAllowed, new ApiResponseDTO
                 {
@@ -137,7 +137,7 @@ namespace YourAssetManager.Server.Controllers
                     }
                 });
             }
-            ApiResponseDTO result = await _userManagementRepository.ActivateAccount(currectLogedInUserId, targetUserId);
+            ApiResponseDTO result = await _userManagementRepository.ActivateAccount(currectLogedInUserId, targetUser.Id);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -172,7 +172,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpGet("GetUserById")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<ApiResponseDTO> GetUserById(string targetUserId)
+        public async Task<ApiResponseDTO> GetUserById([FromBody] UserManagementDTO targetUser)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -183,7 +183,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 };
             }
-            ApiResponseDTO result = await _userManagementRepository.GetUserById(currectLogedInUserId, targetUserId);
+            ApiResponseDTO result = await _userManagementRepository.GetUserById(currectLogedInUserId, targetUser.Id);
             return result;
         }
     }
