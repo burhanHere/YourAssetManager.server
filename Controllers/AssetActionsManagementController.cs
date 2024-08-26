@@ -53,7 +53,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _assetActionsManagementRepository.DeclineAssetRequest(currectLogedInUserId, reqiestId);
+            ApiResponseDTO result = await _assetActionsManagementRepository.DeclineAssetRequest(currectLogedInUserId, requestId);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -69,8 +69,8 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        [HttpPost("AssignAsset")]
+        // [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        // [HttpPost("AssignAsset")]
         // public async Task<IActionResult> AssignAsset(AssetAssignmentDTO assetAssignmentDTO)
         // {
         //     var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
