@@ -172,7 +172,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpGet("GetUserById")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<ApiResponseDTO> GetUserById([FromBody] UserManagementDTO targetUser)
+        public async Task<ApiResponseDTO> GetUserById(UserManagementDTO targetUser)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -185,6 +185,13 @@ namespace YourAssetManager.Server.Controllers
             }
             ApiResponseDTO result = await _userManagementRepository.GetUserById(currectLogedInUserId, targetUser.Id);
             return result;
+        }
+
+        [HttpPut("UpdateUser")]
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
+        public async Task<ApiResponseDTO> UpdateUserProfile([FromBody] UserProfileUpdateDTO userDTO)
+        {
+            return new ApiResponseDTO();
         }
     }
 }
