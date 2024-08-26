@@ -92,7 +92,7 @@ namespace YourAssetManager.Server.Models
                 ResponseData = resultData
             };
         }
-        public async Task<ApiResponseDTO> GetAllAssetRequests(string signedInUserId)
+        public async Task<ApiResponseDTO> GetAllAssetRequests(string signedInUserId, string? requiredRequestsStatus = null)
         {
             // Find the user by ID
             var user = await _userManager.FindByIdAsync(signedInUserId);
@@ -125,7 +125,7 @@ namespace YourAssetManager.Server.Models
             }
 
             var requiredAssetrequests = await _applicationDbContext.AssetRequests
-            .Where(x => x.OrganizationId == userOrganization.OrganizationId && x.RequestStatus == "PENDING")
+            .Where(x => x.OrganizationId == userOrganization.OrganizationId && x.RequestStatus == (requiredRequestsStatus ?? x.RequestStatus))
             .Select(x => new
             {
                 RequestId = x.Id,

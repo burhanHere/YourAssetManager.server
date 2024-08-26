@@ -31,6 +31,22 @@ namespace YourAssetManager.Server.Controllers
             return result;
         }
 
+        [HttpGet("GetAllPandingAssetRequests")]
+        public async Task<ApiResponseDTO> GetAllPandingAssetRequests()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                };
+            }
+            ApiResponseDTO result = await _dashboardManagementRepository.GetAllAssetRequests(userId, "PENDING");
+            return result;
+        }
+
         [HttpGet("GetAllAssetRequests")]
         public async Task<ApiResponseDTO> GetAllAssetRequests()
         {
@@ -46,6 +62,5 @@ namespace YourAssetManager.Server.Controllers
             ApiResponseDTO result = await _dashboardManagementRepository.GetAllAssetRequests(userId);
             return result;
         }
-
     }
 }
