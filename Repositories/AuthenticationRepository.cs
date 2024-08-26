@@ -491,6 +491,7 @@ namespace YourAssetManager.Server.Repositories
                     email = user.Email,
                     userName = user.UserName,
                     userRole = userRoles,
+                    imagePath = user.ImagePath,
                     jwtToken = finalJwtToken
                 }
             };
