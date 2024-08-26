@@ -4,14 +4,16 @@ using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 using YourAssetManager.Server.Models;
+using YourAssetManager.Server.Services;
 
 namespace YourAssetManager.Server.Repositories
 {
-    public class UserManagementRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext applicationDbContext)
+    public class UserManagementRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext applicationDbContext, IConfiguration configuration)
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
+        private readonly CloudinaryService _cloudinaryService = new(configuration);
         public async Task<ApiResponseDTO> AppointAssetManager(string currectLogedInUserId, string AppointeeId)
         {
             // Find the organization owner by user ID
@@ -386,6 +388,7 @@ namespace YourAssetManager.Server.Repositories
                 Email = x.User.Email,
                 PhoneNumber = x.User.PhoneNumber,
                 ActiveUser = x.User.ActiveUser,
+                ImagePath = x.User.ImagePath
             }).ToHashSet();
 
             var userIds = requireduserAccounts.Select(x => x.Id).ToList();
@@ -473,11 +476,80 @@ namespace YourAssetManager.Server.Repositories
                 PhoneNumber = targetUser.PhoneNumber,
                 ActiveUser = targetUser.ActiveUser,
                 Roles = userRole.ToList(),
+                ImagePath = targetUser.ImagePath,
             };
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponseData = reaponseData
+            };
+        }
+        public async Task<ApiResponseDTO> UpdateUserProfile(string targetUserId, UserProfileUpdateDTO userProfileUpdateDTO)
+        {
+            ApplicationUser targetUser = await _userManager.FindByIdAsync(targetUserId);
+            if (targetUser == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Target user not found!"
+                    }
+                };
+            }
+            //check us userName is unique or not
+            bool duplicateUserName = await _applicationDbContext.Users.AnyAsync(x => x.UserName == userProfileUpdateDTO.UserName);
+            if (duplicateUserName)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status409Conflict,
+                    ResponseData = new List<string>
+                    {
+                        "User name already in use by some other user.",
+                        "User name must be unique."
+                    }
+                };
+            }
+            var stream = userProfileUpdateDTO.ProfilePicture.OpenReadStream();
+            string cloudinaryUrlOfImage = await _cloudinaryService.UploadImageToCloudinaryAsync(stream, userProfileUpdateDTO.ProfilePicture.FileName);
+            if (string.IsNullOrEmpty(cloudinaryUrlOfImage))
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>()
+                    {
+                        "failed to update profile."
+                    }
+                };
+            }
+
+            targetUser.UserName = userProfileUpdateDTO.UserName.IsNullOrEmpty()?targetUser.UserName:userProfileUpdateDTO.UserName;
+            targetUser.ImagePath = cloudinaryUrlOfImage;
+
+            _applicationDbContext.Users.Update(targetUser);
+            var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
+            if (savedDbChanges == 0)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>()
+                    {
+                        "failed to update profile."
+                    }
+                };
+            }
+
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>()
+                    {
+                        "Profile updated Successfully."
+                    }
             };
         }
     }

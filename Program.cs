@@ -76,7 +76,7 @@ internal class Program
         {
             options.AddPolicy("RequireOrganizationOwnerAccess", policy => policy.RequireRole("OrganizationOwner"));
             options.AddPolicy("RequireOrganizationOwnerOrAssetManagerAccess", policy => policy.RequireRole("OrganizationOwner", "AssetManager"));
-            options.AddPolicy("RequireOrganizationOwnerOrAssetManagerEmployeeAccess", policy => policy.RequireRole("Employee"));
+            options.AddPolicy("RequireOrganizationOwnerOrAssetManagerEmployeeAccess", policy => policy.RequireRole("OrganizationOwner", "AssetManager", "Employee"));
         });
         // ading CORS
         builder.Services.AddCors(options =>

@@ -16,9 +16,10 @@ namespace YourAssetManager.Server.Services
             var uplaodParameters = new ImageUploadParams
             {
                 File = new FileDescription(fileName, imageStream),
-                AssetFolder = "Test"
+                AssetFolder = configuration["Cloudinary:TargetFolderName"]!
             };
             ImageUploadResult uploadResult = await _cloudinary.UploadAsync(uplaodParameters);
+            Console.WriteLine(uploadResult.StatusCode);
             return uploadResult.SecureUrl.AbsoluteUri;
         }
     }

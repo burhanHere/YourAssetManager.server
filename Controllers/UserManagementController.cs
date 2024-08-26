@@ -11,9 +11,9 @@ namespace YourAssetManager.Server.Controllers
 {
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
-    public class UserManagementController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext applicationDbContext) : ControllerBase
+    public class UserManagementController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext applicationDbContext, IConfiguration configuration) : ControllerBase
     {
-        private readonly UserManagementRepository _userManagementRepository = new(userManager, roleManager, applicationDbContext);
+        private readonly UserManagementRepository _userManagementRepository = new(userManager, roleManager, applicationDbContext, configuration);
 
         [HttpPost("AssignAssetManager")]
         [Authorize(Policy = "RequireOrganizationOwnerAccess")]
@@ -189,9 +189,31 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpPut("UpdateUserProfile")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
-        public async Task<ApiResponseDTO> UpdateUserProfile(UserProfileUpdateDTO userDTO)
+        public async Task<IActionResult> UpdateUserProfile(UserProfileUpdateDTO userProfileUpdateDTO)
         {
-            return new ApiResponseDTO();
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponseDTO result = await _userManagementRepository.UpdateUserProfile(currectLogedInUserId, userProfileUpdateDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            else if (result.Status == StatusCodes.Status409Conflict)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, result);
+            }
+            return BadRequest(result);
         }
     }
 }
