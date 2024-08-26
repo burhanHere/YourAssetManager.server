@@ -174,7 +174,7 @@ namespace YourAssetManager.Server.Repositories
             {
                 newOrganizationDoamins.Add(new OrganizationDomains
                 {
-                    OrganizationDomainString = item.Remove(item.IndexOf("@")),
+                    OrganizationDomainString = item,
                     OrganizationId = newAddedOrganization.Entity.Id
                 });
             }
