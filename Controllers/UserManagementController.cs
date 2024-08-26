@@ -172,7 +172,7 @@ namespace YourAssetManager.Server.Controllers
 
         [HttpGet("GetUserById")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        public async Task<ApiResponseDTO> GetUserById(UserManagementDTO targetUser)
+        public async Task<ApiResponseDTO> GetUserById(string targetUserId)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -183,13 +183,13 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 };
             }
-            ApiResponseDTO result = await _userManagementRepository.GetUserById(currectLogedInUserId, targetUser.Id);
+            ApiResponseDTO result = await _userManagementRepository.GetUserById(currectLogedInUserId, targetUserId);
             return result;
         }
 
-        [HttpPut("UpdateUser")]
+        [HttpPut("UpdateUserProfile")]
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
-        public async Task<ApiResponseDTO> UpdateUserProfile([FromBody] UserProfileUpdateDTO userDTO)
+        public async Task<ApiResponseDTO> UpdateUserProfile(UserProfileUpdateDTO userDTO)
         {
             return new ApiResponseDTO();
         }
