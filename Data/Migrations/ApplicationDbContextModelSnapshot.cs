@@ -347,6 +347,9 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Property<int>("AssetId")
                         .HasColumnType("int");
 
+                    b.Property<int>("AssetRequestId")
+                        .HasColumnType("int");
+
                     b.Property<string>("AssignedById")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -366,6 +369,8 @@ namespace YourAssetManager.server.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AssetId");
+
+                    b.HasIndex("AssetRequestId");
 
                     b.HasIndex("AssignedById");
 
@@ -811,6 +816,12 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("YourAssetManager.Server.Models.AssetRequest", "AssetRequest")
+                        .WithMany()
+                        .HasForeignKey("AssetRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "AssignedBy")
                         .WithMany()
                         .HasForeignKey("AssignedById")
@@ -824,6 +835,8 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Asset");
+
+                    b.Navigation("AssetRequest");
 
                     b.Navigation("AssignedBy");
 

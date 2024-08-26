@@ -11,9 +11,9 @@ namespace YourAssetManager.Server.Controllers
 {
     [ApiController]
     [Route("YourAssetManager.Server/[controller]")]
-    public class AssetActionsManagementController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager) : ControllerBase
+    public class AssetActionsManagementController(ApplicationDbContext applicationDbContext, UserManager<ApplicationUser> userManager, MailSettingsDTO mailSettings) : ControllerBase
     {
-        private readonly AssetActionsManagementRepository _assetActionsManagementRepository = new(applicationDbContext, userManager);
+        private readonly AssetActionsManagementRepository _assetActionsManagementRepository = new(applicationDbContext, userManager, mailSettings);
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
         [HttpPost("RequestAsset")]
@@ -41,8 +41,8 @@ namespace YourAssetManager.Server.Controllers
         }
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        [HttpPost("DeclineAssetRequest")]
-        public async Task<IActionResult> DeclineAssetRequest(int requestId)
+        [HttpPost("ProcessAssetRequest")]
+        public async Task<IActionResult> ProcessAssetRequest(int requestId, bool action)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -53,7 +53,7 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _assetActionsManagementRepository.DeclineAssetRequest(currectLogedInUserId, requestId);
+            ApiResponseDTO result = await _assetActionsManagementRepository.ProcessAssetRequest(currectLogedInUserId, requestId, action);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -69,21 +69,21 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        // [HttpPost("AssignAsset")]
-        // public async Task<IActionResult> AssignAsset(AssetAssignmentDTO assetAssignmentDTO)
-        // {
-        //     var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //     if (string.IsNullOrEmpty(currectLogedInUserId))
-        //     {
-        //         return Unauthorized(new ApiResponseDTO
-        //         {
-        //             Status = StatusCodes.Status401Unauthorized,
-        //             ResponseData = new List<string> { "User not found in token." }
-        //         });
-        //     }
-        //     ApiResponseDTO result = await _assetActionsManagementRepository.AssignAsset()
-        //     return Ok(result);
-        // }
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("AssignAsset")]
+        public async Task<IActionResult> AssignAsset(AssetAssignmentDTO assetAssignmentDTO)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponseDTO result = await _assetActionsManagementRepository.AssetAssign(currectLogedInUserId, assetAssignmentDTO);
+            return Ok(result);
+        }
     }
 }

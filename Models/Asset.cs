@@ -34,7 +34,7 @@ namespace YourAssetManager.Server.Models
 
         [Required]
         [MaxLength(255)]
-        public string? AssetIdentificationNumber { get; set; }
+        public string AssetIdentificationNumber { get; set; }
 
         [Required]
         [MaxLength(255)]
