@@ -230,7 +230,7 @@ namespace YourAssetManager.Server.Repositories
             _applicationRepository.Assets.Update(targetAsset);
 
             var savedDbChanges = await _applicationRepository.SaveChangesAsync();
-            if (savedDbChanges < 3)
+            if (savedDbChanges < 2)
             {
                 return new ApiResponseDTO
                 {
@@ -301,9 +301,93 @@ namespace YourAssetManager.Server.Repositories
                 ResponseData = requiredAssetRequests,
             };
         }
-        // public async Task<ApiResponceDTO> ReturnAsset()
-        // {
-        //     return new ApiResponceDTO();
-        // }
+        public async Task<ApiResponseDTO> ReturnAsset(string currentLogedInUser, AssetReturnDTO assetReturnDTO)
+        {
+            var targetUser = await _userManager.FindByIdAsync(currentLogedInUser);
+            if (targetUser == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            var userOrganization = await _applicationRepository.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == targetUser.Id && x.Organization.ActiveOrganization);
+            if (userOrganization == null)
+            {
+
+                // Return error if organization and user association not found or if organization is deleted(deactivated)
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can perform this action as organization is not active or associated to this user.",
+                    }
+                };
+            }
+
+            var targetAssetAssignment = await _applicationRepository.AssetAssignments
+            .Where(x => x.AssetId == assetReturnDTO.AssetId)
+            .OrderByDescending(x => x.AssignedDate)
+            .Select(x => new
+            {
+                Id = x.Id,
+                AssignedToId = x.AssignedToId,
+                Asset = x.Asset
+            }).FirstOrDefaultAsync();
+
+            if (targetAssetAssignment == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Corresponding Asset Assignemnt not found."
+                    }
+                };
+            }
+            AssetReturn newAssetReturnEntry = new()
+            {
+                ReturnedDate = DateTime.Now,
+                ReturnCondition = assetReturnDTO.ReturnCondition,
+                Notes = assetReturnDTO.Notes,
+                AssetAssignmentId = targetAssetAssignment.Id
+            };
+
+            _applicationRepository.AssetReturns.AddAsync(newAssetReturnEntry);
+            targetAssetAssignment.Asset.AssetStatusId = 4;
+            _applicationRepository.Assets.Update(targetAssetAssignment.Asset);
+
+            var savedDbChanges = await _applicationRepository.SaveChangesAsync();
+            if (savedDbChanges < 2)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Failed To return asset."
+                    }
+                };
+            }
+            string message = $"<table><thead><tr><th>Asset ID</th></tr></thead><tbody><tr><td>{targetAssetAssignment.Asset.AssetId}</td></tr></tbody></table><br><p>The above-mentioned assets has been submitted back to Asset's Departemnt</p>";
+            var requesterUser = await _userManager.FindByIdAsync(targetAssetAssignment.AssignedToId);
+            _ = await _emailService.SendEmailAsync(requesterUser.Email, "Asset Return", message);
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                {
+                    "Asset returned successfully."
+                }
+            };
+        }
     }
 }

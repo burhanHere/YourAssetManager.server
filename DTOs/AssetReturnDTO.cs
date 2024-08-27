@@ -1,6 +1,6 @@
 namespace YourAssetManager.Server.DTOs
 {
-    public class AssetRequestProcess
+    public class AssetReturnDTO
     {
         public int AssetId { get; set; }
         public string ReturnCondition { get; set; }

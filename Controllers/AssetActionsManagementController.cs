@@ -104,18 +104,25 @@ namespace YourAssetManager.Server.Controllers
             return result;
         }
 
-        // public async Task<ApiResponseDTO> ReturnAsset(AssetReturnDTO assetReturnDTO)
-        // {
-        //     var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //     if (string.IsNullOrEmpty(currectLogedInUserId))
-        //     {
-        //         return new ApiResponseDTO
-        //         {
-        //             Status = StatusCodes.Status401Unauthorized,
-        //             ResponseData = new List<string> { "User not found in token." }
-        //         };
-        //     }
-
-        // }
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("ReturnAsset")]
+        public async Task<IActionResult> ReturnAsset([FromBody] AssetReturnDTO assetReturnDTO)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponseDTO result = await _assetActionsManagementRepository.ReturnAsset(currectLogedInUserId, assetReturnDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
     }
 }
