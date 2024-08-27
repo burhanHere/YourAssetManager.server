@@ -17,7 +17,7 @@ namespace YourAssetManager.Server.Controllers
 
         // Define the GetMyOrganizations endpoint to retrieve all organizations related to the currently signed-in user
         [HttpGet("GetOrganizationsInfo")]
-        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
         public async Task<ApiResponseDTO> GetOrganizationsInfo()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

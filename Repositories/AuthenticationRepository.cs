@@ -165,8 +165,8 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            var targetOrganization = await _applicationDbContext.OrganizationDomains.Where(x => x.OrganizationDomainString == domain && x.Organization.ActiveOrganization == true).Select(x => x.Organization).FirstAsync();
-            if (targetOrganization == null)
+            var targetOrganizationDomains = await _applicationDbContext.OrganizationDomains.FirstOrDefaultAsync(x => x.OrganizationDomainString == domain && x.Organization.ActiveOrganization == true);
+            if (targetOrganizationDomains == null)
             {
                 return new ApiResponseDTO
                 {
@@ -222,7 +222,7 @@ namespace YourAssetManager.Server.Repositories
             // assigning user organziation  to the registerer
             _applicationDbContext.UserOrganizations.Add(new UserOrganization()
             {
-                OrganizationId = targetOrganization.Id,
+                OrganizationId = targetOrganizationDomains.OrganizationId,
                 UserId = targetUser.Id
             });
 
