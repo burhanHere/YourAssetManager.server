@@ -124,5 +124,23 @@ namespace YourAssetManager.Server.Controllers
             }
             return BadRequest(result);
         }
+
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerEmployeeAccess")]
+        [HttpPost("CancelRequestAsset")]
+        public async Task<IActionResult> CancelRequestAsset(int reqiestId)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+
+            ApiResponseDTO result = await _assetActionsManagementRepository.CancelRequestAsset(currectLogedInUserId, reqiestId);
+            return Ok(result);
+        }
     }
 }

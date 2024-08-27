@@ -389,5 +389,89 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
+
+        public async Task<ApiResponseDTO> CancelRequestAsset(string currectLogedInUserId, int targetRequestId)
+        {
+            var targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
+            if (targetUser == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            var userOrganization = await _applicationRepository.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == targetUser.Id && x.Organization.ActiveOrganization);
+            if (userOrganization == null)
+            {
+
+                // Return error if organization and user association not found or if organization is deleted(deactivated)
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can perform this action as organization is not active or associated to this user.",
+                    }
+                };
+            }
+
+            AssetRequest targetAssetRequest = await _applicationRepository.AssetRequests.FirstOrDefaultAsync(x => x.Id == targetRequestId);
+            if (targetAssetRequest == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Target Request not found."
+                    }
+                };
+            }
+            if (targetAssetRequest.RequestStatus != "PENDING")
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Request Status Not pending.",
+                    }
+                };
+            }
+
+            targetAssetRequest.RequestStatus = "CANCELED";
+            string message = "AssetRequest canceled successfully.";
+
+            _applicationRepository.AssetRequests.Update(targetAssetRequest);
+            var savedDbChanges = await _applicationRepository.SaveChangesAsync();
+            if (savedDbChanges == 0)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Failed to Process Asset request."
+                    }
+                };
+            }
+            var requesterUser = await _userManager.FindByIdAsync(targetAssetRequest.RequesterId);
+            string emailMessage = @"Your asset Request has been Canceled.<br>";
+            _ = await _emailService.SendEmailAsync(requesterUser.Email, "Asset Request Decline", emailMessage);
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                {
+                    message
+                }
+            };
+        }
     }
 }
