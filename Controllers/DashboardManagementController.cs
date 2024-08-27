@@ -62,5 +62,13 @@ namespace YourAssetManager.Server.Controllers
             ApiResponseDTO result = await _dashboardManagementRepository.GetAllAssetRequests(userId);
             return result;
         }
+
+        [HttpGet("search")]
+        public async Task<ApiResponseDTO> Search([FromQuery] string query, [FromQuery] string tables)
+        {
+            ApiResponseDTO result = await _dashboardManagementRepository.Search(query, tables);
+            return result;
+        }
+
     }
 }

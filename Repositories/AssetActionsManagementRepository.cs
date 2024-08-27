@@ -389,7 +389,6 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
-
         public async Task<ApiResponseDTO> CancelRequestAsset(string currectLogedInUserId, int targetRequestId)
         {
             var targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
