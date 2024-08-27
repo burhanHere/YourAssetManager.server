@@ -554,7 +554,6 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
-
         public async Task<ApiResponseDTO> GetMyData(string currectLogedInUserId)
         {
             ApplicationUser targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
