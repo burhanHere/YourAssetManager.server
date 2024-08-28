@@ -74,35 +74,17 @@ namespace YourAssetManager.Server.Repositories
                     Errors = createUser.Errors
                 };
             }
-            // assigning OrganizationOwner role to the registerer
-            var roleName = "OrganizationOwner";
-            var organizationOwnerRole = await _roleManager.FindByNameAsync(roleName);
-            if (organizationOwnerRole == null)
-            {
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status500InternalServerError,
-                    ResponseData = new List<string>
-                        {
-                            $"Role '{roleName}' does not exist. Please contact support."
-                        }
-                };
-            }
 
-            var addToUserRoleResult = await _userManager.AddToRoleAsync(newUser, organizationOwnerRole.Name!);
+            var addToUserRoleResult = await _userManager.AddToRoleAsync(newUser, "OrganizationOwner");
             if (!addToUserRoleResult.Succeeded)
             {
-                var temp = await _userManager.FindByEmailAsync(newUser.Email!);
-                _ = await _userManager.DeleteAsync(temp!);
+                await _userManager.DeleteAsync(newUser);
                 return new ApiResponseDTO
                 {
-                    Status = StatusCodes.Status500InternalServerError,
+                    Status = StatusCodes.Status400BadRequest,
                     ResponseData = new List<string>
                         {
-                            "Account created successfully.",
-                            "Confirmation email sent. Please check your email.",
-                            "Failed to assign role to the user.",
-                            "Please try registering your account again."
+                            "Account creation failed.",
                         }
                 };
             }
@@ -156,7 +138,7 @@ namespace YourAssetManager.Server.Repositories
             {
                 return new ApiResponseDTO
                 {
-                    Status = StatusCodes.Status400BadRequest,
+                    Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
                         "Invalid email domain.",
@@ -229,7 +211,8 @@ namespace YourAssetManager.Server.Repositories
             var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
             if (savedDbChanges == 0)
             {
-                await _userManager.DeleteAsync(targetUser);
+                var temp = await _userManager.FindByEmailAsync(newUser.Email!);
+                _ = await _userManager.DeleteAsync(temp!);
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
@@ -240,30 +223,14 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-
-            // assigning Employee role to the registerer
-            var roleName = "Employee";
-            var employeeRole = await _roleManager.FindByNameAsync(roleName);
-            if (employeeRole == null)
-            {
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status500InternalServerError,
-                    ResponseData = new List<string>
-                        {
-                            $"Role '{roleName}' does not exist. Please contact support."
-                        }
-                };
-            }
-
-            var addToUserRoleResult = await _userManager.AddToRoleAsync(newUser, employeeRole.Name!);
+            var addToUserRoleResult = await _userManager.AddToRoleAsync(newUser, "Employee");
             if (!addToUserRoleResult.Succeeded)
             {
                 var temp = await _userManager.FindByEmailAsync(newUser.Email!);
                 _ = await _userManager.DeleteAsync(temp!);
                 return new ApiResponseDTO
                 {
-                    Status = StatusCodes.Status500InternalServerError,
+                    Status = StatusCodes.Status400BadRequest,
                     ResponseData = new List<string>
                         {
                             "Failed to assign role to the user.",
@@ -458,7 +425,7 @@ namespace YourAssetManager.Server.Repositories
                 // Incorrect password
                 return new ApiResponseDTO
                 {
-                    Status = StatusCodes.Status403Forbidden,
+                    Status = StatusCodes.Status404NotFound,
                     ResponseData = new List<string>
                     {
                         "Incorrect password.",

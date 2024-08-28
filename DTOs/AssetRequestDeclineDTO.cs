@@ -1,8 +1,7 @@
 namespace YourAssetManager.Server.DTOs
 {
-    public class AssetRequestProcessDTO
+    public class AssetRequestDeclineDTO
     {
         public int RequestId { get; set; }
-        public bool Action { get; set; }
     }
 }

@@ -69,7 +69,7 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
-        public async Task<ApiResponseDTO> ProcessAssetRequest(string currentLogedInUser, int RequestId, bool action)
+        public async Task<ApiResponseDTO> DeclineAssetRequest(string currentLogedInUser, AssetRequestDeclineDTO assetRequestDeclineDTO)
         {
             var targetUser = await _userManager.FindByIdAsync(currentLogedInUser);
             if (targetUser == null)
@@ -101,7 +101,7 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
 
-            AssetRequest targetAssetRequest = await _applicationRepository.AssetRequests.FirstOrDefaultAsync(x => x.OrganizationId == userOrganization.OrganizationId && x.Id == RequestId);
+            AssetRequest targetAssetRequest = await _applicationRepository.AssetRequests.FirstOrDefaultAsync(x => x.OrganizationId == userOrganization.OrganizationId && x.Id == assetRequestDeclineDTO.RequestId);
             if (targetAssetRequest == null)
             {
                 return new ApiResponseDTO
@@ -124,20 +124,8 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            string message;
-            string emailMessage;
-            if (action)
-            {
-                targetAssetRequest.RequestStatus = "FULFILLED";
-                message = "AssetRequest Marked as Fulfilled successfully.";
-                emailMessage = @"Your asset Request has been Fulfilled.<br>";
-            }
-            else
-            {
-                targetAssetRequest.RequestStatus = "DECLINED";
-                message = "AssetRequest Declined successfully.";
-                emailMessage = @"Your asset Request has been declined.<br>";
-            }
+            targetAssetRequest.RequestStatus = "DECLINED";
+
             _applicationRepository.AssetRequests.Update(targetAssetRequest);
             var savedDbChanges = await _applicationRepository.SaveChangesAsync();
             if (savedDbChanges == 0)
@@ -152,13 +140,80 @@ namespace YourAssetManager.Server.Repositories
                 };
             }
             var requesterUser = await _userManager.FindByIdAsync(targetAssetRequest.RequesterId);
+            string emailMessage = @"Your asset Request has been declined.<br>";
             _ = await _emailService.SendEmailAsync(requesterUser.Email, "Asset Request Decline", emailMessage);
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
                 {
-                    message
+                    "AssetRequest Declined successfully."
+                }
+            };
+        }
+
+        public async Task<ApiResponseDTO> FulFillAssetRequest(string currentLogedInUser, AssetRequestFulFillDTO assetRequestFulFillDTO)
+        {
+            AssetAssignmentDTO assetAssignmentDTO = new()
+            {
+                AssignedToId = assetRequestFulFillDTO.AssignedToId,
+                AssetId = assetRequestFulFillDTO.AssetId,
+                Notes = assetRequestFulFillDTO.Notes,
+            };
+
+            var result = await AssetAssign(currentLogedInUser, assetAssignmentDTO);
+            if (result.Status != StatusCodes.Status200OK)
+            {
+                return result;
+            }
+
+            AssetRequest targetAssetRequest = await _applicationRepository.AssetRequests.FirstOrDefaultAsync(x => x.Id == assetRequestFulFillDTO.RequestId);
+            if (targetAssetRequest == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Target Request not found."
+                    }
+                };
+            }
+            if (targetAssetRequest.RequestStatus != "PENDING")
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Request Status Not pending.",
+                    }
+                };
+            }
+            targetAssetRequest.RequestStatus = "FULFILLED";
+
+            _applicationRepository.AssetRequests.Update(targetAssetRequest);
+            var savedDbChanges = await _applicationRepository.SaveChangesAsync();
+            if (savedDbChanges == 0)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Failed to Process Asset request."
+                    }
+                };
+            }
+            var requesterUser = await _userManager.FindByIdAsync(targetAssetRequest.RequesterId);
+            string emailMessage = @"Your asset Request has been Fulfilled.<br>";
+            _ = await _emailService.SendEmailAsync(requesterUser.Email, "Asset Request Decline", emailMessage);
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                {
+                    "AssetRequest Fulfilled successfully."
                 }
             };
         }
@@ -223,7 +278,7 @@ namespace YourAssetManager.Server.Repositories
             newAssetAssignment.AssignedToId = assetAssignmentDTO.AssignedToId;
             newAssetAssignment.AssignedById = targetUser.Id;
             newAssetAssignment.AssetId = assetAssignmentDTO.AssetId;
-            newAssetAssignment.AssetRequestId = assetAssignmentDTO.RequestId;
+            newAssetAssignment.AssetRequestId = null;
 
             await _applicationRepository.AssetAssignments.AddAsync(newAssetAssignment);
             targetAsset.AssetStatusId = 1;

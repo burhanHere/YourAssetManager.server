@@ -19,6 +19,9 @@ namespace YourAssetManager.Server.Models
         public bool ActiveOrganization { get; set; }
 
         [Required]
+        public bool OrganizationConfirmed { get; set; } = false;
+
+        [Required]
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
         [Required]

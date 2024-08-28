@@ -69,6 +69,5 @@ namespace YourAssetManager.Server.Controllers
             ApiResponseDTO result = await _dashboardManagementRepository.Search(assetQuery, assetCatagoriId);
             return result;
         }
-
     }
 }

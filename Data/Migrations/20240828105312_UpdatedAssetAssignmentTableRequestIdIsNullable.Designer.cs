@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YourAssetManager.Server.Data;
 
@@ -11,9 +12,11 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240828105312_UpdatedAssetAssignmentTableRequestIdIsNullable")]
+    partial class UpdatedAssetAssignmentTableRequestIdIsNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -617,9 +620,6 @@ namespace YourAssetManager.server.Data.Migrations
 
                     b.Property<string>("ImagePath")
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("OrganizationConfirmed")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("OrganizationName")
                         .IsRequired()

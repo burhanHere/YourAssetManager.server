@@ -152,6 +152,7 @@ namespace YourAssetManager.Server.Repositories
                 CreatedDate = DateTime.UtcNow,
                 UpdatedDate = DateTime.UtcNow,
                 ActiveOrganization = true,
+                OrganizationConfirmed = false
             };
 
             // Add the organization to the database

@@ -34,7 +34,7 @@ namespace YourAssetManager.Server.Models
         public Asset Asset { get; set; }
 
         [Required]
-        public int AssetRequestId { get; set; }
+        public int? AssetRequestId { get; set; }
 
         [ForeignKey("AssetRequestId")]
         public AssetRequest AssetRequest { get; set; }

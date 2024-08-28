@@ -41,8 +41,8 @@ namespace YourAssetManager.Server.Controllers
         }
 
         [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
-        [HttpPost("ProcessAssetRequest")]
-        public async Task<IActionResult> ProcessAssetRequest([FromBody] AssetRequestProcessDTO assetRequestProcessDTO)
+        [HttpPost("DeclineAssetRequest")]
+        public async Task<IActionResult> DeclineAssetRequest([FromBody] AssetRequestDeclineDTO assetRequestProcessDTO)
         {
             var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(currectLogedInUserId))
@@ -53,7 +53,36 @@ namespace YourAssetManager.Server.Controllers
                     ResponseData = new List<string> { "User not found in token." }
                 });
             }
-            ApiResponseDTO result = await _assetActionsManagementRepository.ProcessAssetRequest(currectLogedInUserId, assetRequestProcessDTO.RequestId, assetRequestProcessDTO.Action);
+            ApiResponseDTO result = await _assetActionsManagementRepository.DeclineAssetRequest(currectLogedInUserId, assetRequestProcessDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            else if (result.Status == StatusCodes.Status405MethodNotAllowed)
+            {
+                return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("FulFillAssetRequest")]
+        public async Task<IActionResult> FulFillAssetRequest([FromBody] AssetRequestFulFillDTO assetRequestFulFillDTO)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+            ApiResponseDTO result = await _assetActionsManagementRepository.FulFillAssetRequest(currectLogedInUserId, assetRequestFulFillDTO);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
