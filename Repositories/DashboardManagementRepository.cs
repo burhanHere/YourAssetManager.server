@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
 
@@ -154,9 +155,9 @@ namespace YourAssetManager.Server.Models
             };
         }
 
-        public async Task<ApiResponseDTO> Search(string query, string tables)
+        public async Task<ApiResponseDTO> Search(string assetQuery, int assetCatagoriId)
         {
-            if (string.IsNullOrEmpty(query))
+            if (string.IsNullOrEmpty(assetQuery))
             {
                 return new ApiResponseDTO
                 {
@@ -165,53 +166,58 @@ namespace YourAssetManager.Server.Models
                 };
             }
 
-            // Split the tables parameter into an array
-            var tableList = tables?.Split(',').Select(t => t.Trim().ToLower()).ToList();
-
-            var results = new
+            List<AssetDTO> targetAssets;
+            if (assetCatagoriId == 0)
             {
-                Assets = tableList == null || tableList.Contains("assets")
-                    ? await _applicationDbContext.Assets.Where(a => a.AssetName.Contains(query)).ToListAsync()
-                    : null,
-                // AssetAssignments = tableList == null || tableList.Contains("assetassignments")
-                //     ? await _applicationDbContext.AssetAssignments.Where(a => a.Notes.Contains(query)).ToListAsync()
-                //     : null,
-                AssetCategories = tableList == null || tableList.Contains("categories")
-                    ? await _applicationDbContext.AssetCategories.Where(a => a.CategoryName.Contains(query)).ToListAsync()
-                    : null,
-                // AssetMaintenances = tableList == null || tableList.Contains("assetmaintenances")
-                //     ? await _applicationDbContext.AssetMaintenances.Where(a => a.Description.Contains(query)).ToListAsync()
-                //     : null,
-                // AssetRequests = tableList == null || tableList.Contains("assetrequests")
-                //     ? await _applicationDbContext.AssetRequests.Where(a => a.RequestDescription.Contains(query)).ToListAsync()
-                //     : null,
-                // AssetRetires = tableList == null || tableList.Contains("assetretires")
-                //     ? await _applicationDbContext.AssetRetires.Where(a => a.RetirementReason.Contains(query)).ToListAsync()
-                //     : null,
-                // AssetReturns = tableList == null || tableList.Contains("assetreturns")
-                //     ? await _applicationDbContext.AssetReturns.Where(a => a.ReturnCondition.Contains(query) || a.Notes.Contains(query)).ToListAsync()
-                //     : null,
-                AssetTypes = tableList == null || tableList.Contains("assettypes")
-                    ? await _applicationDbContext.AssetTypes.Where(a => a.AssetTypeName.Contains(query) || a.Description.Contains(query)).ToListAsync()
-                    : null,
-                // Organizations = tableList == null || tableList.Contains("organizations")
-                //     ? await _applicationDbContext.Organizations.Where(o => o.OrganizationName.Contains(query) || o.Description.Contains(query)).ToListAsync()
-                //     : null,
-                // OrganizationDomains = tableList == null || tableList.Contains("organizationdomains")
-                //     ? await _applicationDbContext.OrganizationDomains.Where(o => o.OrganizationDomainString.Contains(query)).ToListAsync()
-                //     : null,
-                Vendors = tableList == null || tableList.Contains("vendors")
-                    ? await _applicationDbContext.Vendors.Where(v => v.Name.Contains(query) || v.PhoneNumber.Contains(query)).ToListAsync()
-                    : null,
-                Users = tableList == null || tableList.Contains("users")
-                    ? await _applicationDbContext.Users.Where(u => u.UserName.Contains(query) || u.Email.Contains(query)).ToListAsync()
-                    : null
-            };
+                targetAssets = await _applicationDbContext.Assets.Where(a => a.AssetName.Contains(assetQuery)).Select(x => new AssetDTO()
+                {
+                    Id = x.AssetId,
+                    AssetName = x.AssetName,
+                    Description = x.Description,
+                    PurchaseDate = x.PurchaseDate,
+                    PurchasePrice = x.PurchasePrice,
+                    SerialNumber = x.SerialNumber,
+                    CreatedDate = x.CreatedDate,
+                    UpdatedDate = x.UpdatedDate,
+                    AssetIdentificationNumber = x.AssetIdentificationNumber,
+                    Manufacturer = x.Manufacturer,
+                    Model = x.Model,
+                    CatagoryReleventFeildsData = x.CatagoryReleventFeildsData,
+                    OrganizationData = x.OrganizationId.ToString(),
+                    AssetStatusData = x.AssetStatusId.ToString(),
+                    AssetCategoryData = x.AssetCategoryId.ToString(),
+                    AssetTypeData = x.AssetTypeId.ToString(),
+                    VendorData = x.VendorId.ToString()
+                }).ToListAsync();
+            }
+            else
+            {
+                targetAssets = await _applicationDbContext.Assets.Where(a => a.AssetName.Contains(assetQuery) && a.AssetCategoryId == assetCatagoriId).Select(x => new AssetDTO()
+                {
+                    Id = x.AssetId,
+                    AssetName = x.AssetName,
+                    Description = x.Description,
+                    PurchaseDate = x.PurchaseDate,
+                    PurchasePrice = x.PurchasePrice,
+                    SerialNumber = x.SerialNumber,
+                    CreatedDate = x.CreatedDate,
+                    UpdatedDate = x.UpdatedDate,
+                    AssetIdentificationNumber = x.AssetIdentificationNumber,
+                    Manufacturer = x.Manufacturer,
+                    Model = x.Model,
+                    CatagoryReleventFeildsData = x.CatagoryReleventFeildsData,
+                    OrganizationData = x.OrganizationId.ToString(),
+                    AssetStatusData = x.AssetStatusId.ToString(),
+                    AssetCategoryData = x.AssetCategoryId.ToString(),
+                    AssetTypeData = x.AssetTypeId.ToString(),
+                    VendorData = x.VendorId.ToString()
+                }).ToListAsync();
+            }
 
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
-                ResponseData = results
+                ResponseData = targetAssets
             };
         }
     }
