@@ -171,5 +171,35 @@ namespace YourAssetManager.Server.Controllers
             ApiResponseDTO result = await _assetActionsManagementRepository.CancelRequestAsset(currectLogedInUserId, reqiestId);
             return Ok(result);
         }
+
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("RetireAsset")]
+        public async Task<IActionResult> RetireAsset([FromBody] AssetRetireDTO assetRetireDTO)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+
+            ApiResponseDTO result = await _assetActionsManagementRepository.RetireAsset(currectLogedInUserId, assetRetireDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status405MethodNotAllowed)
+            {
+                return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

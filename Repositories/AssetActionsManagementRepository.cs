@@ -525,5 +525,93 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
+
+        public async Task<ApiResponseDTO> RetireAsset(string currectLogedInUserId, AssetRetireDTO assetRetireDTO)
+        {
+            var targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
+            if (targetUser == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            var userOrganization = await _applicationRepository.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == targetUser.Id && x.Organization.ActiveOrganization);
+            if (userOrganization == null)
+            {
+
+                // Return error if organization and user association not found or if organization is deleted(deactivated)
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can perform this action as organization is not active or associated to this user.",
+                    }
+                };
+            }
+
+            Asset targetAsset = await _applicationRepository.Assets.FirstOrDefaultAsync(x => x.AssetId == assetRetireDTO.AssetId);
+            if (targetAsset == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Target Asset not found."
+                    }
+                };
+            }
+            if (targetAsset.AssetStatusId != 4)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Asset is not Available.",
+                    }
+                };
+            }
+            AssetRetire assetRetire = new()
+            {
+                RetiredOn = DateTime.Now,
+                RetirementReason = assetRetireDTO.RetirementReason,
+                AssetId = assetRetireDTO.AssetId,
+            };
+            _applicationRepository.AssetRetires.Add(assetRetire);
+
+            targetAsset.AssetStatusId = 2;
+
+            _applicationRepository.Assets.Update(targetAsset);
+            var savedDbChanges = await _applicationRepository.SaveChangesAsync();
+            if (savedDbChanges < 2)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Failed to Retire Asset."
+                    }
+                };
+            }
+
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                {
+                    "Asset Retired Successfully."
+                }
+            };
+        }
     }
 }
