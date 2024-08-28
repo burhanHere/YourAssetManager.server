@@ -151,7 +151,6 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
-
         public async Task<ApiResponseDTO> FulFillAssetRequest(string currentLogedInUser, AssetRequestFulFillDTO assetRequestFulFillDTO)
         {
             AssetAssignmentDTO assetAssignmentDTO = new()
@@ -213,7 +212,7 @@ namespace YourAssetManager.Server.Repositories
                 Status = StatusCodes.Status200OK,
                 ResponseData = new List<string>
                 {
-                    "AssetRequest Fulfilled successfully."
+                    "Asset Request Fulfilled successfully."
                 }
             };
         }
@@ -278,7 +277,6 @@ namespace YourAssetManager.Server.Repositories
             newAssetAssignment.AssignedToId = assetAssignmentDTO.AssignedToId;
             newAssetAssignment.AssignedById = targetUser.Id;
             newAssetAssignment.AssetId = assetAssignmentDTO.AssetId;
-            newAssetAssignment.AssetRequestId = null;
 
             await _applicationRepository.AssetAssignments.AddAsync(newAssetAssignment);
             targetAsset.AssetStatusId = 1;

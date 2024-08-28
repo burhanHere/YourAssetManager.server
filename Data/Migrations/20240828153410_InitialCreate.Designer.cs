@@ -12,7 +12,7 @@ using YourAssetManager.Server.Data;
 namespace YourAssetManager.server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240826203253_InitialCreate")]
+    [Migration("20240828153410_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -350,9 +350,6 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Property<int>("AssetId")
                         .HasColumnType("int");
 
-                    b.Property<int>("AssetRequestId")
-                        .HasColumnType("int");
-
                     b.Property<string>("AssignedById")
                         .IsRequired()
                         .HasColumnType("varchar(255)");
@@ -372,8 +369,6 @@ namespace YourAssetManager.server.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AssetId");
-
-                    b.HasIndex("AssetRequestId");
 
                     b.HasIndex("AssignedById");
 
@@ -620,6 +615,9 @@ namespace YourAssetManager.server.Data.Migrations
                     b.Property<string>("ImagePath")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("OrganizationConfirmed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("OrganizationName")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -819,12 +817,6 @@ namespace YourAssetManager.server.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("YourAssetManager.Server.Models.AssetRequest", "AssetRequest")
-                        .WithMany()
-                        .HasForeignKey("AssetRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("YourAssetManager.Server.Models.ApplicationUser", "AssignedBy")
                         .WithMany()
                         .HasForeignKey("AssignedById")
@@ -838,8 +830,6 @@ namespace YourAssetManager.server.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Asset");
-
-                    b.Navigation("AssetRequest");
 
                     b.Navigation("AssignedBy");
 

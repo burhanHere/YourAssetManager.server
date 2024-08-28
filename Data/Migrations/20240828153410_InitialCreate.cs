@@ -100,6 +100,7 @@ namespace YourAssetManager.server.Data.Migrations
                     Description = table.Column<string>(type: "varchar(1000)", maxLength: 1000, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ActiveOrganization = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    OrganizationConfirmed = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ImagePath = table.Column<string>(type: "longtext", nullable: true)
@@ -479,8 +480,7 @@ namespace YourAssetManager.server.Data.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AssignedById = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    AssetId = table.Column<int>(type: "int", nullable: false),
-                    AssetRequestId = table.Column<int>(type: "int", nullable: false)
+                    AssetId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -495,12 +495,6 @@ namespace YourAssetManager.server.Data.Migrations
                         name: "FK_AssetAssignments_AspNetUsers_AssignedToId",
                         column: x => x.AssignedToId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AssetAssignments_AssetRequests_AssetRequestId",
-                        column: x => x.AssetRequestId,
-                        principalTable: "AssetRequests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -647,11 +641,6 @@ namespace YourAssetManager.server.Data.Migrations
                 column: "AssetId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AssetAssignments_AssetRequestId",
-                table: "AssetAssignments",
-                column: "AssetRequestId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AssetAssignments_AssignedById",
                 table: "AssetAssignments",
                 column: "AssignedById");
@@ -770,6 +759,9 @@ namespace YourAssetManager.server.Data.Migrations
                 name: "AssetMaintenances");
 
             migrationBuilder.DropTable(
+                name: "AssetRequests");
+
+            migrationBuilder.DropTable(
                 name: "AssetRetires");
 
             migrationBuilder.DropTable(
@@ -788,13 +780,10 @@ namespace YourAssetManager.server.Data.Migrations
                 name: "AssetAssignments");
 
             migrationBuilder.DropTable(
-                name: "AssetRequests");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Assets");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "AssetCategories");
