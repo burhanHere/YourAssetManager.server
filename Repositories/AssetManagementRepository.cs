@@ -469,7 +469,7 @@ namespace YourAssetManager.Server.Repositories
             }
 
             List<AssetDTO> requiredAssets = await _applicationDbContext.Assets
-                .Where(x => x.OrganizationId == userOrganization.OrganizationId && x.AssetCategoryId == catagoryId)
+                .Where(x => x.OrganizationId == userOrganization.OrganizationId && x.AssetCategoryId == catagoryId && x.AssetStatusId == 4)
                 .Select(x => new AssetDTO
                 {
                     Id = x.AssetId,
