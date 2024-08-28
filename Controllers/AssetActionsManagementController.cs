@@ -201,5 +201,64 @@ namespace YourAssetManager.Server.Controllers
             }
             return BadRequest(result);
         }
+
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("SendForMaintenance")]
+        public async Task<IActionResult> SendForMaintenance([FromBody] AssetMaintanenceDTO assetMaintanenceDTO)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+
+            ApiResponseDTO result = await _assetActionsManagementRepository.SendReturnFromMaintenance(currectLogedInUserId, true, assetMaintanenceDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status405MethodNotAllowed)
+            {
+                return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
+        [Authorize(Policy = "RequireOrganizationOwnerOrAssetManagerAccess")]
+        [HttpPost("ReturnFromMaintenance")]
+        public async Task<IActionResult> ReturnFromMaintenance([FromBody] AssetMaintanenceDTO assetMaintanenceDTO)
+        {
+            var currectLogedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(currectLogedInUserId))
+            {
+                return Unauthorized(new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status401Unauthorized,
+                    ResponseData = new List<string> { "User not found in token." }
+                });
+            }
+
+            ApiResponseDTO result = await _assetActionsManagementRepository.SendReturnFromMaintenance(currectLogedInUserId, false, assetMaintanenceDTO);
+            if (result.Status == StatusCodes.Status200OK)
+            {
+                return Ok(result);
+            }
+            else if (result.Status == StatusCodes.Status405MethodNotAllowed)
+            {
+                return StatusCode(StatusCodes.Status405MethodNotAllowed, result);
+            }
+            else if (result.Status == StatusCodes.Status404NotFound)
+            {
+                return NotFound(result);
+            }
+            return BadRequest(result);
+        }
     }
 }

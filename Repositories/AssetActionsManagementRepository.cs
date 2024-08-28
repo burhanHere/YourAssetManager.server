@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.EntityFrameworkCore;
 using YourAssetManager.Server.Data;
 using YourAssetManager.Server.DTOs;
@@ -525,7 +526,6 @@ namespace YourAssetManager.Server.Repositories
                 }
             };
         }
-
         public async Task<ApiResponseDTO> RetireAsset(string currectLogedInUserId, AssetRetireDTO assetRetireDTO)
         {
             var targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
@@ -610,6 +610,128 @@ namespace YourAssetManager.Server.Repositories
                 ResponseData = new List<string>
                 {
                     "Asset Retired Successfully."
+                }
+            };
+        }
+        public async Task<ApiResponseDTO> SendReturnFromMaintenance(string currectLogedInUserId, bool action, AssetMaintanenceDTO assetMaintanenceDTO)
+        {
+            var targetUser = await _userManager.FindByIdAsync(currectLogedInUserId);
+            if (targetUser == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+            var userOrganization = await _applicationRepository.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == targetUser.Id && x.Organization.ActiveOrganization);
+            if (userOrganization == null)
+            {
+
+                // Return error if organization and user association not found or if organization is deleted(deactivated)
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can perform this action as organization is not active or associated to this user.",
+                    }
+                };
+            }
+
+            Asset targetAsset = await _applicationRepository.Assets.FirstOrDefaultAsync(x => x.AssetId == assetMaintanenceDTO.AssetId);
+            if (targetAsset == null)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Target Asset not found."
+                    }
+                };
+            }
+            if (targetAsset.AssetStatusId != 4)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Asset is not Available.",
+                    }
+                };
+            }
+            if (targetAsset.AssetStatusId == 3)
+            {
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status405MethodNotAllowed,
+                    ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Asset already Under Maintanence.",
+                    }
+                };
+            }
+            string message;
+            if (action)
+            {
+                targetAsset.AssetStatusId = 3;
+                _applicationRepository.Assets.Update(targetAsset);
+
+                var savedDbChanges = await _applicationRepository.SaveChangesAsync();
+                if (savedDbChanges == 0)
+                {
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        ResponseData = new List<string>
+                    {
+                        "Failed to Retire Asset."
+                    }
+                    };
+                }
+                message = "Asset returned from maintanance Successfully.";
+            }
+            else
+            {
+                AssetMaintenance assetMaintenance = new()
+                {
+                    MaintenanceDate = DateTime.Now,
+                    Description = assetMaintanenceDTO.Description,
+                    AssetId = assetMaintanenceDTO.AssetId
+                };
+                _applicationRepository.AssetMaintenances.Update(assetMaintenance);
+
+                targetAsset.AssetStatusId = 3;
+                _applicationRepository.Assets.Update(targetAsset);
+
+                var savedDbChanges = await _applicationRepository.SaveChangesAsync();
+                if (savedDbChanges < 2)
+                {
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        ResponseData = new List<string>
+                    {
+                        "Failed to Retire Asset."
+                    }
+                    };
+                }
+                message = "Asset Sent for maintanance Successfully.";
+            }
+
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = new List<string>
+                {
+                   message
                 }
             };
         }
