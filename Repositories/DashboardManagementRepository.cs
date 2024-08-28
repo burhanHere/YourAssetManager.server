@@ -195,7 +195,7 @@ namespace YourAssetManager.Server.Models
             else
             {
                 targetAssets = await _applicationDbContext.Assets
-                .Where(a => (a.AssetName.Contains(assetQuery) || a.Description.Contains(assetQuery)) && a.AssetCategoryId == assetCatagoriId)
+                .Where(a => a.AssetName.Contains(assetQuery) || a.Description.Contains(assetQuery) || a.AssetCategoryId == assetCatagoriId)
                 .Select(x => new AssetDTO()
                 {
                     Id = x.AssetId,
