@@ -167,7 +167,7 @@ namespace YourAssetManager.Server.Models
             }
 
             List<AssetDTO> targetAssets;
-            if (assetCatagoriId == 0)
+            if (assetCatagoriId <= 0)
             {
                 targetAssets = await _applicationDbContext.Assets
                 .Where(a => a.AssetName.Contains(assetQuery) || a.Description.Contains(assetQuery))
