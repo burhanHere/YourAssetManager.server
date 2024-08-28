@@ -145,19 +145,24 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // [HttpPost("AssignAsset")]
-        // public async Task<IActionResult> AssignAsset([FromBody] AssetRequestDTO request) { return Ok(); }
-
-        // [HttpPost("UnassignAsset")]
-        // public async Task<IActionResult> UnassignAsset([FromBody] AssetRequestDTO request) { return Ok(); }
-
-        // [HttpGet("GetAssetsAssignedToUser/{userId}")]
-        // public async Task<IActionResult> GetAssetsAssignedToUser(int userId) { return Ok(); }
-
-        // [HttpGet("GetAssetAssignmentDetails/{assetId}")]
-        // public async Task<IActionResult> GetAssetAssignmentDetails(int assetId) { return Ok(); }
-
-        // [HttpPut("UpdateAssetAssignment")]
-        // public async Task<IActionResult> UpdateAssetAssignment([FromBody] AssetRequestDTO request) { return Ok(); }
+        [HttpGet("GetAvailableAssetsByCatagory")]
+        public async Task<ApiResponseDTO> GetAvailableAssetsByCatagory(int catagoryId)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // If the username is not found, return an unauthorized response
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status401Unauthorized,
+                        ResponseData = new List<string> { "User not found in token." }
+                    };
+                }
+            }
+            ApiResponseDTO result = await _assetManagementRepository.GetAvailableAssetsByCatagory(userId, catagoryId);
+            return result;
+        }
     }
 }

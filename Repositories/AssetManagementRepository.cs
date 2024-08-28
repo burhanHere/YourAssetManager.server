@@ -435,5 +435,79 @@ namespace YourAssetManager.Server.Repositories
                     }
             };
         }
+
+        public async Task<ApiResponseDTO> GetAvailableAssetsByCatagory(string userId, int catagoryId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                // Return error if user not found
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not found."
+                    }
+                };
+            }
+
+            var userOrganization = await _applicationDbContext.UserOrganizations.FirstOrDefaultAsync(x => x.UserId == user.Id && x.Organization.ActiveOrganization);
+            if (userOrganization == null)
+            {
+                // Return error if user not associated to any organization
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "Invalid user request.",
+                        "User not associated to any organization."
+                    }
+                };
+            }
+
+            List<AssetDTO> requiredAssets = await _applicationDbContext.Assets
+                .Where(x => x.OrganizationId == userOrganization.OrganizationId && x.AssetCategoryId == catagoryId)
+                .Select(x => new AssetDTO
+                {
+                    Id = x.AssetId,
+                    AssetName = x.AssetName,
+                    Description = x.Description,
+                    PurchaseDate = x.PurchaseDate,
+                    PurchasePrice = x.PurchasePrice,
+                    SerialNumber = x.SerialNumber,
+                    CreatedDate = x.CreatedDate,
+                    UpdatedDate = x.UpdatedDate,
+                    AssetIdentificationNumber = x.AssetIdentificationNumber,
+                    Manufacturer = x.Manufacturer,
+                    Model = x.Model,
+                    CatagoryReleventFeildsData = x.CatagoryReleventFeildsData,
+                    AssetStatusData = x.AssetStatus.StatusName,
+                    OrganizationData = x.Organization.OrganizationName,
+                    AssetCategoryData = x.AssetCategory.CategoryName,
+                    AssetTypeData = x.AssetType.AssetTypeName,
+                    VendorData = x.Vendor.Name,
+                }).ToListAsync();
+
+            if (requiredAssets.Count == 0)
+            {
+                // Return error if no assets associated to this organization
+                return new ApiResponseDTO
+                {
+                    Status = StatusCodes.Status404NotFound,
+                    ResponseData = new List<string>
+                    {
+                        "No assets found",
+                    }
+                };
+            }
+            return new ApiResponseDTO
+            {
+                Status = StatusCodes.Status200OK,
+                ResponseData = requiredAssets
+            };
+        }
     }
 }
