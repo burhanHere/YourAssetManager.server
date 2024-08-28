@@ -169,7 +169,9 @@ namespace YourAssetManager.Server.Models
             List<AssetDTO> targetAssets;
             if (assetCatagoriId == 0)
             {
-                targetAssets = await _applicationDbContext.Assets.Where(a => a.AssetName.Contains(assetQuery)).Select(x => new AssetDTO()
+                targetAssets = await _applicationDbContext.Assets
+                .Where(a => a.AssetName.Contains(assetQuery) || a.Description.Contains(assetQuery))
+                .Select(x => new AssetDTO()
                 {
                     Id = x.AssetId,
                     AssetName = x.AssetName,
@@ -192,7 +194,9 @@ namespace YourAssetManager.Server.Models
             }
             else
             {
-                targetAssets = await _applicationDbContext.Assets.Where(a => a.AssetName.Contains(assetQuery) && a.AssetCategoryId == assetCatagoriId).Select(x => new AssetDTO()
+                targetAssets = await _applicationDbContext.Assets
+                .Where(a => (a.AssetName.Contains(assetQuery) || a.Description.Contains(assetQuery)) && a.AssetCategoryId == assetCatagoriId)
+                .Select(x => new AssetDTO()
                 {
                     Id = x.AssetId,
                     AssetName = x.AssetName,
