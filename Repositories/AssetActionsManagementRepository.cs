@@ -207,7 +207,7 @@ namespace YourAssetManager.Server.Repositories
             }
             var requesterUser = await _userManager.FindByIdAsync(targetAssetRequest.RequesterId);
             string emailMessage = @"Your asset Request has been Fulfilled.<br>";
-            _ = await _emailService.SendEmailAsync(requesterUser.Email, "Asset Request Decline", emailMessage);
+            _ = await _emailService.SendEmailAsync(requesterUser.Email, "Asset Request FulFilled", emailMessage);
             return new ApiResponseDTO
             {
                 Status = StatusCodes.Status200OK,
