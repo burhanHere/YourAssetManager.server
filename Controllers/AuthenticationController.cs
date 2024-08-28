@@ -135,18 +135,7 @@ namespace YourAssetManager.Server.Controllers
             return BadRequest(result);
         }
 
-        // Define the ResetPassword Get endpoint to handle passwords reset
-        // [HttpGet("/ResetPassword")]
-        // public IActionResult ResetPassword(string token, string email)
-        // {
-        //     ResetPassowrdModel resetPassowrdModel = new()
-        //     {
-        //         Token = token,
-        //         Email = email
-        //     };
-        //     return Ok(resetPassowrdModel);
-        // }
-        // Define the ResetPassword Post endpoint to handle passwords reset
+        
         [HttpPost("ResetPassword")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO resetPassowrdModel)
         {

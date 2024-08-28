@@ -154,7 +154,6 @@ namespace YourAssetManager.Server.Models
                 ResponseData = requiredAssetrequests
             };
         }
-
         public async Task<ApiResponseDTO> Search(string assetQuery, int assetCatagoriId)
         {
             if (string.IsNullOrEmpty(assetQuery))

@@ -9,7 +9,7 @@ using YourAssetManager.Server.Data;
 
 #nullable disable
 
-namespace YourAssetManager.server.Data.Migrations
+namespace YourAssetManager.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20240828153410_InitialCreate")]
