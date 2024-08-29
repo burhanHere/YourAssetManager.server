@@ -671,18 +671,7 @@ namespace YourAssetManager.Server.Repositories
             string message;
             if (action)
             {
-                if (targetAsset.AssetStatusId == 3)
-                {
-                    return new ApiResponseDTO
-                    {
-                        Status = StatusCodes.Status405MethodNotAllowed,
-                        ResponseData = new List<string>
-                    {
-                        "Can't perform this action. Asset already Under Maintanence.",
-                    }
-                    };
-                }
-                targetAsset.AssetStatusId = 3;
+                targetAsset.AssetStatusId = 4;
                 _applicationRepository.Assets.Update(targetAsset);
 
                 var savedDbChanges = await _applicationRepository.SaveChangesAsync();
@@ -701,6 +690,17 @@ namespace YourAssetManager.Server.Repositories
             }
             else
             {
+                if (targetAsset.AssetStatusId == 3)
+                {
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status405MethodNotAllowed,
+                        ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Asset already Under Maintanence.",
+                    }
+                    };
+                }
                 AssetMaintenance assetMaintenance = new()
                 {
                     MaintenanceDate = DateTime.Now,
