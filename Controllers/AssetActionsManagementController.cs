@@ -216,7 +216,7 @@ namespace YourAssetManager.Server.Controllers
                 });
             }
 
-            ApiResponseDTO result = await _assetActionsManagementRepository.SendReturnFromMaintenance(currectLogedInUserId, true, assetMaintanenceDTO);
+            ApiResponseDTO result = await _assetActionsManagementRepository.SendReturnFromMaintenance(currectLogedInUserId, false, assetMaintanenceDTO);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
@@ -245,7 +245,7 @@ namespace YourAssetManager.Server.Controllers
                 });
             }
 
-            ApiResponseDTO result = await _assetActionsManagementRepository.SendReturnFromMaintenance(currectLogedInUserId, false, assetMaintanenceDTO);
+            ApiResponseDTO result = await _assetActionsManagementRepository.SendReturnFromMaintenance(currectLogedInUserId, true, assetMaintanenceDTO);
             if (result.Status == StatusCodes.Status200OK)
             {
                 return Ok(result);
