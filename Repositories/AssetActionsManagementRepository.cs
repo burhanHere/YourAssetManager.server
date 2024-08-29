@@ -667,20 +667,21 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            if (targetAsset.AssetStatusId == 3)
-            {
-                return new ApiResponseDTO
-                {
-                    Status = StatusCodes.Status405MethodNotAllowed,
-                    ResponseData = new List<string>
-                    {
-                        "Can't perform this action. Asset already Under Maintanence.",
-                    }
-                };
-            }
+
             string message;
             if (action)
             {
+                if (targetAsset.AssetStatusId == 3)
+                {
+                    return new ApiResponseDTO
+                    {
+                        Status = StatusCodes.Status405MethodNotAllowed,
+                        ResponseData = new List<string>
+                    {
+                        "Can't perform this action. Asset already Under Maintanence.",
+                    }
+                    };
+                }
                 targetAsset.AssetStatusId = 3;
                 _applicationRepository.Assets.Update(targetAsset);
 
