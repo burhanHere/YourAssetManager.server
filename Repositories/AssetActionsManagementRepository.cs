@@ -576,7 +576,7 @@ namespace YourAssetManager.Server.Repositories
                     Status = StatusCodes.Status405MethodNotAllowed,
                     ResponseData = new List<string>
                     {
-                        "Can't perform this action. Asset is not Available.",
+                        "Can't perform this action. Asset is not unde maintanence.",
                     }
                 };
             }
