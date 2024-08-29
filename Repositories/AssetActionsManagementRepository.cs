@@ -656,7 +656,7 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            if (targetAsset.AssetStatusId != 3)
+            if (targetAsset.AssetStatusId != 4)
             {
                 return new ApiResponseDTO
                 {
