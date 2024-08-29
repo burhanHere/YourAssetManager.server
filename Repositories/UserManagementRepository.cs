@@ -514,10 +514,12 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            var stream = userProfileUpdateDTO.ProfilePicture.OpenReadStream();
-            string cloudinaryUrlOfImage = await _cloudinaryService.UploadImageToCloudinaryAsync(stream, userProfileUpdateDTO.ProfilePicture.FileName);
-            if (string.IsNullOrEmpty(cloudinaryUrlOfImage))
+            if (userProfileUpdateDTO.ProfilePicture != null)
             {
+                var stream = userProfileUpdateDTO.ProfilePicture.OpenReadStream();
+                string cloudinaryUrlOfImage = await _cloudinaryService.UploadImageToCloudinaryAsync(stream, userProfileUpdateDTO.ProfilePicture.FileName);
+                if (string.IsNullOrEmpty(cloudinaryUrlOfImage))
+                {
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status400BadRequest,
@@ -526,10 +528,11 @@ namespace YourAssetManager.Server.Repositories
                         "failed to update profile."
                     }
                 };
+                }
+                targetUser.ImagePath = cloudinaryUrlOfImage;
             }
 
-            targetUser.UserName = userProfileUpdateDTO.UserName.IsNullOrEmpty()?targetUser.UserName:userProfileUpdateDTO.UserName;
-            targetUser.ImagePath = cloudinaryUrlOfImage;
+            targetUser.UserName = userProfileUpdateDTO.UserName.IsNullOrEmpty() ? targetUser.UserName : userProfileUpdateDTO.UserName;
 
             _applicationDbContext.Users.Update(targetUser);
             var savedDbChanges = await _applicationDbContext.SaveChangesAsync();
