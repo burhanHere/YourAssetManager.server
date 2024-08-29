@@ -569,14 +569,14 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            if (targetAsset.AssetStatusId != 3)
+            if (targetAsset.AssetStatusId != 2)
             {
                 return new ApiResponseDTO
                 {
                     Status = StatusCodes.Status405MethodNotAllowed,
                     ResponseData = new List<string>
                     {
-                        "Can't perform this action. Asset is not unde maintanence.",
+                        "Can't perform this action. Asset is not under maintanence.",
                     }
                 };
             }
@@ -656,7 +656,7 @@ namespace YourAssetManager.Server.Repositories
                     }
                 };
             }
-            if (targetAsset.AssetStatusId != 4)
+            if (targetAsset.AssetStatusId != 3)
             {
                 return new ApiResponseDTO
                 {
