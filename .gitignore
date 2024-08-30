@@ -141,3 +141,5 @@ migrations/
 
 # Ignore Rider project files
 .idea/
+
+appsettings.json
