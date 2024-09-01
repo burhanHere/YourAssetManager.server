@@ -209,11 +209,11 @@ namespace YourAssetManager.Server.Models
                     Manufacturer = x.Manufacturer,
                     Model = x.Model,
                     CatagoryReleventFeildsData = x.CatagoryReleventFeildsData,
-                    OrganizationData = x.OrganizationId.ToString(),
-                    AssetStatusData = x.AssetStatusId.ToString(),
-                    AssetCategoryData = x.AssetCategoryId.ToString(),
-                    AssetTypeData = x.AssetTypeId.ToString(),
-                    VendorData = x.VendorId.ToString()
+                    OrganizationData = x.Organization.OrganizationName,
+                    AssetStatusData = x.AssetStatus.StatusName,
+                    AssetCategoryData = x.AssetCategory.CategoryName,
+                    AssetTypeData = x.AssetType.AssetTypeName,
+                    VendorData = x.Vendor.Name
                 }).ToListAsync();
             }
 
